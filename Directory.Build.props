@@ -8,16 +8,13 @@
     <RepoRootDir>$([System.IO.Path]::GetFullPath("$(MSBuildThisFileDirectory)"))</RepoRootDir>
     <NupkgsDir>$([System.IO.Path]::GetFullPath("$(MSBuildThisFileDirectory)/bin/nupkg"))</NupkgsDir>
     <MonoOrEmpty Condition=" '$(OS)' != 'Windows_NT' ">mono </MonoOrEmpty>
-
     <Version Condition=" '$(Version)' == '' ">$(VersionPrefix)$(VersionSuffix)</Version>
-
     <NoWarn>$(NoWarn);FS2003</NoWarn>
-
     <EnableSourceLink Condition=" 'Configuration' == 'Release' ">true</EnableSourceLink>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>7sharp9;enricosada</Authors>
+    <Authors>7sharp9</Authors>
     <PackageProjectUrl>https://github.com/7sharp9/myriad/</PackageProjectUrl>
     <PackageTags>fsharp;codegen;generation</PackageTags>
     <RepositoryType>git</RepositoryType>
