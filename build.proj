@@ -1,0 +1,21 @@
+<Project ToolsVersion="15.0">
+
+    <Import Project="Directory.Build.props" />
+
+    <Target Name="Restore">
+        <Exec Command="$(MonoOrEmpty)paket.exe restore" WorkingDirectory=".paket" ConsoleToMSBuild="true" />
+        <Exec Command="dotnet restore" WorkingDirectory="tools" ConsoleToMSBuild="true" />
+    </Target>
+
+    <Target Name="Build" DependsOnTargets="Restore">
+        <Exec Command='dotnet build src/Myriad -c Release' />
+    </Target>
+
+    <Target Name="Pack" DependsOnTargets="Restore">
+        <RemoveDir Directories="$(NupkgsDir)" />
+        <Exec Command='dotnet pack src/Myriad.Sdk -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
+        <Exec Command='dotnet pack src/Myriad -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
+        <Exec Command='dotnet mergenupkg --source "$(NupkgsDir)/Myriad.Sdk.$(Version).nupkg" --other "$(NupkgsDir)/Myriad.$(Version).nupkg" --tools --only-files' WorkingDirectory="tools" />
+    </Target>
+
+</Project>
