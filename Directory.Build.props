@@ -19,7 +19,7 @@
     <PackageTags>fsharp;codegen;generation</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/7sharp/myriad.git</RepositoryUrl>
-    <<PackageLicenseUrl>https://github.com/7sharp9/myriad/blob/v$(VersionPrefix)/LICENSE</PackageLicenseUrl>>
+    <PackageLicenseUrl>https://github.com/7sharp9/myriad/blob/v$(VersionPrefix)/LICENSE</PackageLicenseUrl>
     <Copyright>Dave Thomas</Copyright>
     <PackageReleaseNotes>see $(PackageProjectUrl)blob/master/CHANGELOG.md#v$(VersionPrefix)</PackageReleaseNotes>
   </PropertyGroup>
