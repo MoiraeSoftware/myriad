@@ -1,0 +1,7 @@
+source https://www.nuget.org/api/v2
+nuget ArgU
+nuget FSAst
+nuget FSharp.Compiler.Service 25.0.1
+nuget FSharp.Core 4.5.4 strategy: min
+nuget Fantomas 2.9.2
+nuget Falanx.Machinery
