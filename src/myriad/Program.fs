@@ -63,8 +63,10 @@ module Main =
             File.WriteAllText(outputFile, code)
 
             printfn "%A" code
+#if DEBUG
             printfn "AST-----------------------------------------------"
             printfn "%A" parseTree
+#endif
             0 // return an integer exit code
 
         with
