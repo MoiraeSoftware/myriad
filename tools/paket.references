@@ -1,0 +1,2 @@
+group MergeNupkgTool
+  dotnet-mergenupkg

@@ -5,3 +5,10 @@ nuget FSharp.Compiler.Service 25.0.1
 nuget FSharp.Core 4.5.4 strategy: min
 nuget Fantomas 2.9.2
 nuget Falanx.Machinery
+
+group MergeNupkgTool
+source https://www.nuget.org/api/v2
+frameworks: netcoreapp2.0, netstandard2.0
+storage: none
+
+clitool dotnet-mergenupkg ~> 2.4

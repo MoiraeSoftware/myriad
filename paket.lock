@@ -527,3 +527,14 @@ NUGET
       Microsoft.NETCore.Targets (>= 1.0.1) - restriction: || (&& (< monoandroid) (< monotouch) (< net451) (>= netstandard1.2) (< win81) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net451+win81+wpa81)
       System.Runtime (>= 4.1) - restriction: || (&& (< monoandroid) (< monotouch) (< net451) (>= netstandard1.2) (< win81) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net451+win81+wpa81)
     System.ValueTuple (4.5) - restriction: >= net45
+
+GROUP MergeNupkgTool
+STORAGE: NONE
+RESTRICTION: || (== netcoreapp2.0) (== netstandard2.0)
+NUGET
+  remote: https://www.nuget.org/api/v2
+    dotnet-mergenupkg (2.4) - clitool: true
+      FSharp.Core (>= 4.3.4) - restriction: || (== netcoreapp2.0) (&& (== netstandard2.0) (>= netcoreapp1.0))
+      Microsoft.NETCore.App (>= 2.0) - restriction: || (== netcoreapp2.0) (&& (== netstandard2.0) (>= netcoreapp2.0))
+    FSharp.Core (4.6.2) - restriction: || (== netcoreapp2.0) (&& (== netstandard2.0) (>= netcoreapp1.0))
+    Microsoft.NETCore.App (2.2.4) - restriction: || (== netcoreapp2.0) (&& (== netstandard2.0) (>= netcoreapp2.0))
