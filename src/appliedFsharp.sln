@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{554C4C08-7DD6-41CB-A6B2-EA941B1D87CC}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "myriad", "src\myriad\myriad.fsproj", "{AA7F1010-DE51-4673-975F-85A6184DD152}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "myriad", "myriad\myriad.fsproj", "{AA7F1010-DE51-4673-975F-85A6184DD152}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
