@@ -1,0 +1,70 @@
+<Project>
+
+    <!-- Input to the code generator should not include its output. -->
+    <Target Name="_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateInputCache">
+        <ItemGroup>
+            <MyriadCodegen Include="%(MyriadFile.FullPath)">
+                <OutputPath Condition=" '%(MyriadFile.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadFile.OutputPath)'))</OutputPath>
+                <OutputPath Condition=" '%(MyriadFile.OutputPath)' == '' ">%(MyriadFile.FullPath).fs</OutputPath>
+            </MyriadCodegen>
+        </ItemGroup>
+
+        <PropertyGroup>
+            <_MyriadSdkCodeGenInputCache>$(IntermediateOutputPath)$(MSBuildProjectFile).FalanxSdkCodeGenInputs.cache</_MyriadSdkCodeGenInputCache>
+        </PropertyGroup>
+    </Target>
+
+    <!--
+    Update the file which captures the total set of all inputs to the code generator.
+    This is based on the _GenerateCompileDependencyCache target from the .NET project system. -->
+    <Target Name="MyriadSdkGenerateInputCache" DependsOnTargets="ResolveAssemblyReferences;_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateCode">
+
+        <ItemGroup>
+            <MyriadSdk_CodeGenInputs Include="@(MyriadCodegen);@(ReferencePath);$(MyriadSdk_Generator_Exe)" />
+        </ItemGroup>
+
+        <Hash ItemsToHash="@(MyriadSdk_CodeGenInputs)">
+            <Output TaskParameter="HashResult" PropertyName="MyriadSdk_UpdatedInputCacheContents" />
+        </Hash>
+
+        <WriteLinesToFile Overwrite="true" File="$(_MyriadSdkCodeGenInputCache)" Lines="$(MyriadSdk_UpdatedInputCacheContents)" WriteOnlyWhenDifferent="True" />
+
+    </Target>
+
+    <PropertyGroup>
+        <MyriadSdkGenerateCodeDependsOn>$(MyriadSdkGenerateCodeDependsOn);ResolveReferences;MyriadSdkGenerateInputCache</MyriadSdkGenerateCodeDependsOn>
+    </PropertyGroup>
+
+    <Target Name="MyriadSdkGenerateCode"
+            DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)" 
+            BeforeTargets="CoreCompile"
+            Condition=" '$(DesignTimeBuild)' != 'true' "
+            Inputs="@(MyriadCodegen);$(_MyriadSdkCodeGenInputCache);$(MyriadSdk_Generator_Exe)"
+            Outputs="%(MyriadCodegen.OutputPath)">
+
+        <PropertyGroup>
+            <_MyriadSdk_InputFileName>%(MyriadCodegen.Identity)</_MyriadSdk_InputFileName>
+            <_MyriadSdk_OutputFileName>%(MyriadCodegen.OutputPath)</_MyriadSdk_OutputFileName>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <MyriadSdk_CodeGenArgs Include='--inputfile "$(_MyriadSdk_InputFileName)"' />
+            <MyriadSdk_CodeGenArgs Include='--outputfile "$(_MyriadSdk_OutputFileName)"' />
+            <MyriadSdk_CodeGenArgs Include='--namespace "$(RootNamespace)"' />
+        </ItemGroup>
+
+        <!-- Use dotnet to execute the process. -->
+        <Exec Command="$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_CodeGenArgs -> '%(Identity)', ' ')" />
+
+        <ItemGroup>
+            <CompileBefore Include="$(_MyriadSdk_OutputFileName)" Condition="Exists('$(_MyriadSdk_OutputFileName)')" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="MyriadSdkIncludeCodegenOutputDuringDesignTimeBuild" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' == 'true' ">
+        <ItemGroup>
+            <CompileBefore Include="%(MyriadCodegen.OutputPath)" />
+        </ItemGroup>
+    </Target>
+
+</Project>
