@@ -1,34 +1,32 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
-trigger:
-- master
-
-pool:
-  vmImage: 'VS2017-Win2016'
-
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-
-steps:
-- task: NuGetToolInstaller@0
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+name: $(Rev:r)
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - powershell: |
+      $buildId = $env:BUILD_BUILDNUMBER.PadLeft(7, '0');
+      $versionSuffixPR = "-PR$($env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)-$buildId";
+      $branchName = "$env:BUILD_SOURCEBRANCHNAME".Replace("_","");
+      $versionSuffixBRANCH = "-$branchName-$buildId";
+      $isTag = "$env:BUILD_SOURCEBRANCH".StartsWith('refs/tags/');
+      $isPR = "$env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" -ne ""
+      $versionSuffix = if ($isTag) { "" } else { if ($isPR) { $versionSuffixPR } else { $versionSuffixBRANCH } };
+      Write-Host "##vso[task.setvariable variable=VersionSuffix]$versionSuffix";
+  - script: dotnet pack build.proj -v n
+    displayName: Create package
+    env:
+      VersionSuffix: '$(VersionSuffix)'
+  - script: dotnet test build.proj -v n
+    displayName: Run tests
+    env:
+      VersionSuffix: '$(VersionSuffix)'
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'VSTest'
+      testResultsFiles: 'bin/test_results/*TestResults.xml'
+    condition: succeededOrFailed()
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: 'bin/nupkg'
+      artifactName: 'nupkgs'
