@@ -8,7 +8,7 @@ jobs:
       $buildId = $env:BUILD_BUILDNUMBER.PadLeft(7, '0');
       $versionSuffixPR = "-PR$($env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)-$buildId";
       $branchName = "$env:BUILD_SOURCEBRANCHNAME".Replace("_","");
-      $versionSuffixBRANCH = "-$branchName-$buildId";
+      $versionSuffixBRANCH = if ($branchName -eq "master") { "prerelease-$buildId" } else { "-$branchName-$buildId" };
       $isTag = "$env:BUILD_SOURCEBRANCH".StartsWith('refs/tags/');
       $isPR = "$env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER" -ne ""
       $versionSuffix = if ($isTag) { "" } else { if ($isPR) { $versionSuffixPR } else { $versionSuffixBRANCH } };
