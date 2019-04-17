@@ -1,4 +1,9 @@
+version 5.195.4
+
 source https://www.nuget.org/api/v2
+framework: netcoreapp2.1, netstandard2.0
+storage: none
+
 nuget ArgU
 nuget FSAst
 nuget FSharp.Compiler.Service 25.0.1
