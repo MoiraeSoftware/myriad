@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Library.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <MyriadFile Include="Library.fs" >
+            <OutputPath>Generated.fs</OutputPath>
+        </MyriadFile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Myriad.Sdk" Version="0.0.2" PrivateAssets="All" />
+    </ItemGroup>
+
+</Project>
