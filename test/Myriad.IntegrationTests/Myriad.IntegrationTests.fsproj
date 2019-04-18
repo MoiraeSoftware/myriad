@@ -5,6 +5,10 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\src\Example\Library.fs" />
+    <Compile Include="Generated.fs" >
+        <MyriadFile>..\..\src\Example\Library.fs</MyriadFile>
+    </Compile>
     <Compile Include="Tests.fs" />
   </ItemGroup>
   <!-- use the falanx generator binary directly -->
