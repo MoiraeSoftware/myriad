@@ -7,5 +7,16 @@
   <ItemGroup>
     <Compile Include="Tests.fs" />
   </ItemGroup>
+  <!-- use the falanx generator binary directly -->
+  <PropertyGroup>
+    <MyriadSdk_Generator_ExeHost>dotnet </MyriadSdk_Generator_ExeHost>
+    <MyriadSdk_Generator_Exe>..\..\src\Myriad\bin\$(Configuration)\netcoreapp2.1\myriad.dll</MyriadSdk_Generator_Exe>
+  </PropertyGroup>
+  <!-- include to enable the generation of these formats -->
+  <!-- <Import Project="..\..\src\Falanx.Proto.Codec.Binary\build\Falanx.Proto.Codec.Binary.props" />
+  <Import Project="..\..\src\Falanx.Proto.Codec.Json\build\Falanx.Proto.Codec.Json.props" /> -->
+  <!-- do import directly the falanx sdk target, instead from package -->
+  <Import Project="..\..\src\Myriad.Sdk\build\Myriad.Sdk.targets" />
+  <!-- paket -->
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
