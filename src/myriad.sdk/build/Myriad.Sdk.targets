@@ -3,9 +3,15 @@
     <!-- Input to the code generator should not include its output. -->
     <Target Name="_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateInputCache">
         <ItemGroup>
-            <MyriadCodegen Include="%(MyriadFile.FullPath)">
-                <OutputPath Condition=" '%(MyriadFile.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadFile.OutputPath)'))</OutputPath>
-                <OutputPath Condition=" '%(MyriadFile.OutputPath)' == '' ">%(MyriadFile.FullPath).fs</OutputPath>
+            <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' ">
+                <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
+            </MyriadSource>
+        </ItemGroup>
+
+        <ItemGroup>
+            <MyriadCodegen Include="%(MyriadSource.FullPath)">
+                <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadSource.OutputPath)'))</OutputPath>
+                <OutputPath Condition=" '%(MyriadSource.OutputPath)' == '' ">%(MyriadSource.FullPath).fs</OutputPath>
             </MyriadCodegen>
         </ItemGroup>
 
