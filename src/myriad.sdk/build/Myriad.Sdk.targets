@@ -61,16 +61,9 @@
 
         <!-- Use dotnet to execute the process. -->
         <Exec Command="$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')" />
-
-        <ItemGroup>
-            <CompileBefore Include="$(_MyriadSdk_OutputFileName)" Condition="Exists('$(_MyriadSdk_OutputFileName)')" />
-        </ItemGroup>
     </Target>
 
     <Target Name="MyriadSdkIncludeCodegenOutputDuringDesignTimeBuild" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' == 'true' ">
-        <ItemGroup>
-            <CompileBefore Include="%(MyriadCodegen.OutputPath)" />
-        </ItemGroup>
     </Target>
 
 </Project>
