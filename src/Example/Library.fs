@@ -1,5 +1,4 @@
 ﻿namespace Example
 
-module MyRecords =
-    type Test1 = { One: int; Two: string; Three: float; Four: float32 }
-    type Test2 = { One: Test1; Two: string }
+type Test1 = { one: int; two: string; three: float; four: float32 }
+type Test2 = { one: Test1; two: string }
