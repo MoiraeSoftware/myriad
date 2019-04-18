@@ -15,7 +15,7 @@
         <RemoveDir Directories="$(NupkgsDir)" />
         <Exec Command='dotnet pack src/Myriad.Sdk -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
         <Exec Command='dotnet pack src/Myriad -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
-        <Exec Command='dotnet mergenupkg --source "$(NupkgsDir)/Myriad.Sdk.$(Version).nupkg" --other "$(NupkgsDir)/Myriad.$(Version).nupkg" --framework netcoreapp2.1' WorkingDirectory="tools" />
+        <Exec Command='dotnet mergenupkg --source "$(NupkgsDir)/Myriad.Sdk.$(Version).nupkg" --other "$(NupkgsDir)/Myriad.$(Version).nupkg" --tools --only-files' WorkingDirectory="tools" />
     </Target>
 
 </Project>
