@@ -10,6 +10,10 @@ nuget FSharp.Compiler.Service 25.0.1
 nuget FSharp.Core 4.5.4 strategy: min
 nuget Fantomas 2.9.2
 
+nuget Microsoft.NET.Test.Sdk ~> 15.9.0
+nuget xunit ~> 2.4.0
+nuget xunit.runner.visualstudio ~> 2.4.0
+
 group MergeNupkgTool
 source https://www.nuget.org/api/v2
 frameworks: netcoreapp2.0, netstandard2.0
