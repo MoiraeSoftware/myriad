@@ -72,8 +72,12 @@ module Ast =
         let fieldMaps = fields |> List.map (createMap parentId)
         let create = createCreate parentId fields
         let declarations = [ yield!fieldMaps; yield create ]
+
+        let fieldsModuleInfo = SynComponentInfoRcd.Create ([Ident.Create "Fields"])
+        let fieldsModule = SynModuleDecl.CreateNestedModule(fieldsModuleInfo, declarations)
+
         let info = SynComponentInfoRcd.Create parentId
-        SynModuleDecl.CreateNestedModule(info, declarations)
+        SynModuleDecl.CreateNestedModule(info, [fieldsModule])
 
     let getAst filename =
         let s = File.ReadAllText filename
