@@ -37,7 +37,7 @@ module Main =
             let records = Ast.extractRecordMeta ast
             let modules = 
                 records
-                |> List.map (fun (p,fs) -> Ast.createRecordModule p fs )
+                |> List.map (fun (ns, p,fs) -> Ast.createRecordModule ns p fs )
     
             let namespace' = 
                 {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')

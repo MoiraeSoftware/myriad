@@ -68,16 +68,19 @@ module Ast =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create recordType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createRecordModule (parentId: LongIdent) (fields : SynFields) =
+    let createRecordModule (namespace': LongIdent) (parentId: LongIdent) (fields : SynFields) =
+
+        let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespace' |> List.map (fun ident -> ident.idText)))
+
         let fieldMaps = fields |> List.map (createMap parentId)
         let create = createCreate parentId fields
-        let declarations = [ yield!fieldMaps; yield create ]
-
-        let fieldsModuleInfo = SynComponentInfoRcd.Create ([Ident.Create "Fields"])
-        let fieldsModule = SynModuleDecl.CreateNestedModule(fieldsModuleInfo, declarations)
+        let declarations = [
+            yield openParent
+            yield!fieldMaps
+            yield create ]
 
         let info = SynComponentInfoRcd.Create parentId
-        SynModuleDecl.CreateNestedModule(info, [fieldsModule])
+        SynModuleDecl.CreateNestedModule(info, declarations)
 
     let getAst filename =
         let s = File.ReadAllText filename
@@ -88,16 +91,16 @@ module Ast =
         let records = [
             match ast with
             | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules , g)) ->
-                for SynModuleOrNamespace(longident, isRecursive, isModule, moduleDecls, preXmlDoc, attributes, access, _) in modules do
+                for SynModuleOrNamespace(namespaceIdent, isRecursive, isModule, moduleDecls, preXmlDoc, attributes, access, _) in modules do
                     for moduleDecl in moduleDecls do
                         match moduleDecl with
                         | SynModuleDecl.Types(types, _) ->
-                            for TypeDefn( ComponentInfo(attribs, typeParams, constraints, ident, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
+                            for TypeDefn( ComponentInfo(attribs, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
                                 match typeDefRepr with
                                 | SynTypeDefnRepr.Exception(a) -> ()
                                 | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()
                                 | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(access2, fields, _), _) ->
-                                    yield (ident, fields)
+                                    yield (namespaceIdent, recordIdent, fields)
                                 | _ -> ()
                         | _ -> ()
             | _ -> () ]

@@ -10,6 +10,11 @@
       <MyriadFile>..\..\src\Example\Library.fs</MyriadFile>
       <MyriadNameSpace>Test</MyriadNameSpace>
     </Compile>
+
+    <Compile Include="Generated2.fs" >
+      <MyriadFile>..\..\src\Example\Library.fs</MyriadFile>
+      <MyriadNameSpace>Test2</MyriadNameSpace>
+    </Compile>
              
     <Compile Include="Tests.fs" />
   </ItemGroup>
