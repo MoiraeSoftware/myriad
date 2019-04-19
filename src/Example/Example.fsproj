@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Myriad.Sdk" Version="0.0.5" PrivateAssets="All" />
+        <PackageReference Include="Myriad.Sdk" Version="0.1.*" PrivateAssets="All" />
     </ItemGroup>
 
 </Project>
