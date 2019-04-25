@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "myriad", "Myriad\myriad.fsproj", "{D8A79BFF-9C20-48DA-BE54-8C3DD9DF831B}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad", "Myriad\Myriad.fsproj", "{D8A79BFF-9C20-48DA-BE54-8C3DD9DF831B}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Example", "Example\Example.fsproj", "{D03A7334-E87E-4C41-AE26-25A3B5D92856}"
 EndProject
