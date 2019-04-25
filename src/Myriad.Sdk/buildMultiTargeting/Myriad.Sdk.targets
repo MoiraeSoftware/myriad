@@ -1,3 +1,0 @@
-<Project>
-  <Import Project="..\build\Myriad.Sdk.targets" />
-</Project>
