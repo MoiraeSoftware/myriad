@@ -58,7 +58,7 @@ module Main =
                     "//        Changes to this file will be lost when the code is regenerated."
                     "//------------------------------------------------------------------------------"
                     formattedCode ]
-                |> String.concat (Environment.NewLine)
+                |> String.concat Environment.NewLine
 
             File.WriteAllText(outputFile, code)
 
