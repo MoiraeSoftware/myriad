@@ -1,5 +1,9 @@
-image:
-  file: .gitpod.dockerfile
+image: gitpod/workspace-dotnet
+
+tasks:
+  - init: >
+      dotnet tool install paket -g && dotnet tool install fake-cli -g
+
 
 vscode:
   extensions:
