@@ -1,7 +1,7 @@
 image: gitpod/workspace-dotnet
 
 tasks:
-  - init: dotnet tool install paket --tool-path /workspace/.dotnet/tools && dotnet tool install fake-cli --tool-path /workspace/.dotnet/tools && export PATH=/workspace/.dotnet/tools:$PATH
+  - init: dotnet tool install --tool-path .paket Paket && export PATH=.paket:$PATH
 
 vscode:
   extensions:
