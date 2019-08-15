@@ -3,7 +3,6 @@
     <Import Project="Directory.Build.props" />
 
     <Target Name="Restore">
-        <Exec Command="$(MonoOrEmpty)paket.exe restore" WorkingDirectory=".paket" ConsoleToMSBuild="true" />
         <Exec Command="dotnet restore" WorkingDirectory="tools" ConsoleToMSBuild="true" />
     </Target>
 
