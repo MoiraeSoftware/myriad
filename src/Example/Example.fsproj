@@ -1,17 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
         <Compile Include="Library.fs"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <MyriadFile Include="Library.fs" >
-            <OutputPath>Generated.fs</OutputPath>
-        </MyriadFile>
+        <Compile Include="Generated.fs">
+            <MyriadFile>Library.fs</MyriadFile>
+            <MyriadNameSpace>Test</MyriadNameSpace>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

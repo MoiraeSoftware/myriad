@@ -6,27 +6,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\Example\Library.fs" />
-    <Compile Include="Generated.fs" >
+    <Compile Include="Generated.fs">
       <MyriadFile>..\..\src\Example\Library.fs</MyriadFile>
       <MyriadNameSpace>Test</MyriadNameSpace>
     </Compile>
 
-    <Compile Include="Generated2.fs" >
+    <Compile Include="Generated2.fs">
       <MyriadFile>..\..\src\Example\Library.fs</MyriadFile>
       <MyriadNameSpace>Test2</MyriadNameSpace>
     </Compile>
              
     <Compile Include="Tests.fs" />
   </ItemGroup>
-  <!-- use the falanx generator binary directly -->
+  
+    <!-- use the dll directly rather than using a nuget -->
   <PropertyGroup>
     <MyriadSdk_Generator_ExeHost>dotnet </MyriadSdk_Generator_ExeHost>
-    <MyriadSdk_Generator_Exe>..\..\src\Myriad\bin\$(Configuration)\netcoreapp2.1\myriad.dll</MyriadSdk_Generator_Exe>
+    <MyriadSdk_Generator_Exe>..\..\src\Myriad\bin\$(Configuration)\netcoreapp3.0\myriad.dll</MyriadSdk_Generator_Exe>
   </PropertyGroup>
-  <!-- include to enable the generation of these formats -->
-  <!-- <Import Project="..\..\src\Falanx.Proto.Codec.Binary\build\Falanx.Proto.Codec.Binary.props" />
-  <Import Project="..\..\src\Falanx.Proto.Codec.Json\build\Falanx.Proto.Codec.Json.props" /> -->
-  <!-- do import directly the falanx sdk target, instead from package -->
+  <!-- include to enable the generation of myriad output -->
   <Import Project="..\..\src\Myriad.Sdk\build\Myriad.Sdk.targets" />
   <!-- paket -->
   <Import Project="..\..\.paket\Paket.Restore.targets" />
