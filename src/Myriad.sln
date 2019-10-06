@@ -9,8 +9,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.IntegrationTests", "
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.Core", "Myriad.Core\Myriad.Core.fsproj", "{8A8A221F-61EA-4EA1-8145-A18169BF5150}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.Plugins.Example1", "Myriad.Plugins.Example1\Myriad.Plugins.Example1.fsproj", "{0416597B-EF47-4CC5-9124-15683E53419C}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.IntegrationPluginTests", "..\test\Myriad.IntegrationPluginTests\Myriad.IntegrationPluginTests.fsproj", "{40D21002-A79F-4800-86B0-7DE751FC316D}"
 EndProject
 Global
@@ -35,10 +33,6 @@ Global
 		{8A8A221F-61EA-4EA1-8145-A18169BF5150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A8A221F-61EA-4EA1-8145-A18169BF5150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A8A221F-61EA-4EA1-8145-A18169BF5150}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0416597B-EF47-4CC5-9124-15683E53419C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0416597B-EF47-4CC5-9124-15683E53419C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0416597B-EF47-4CC5-9124-15683E53419C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0416597B-EF47-4CC5-9124-15683E53419C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{40D21002-A79F-4800-86B0-7DE751FC316D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{40D21002-A79F-4800-86B0-7DE751FC316D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40D21002-A79F-4800-86B0-7DE751FC316D}.Release|Any CPU.ActiveCfg = Release|Any CPU
