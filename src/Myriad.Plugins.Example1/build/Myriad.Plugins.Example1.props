@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <MyriadSdkGenerator Include="example1">
+            <AssemblyPath>$(MSBuildThisFileDirectory)/../lib/netstandard2.1/Myriad.Plugins.Example1.dll</AssemblyPath>
+        </MyriadSdkGenerator>
+    </PropertyGroup>
+</Project>
