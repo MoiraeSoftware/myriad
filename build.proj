@@ -19,4 +19,11 @@
         <Exec Command='dotnet pack src/Myriad.Core -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
     </Target>
 
+    <Target Name="Test" DependsOnTargets="Build">
+        <Exec Command='dotnet build test/Myriad.IntegrationTests -c Release' />
+        <Exec Command='dotnet build test/Myriad.IntegrationPluginTests -c Release' />
+    </Target>
+
+    <Target Name="VSTest" DependsOnTargets="Test" />
+
 </Project>
