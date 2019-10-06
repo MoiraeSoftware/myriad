@@ -1,8 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad", "Myriad\Myriad.fsproj", "{D8A79BFF-9C20-48DA-BE54-8C3DD9DF831B}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Example", "Example\Example.fsproj", "{D03A7334-E87E-4C41-AE26-25A3B5D92856}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.IntegrationTests", "..\test\Myriad.IntegrationTests\Myriad.IntegrationTests.fsproj", "{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +21,9 @@ Global
 		{D03A7334-E87E-4C41-AE26-25A3B5D92856}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D03A7334-E87E-4C41-AE26-25A3B5D92856}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D03A7334-E87E-4C41-AE26-25A3B5D92856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
