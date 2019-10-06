@@ -5,11 +5,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad", "Myriad\Myriad.fsp
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Example", "Example\Example.fsproj", "{D03A7334-E87E-4C41-AE26-25A3B5D92856}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.IntegrationTests", "..\test\Myriad.IntegrationTests\Myriad.IntegrationTests.fsproj", "{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.Core", "Myriad.Core\Myriad.Core.fsproj", "{8A8A221F-61EA-4EA1-8145-A18169BF5150}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.IntegrationPluginTests", "..\test\Myriad.IntegrationPluginTests\Myriad.IntegrationPluginTests.fsproj", "{40D21002-A79F-4800-86B0-7DE751FC316D}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Myriad.Plugins.Example1", "..\test\Myriad.Plugins.Example1\Myriad.Plugins.Example1.fsproj", "{1E97F98D-4D11-422B-8CB6-8E992ACE121E}"
 EndProject
@@ -27,18 +23,10 @@ Global
 		{D03A7334-E87E-4C41-AE26-25A3B5D92856}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D03A7334-E87E-4C41-AE26-25A3B5D92856}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D03A7334-E87E-4C41-AE26-25A3B5D92856}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC354696-FCC2-4E6D-9EEA-DA69FC770BB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A8A221F-61EA-4EA1-8145-A18169BF5150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A8A221F-61EA-4EA1-8145-A18169BF5150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A8A221F-61EA-4EA1-8145-A18169BF5150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A8A221F-61EA-4EA1-8145-A18169BF5150}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40D21002-A79F-4800-86B0-7DE751FC316D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40D21002-A79F-4800-86B0-7DE751FC316D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40D21002-A79F-4800-86B0-7DE751FC316D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40D21002-A79F-4800-86B0-7DE751FC316D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E97F98D-4D11-422B-8CB6-8E992ACE121E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E97F98D-4D11-422B-8CB6-8E992ACE121E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E97F98D-4D11-422B-8CB6-8E992ACE121E}.Release|Any CPU.ActiveCfg = Release|Any CPU
