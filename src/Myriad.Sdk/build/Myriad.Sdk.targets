@@ -61,7 +61,7 @@
             <MyriadSdk_Args Include='--inputfile "$(_MyriadSdk_InputFileName)"' />
             <MyriadSdk_Args Include='--outputfile "$(_MyriadSdk_OutputFileName)"' />
             <MyriadSdk_Args Include='--namespace "$(_MyriadSdk_Namespace)"' />
-            <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.Name)=%(MyriadSdkGenerator.FullPath)' />
+            <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.Name)=%(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' "/>
         </ItemGroup>
 
         <!-- Use dotnet to execute the process. -->
