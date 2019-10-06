@@ -5,5 +5,11 @@ open System
 type MyriadGenAttribute(generator: string) =
     inherit Attribute()
 
+
+type MyriadSdkGeneratorAttribute(name: string) =
+    inherit Attribute()
+
+    member __.Name = name
+
 type IMyriadGen =
-    abstract member GetName: unit -> string
+    abstract member DoThings: unit -> string

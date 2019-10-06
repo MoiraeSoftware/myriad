@@ -2,6 +2,7 @@
 
 open Myriad.Core
 
+[<MyriadSdkGenerator("example1")>]
 type Example1Gen() =
     interface IMyriadGen with
-        member __.GetName() = "test1"
+        member __.DoThings() = "ok"
