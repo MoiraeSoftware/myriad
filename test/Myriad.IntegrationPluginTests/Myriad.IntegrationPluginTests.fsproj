@@ -33,7 +33,7 @@
   <!-- include core plugin -->
   <Import Project="..\..\src\Myriad.Core\build\Myriad.Core.props" />
   <!-- include example1 plugin -->
-  <Import Project="..\..\src\Myriad.Plugins.Example1\build\Myriad.Plugins.Example1.props" />
+  <Import Project="..\test\Myriad.Plugins.Example1\build\Myriad.Plugins.Example1.props" />
   <!-- paket -->
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
