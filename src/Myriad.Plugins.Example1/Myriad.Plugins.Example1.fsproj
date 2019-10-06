@@ -7,6 +7,13 @@
     <Compile Include="Library.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="build\Myriad.Plugins.Example1.props">
+      <Pack>true</Pack>
+      <PackagePath>%(Identity)</PackagePath>
+      <Visible>true</Visible>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Myriad.Core\Myriad.Core.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

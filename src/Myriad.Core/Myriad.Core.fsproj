@@ -6,5 +6,12 @@
   <ItemGroup>
     <Compile Include="Library.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="build\Myriad.Core.props">
+      <Pack>true</Pack>
+      <PackagePath>%(Identity)</PackagePath>
+      <Visible>true</Visible>
+    </Content>
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

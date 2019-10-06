@@ -12,6 +12,7 @@ module Main =
         | [<Mandatory>] InputFile of string
         | Namespace of string
         | [<Mandatory>] OutputFile of string
+        | Plugin of string
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -19,6 +20,7 @@ module Main =
                 | InputFile _ -> "specify a file to use as input."
                 | Namespace _ -> "specify a namespace to use."
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
+                | Plugin _ -> "Register a plugin."
 
     [<EntryPoint>]
     let main argv =
@@ -32,6 +34,16 @@ module Main =
                 match results.TryGetResult Namespace with
                 | Some ns -> ns
                 | None -> Path.GetFileNameWithoutExtension(inputFile)
+            let plugins =
+                results.GetResults Plugin
+                |> List.map (fun s -> s.Split('='))
+                |> List.map (fun a -> a.[0], a.[1])
+
+#if DEBUG
+            printfn "Plugins:"
+            plugins
+            |> List.iter (fun (n,p) -> printfn "%s -> %s" n p)
+#endif
 
             let ast = Ast.getAst inputFile
             let records = Ast.extractRecordMeta ast

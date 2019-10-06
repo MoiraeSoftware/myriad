@@ -1,7 +1,7 @@
 <Project>
-    <PropertyGroup>
-        <MyriadSdkGenerator Include="default">
-            <AssemblyPath>$(MSBuildThisFileDirectory)/../lib/netstandard2.1/Myriad.Core.dll</AssemblyPath>
+    <ItemGroup>
+        <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../lib/netstandard2.1/Myriad.Core.dll">
+            <Name>default</Name>
         </MyriadSdkGenerator>
-    </PropertyGroup>
+    </ItemGroup>
 </Project>
