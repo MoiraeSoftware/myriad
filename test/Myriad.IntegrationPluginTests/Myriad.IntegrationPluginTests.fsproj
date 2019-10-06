@@ -19,8 +19,8 @@
     <Compile Include="Tests.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../src/Myriad.Core/Myriad.Core.fsproj" />
-    <ProjectReference Include="../../src/Myriad.Plugins.Example1/Myriad.Plugins.Example1.fsproj" />
+    <ProjectReference Include="../../src/Myriad.Core/Myriad.Core.fsproj" PrivateAssets="All" />
+    <ProjectReference Include="../Myriad.Plugins.Example1/Myriad.Plugins.Example1.fsproj" PrivateAssets="All" />
   </ItemGroup>
   
     <!-- use the dll directly rather than using a nuget -->
