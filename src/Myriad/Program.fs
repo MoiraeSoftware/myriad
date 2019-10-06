@@ -40,6 +40,37 @@ module Main =
             printfn "Plugins:"
             plugins
             |> List.iter (printfn "- '%s'")
+
+            let findPlugins (path: string) =
+                let assembly = System.Reflection.Assembly.LoadFrom(path)
+
+                let gens =
+                    [ for t in assembly.GetTypes() do
+                        if t.GetCustomAttributes(typeof<Myriad.Core.MyriadSdkGeneratorAttribute>, true).Length > 0 then
+                            yield t ]
+                gens
+            
+            let generators =
+                plugins
+                |> List.collect findPlugins
+
+            printfn "Generators:"
+            generators
+            |> List.iter (fun t -> printfn "- '%s'" t.FullName)
+
+            let execGen (genType: Type) =
+                let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGen
+
+                printfn "Executing: %s..." genType.FullName
+
+                let result = instance.DoThings()
+
+                printfn "Result: '%s'" result
+
+            printfn "Exec generators:"
+            generators
+            |> List.iter execGen
+
 #endif
 
             let ast = Ast.getAst inputFile

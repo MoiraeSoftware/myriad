@@ -31,9 +31,9 @@
   <!-- include to enable the generation of myriad output -->
   <Import Project="..\..\src\Myriad.Sdk\build\Myriad.Sdk.targets" />
   <!-- include core plugin -->
-  <Import Project="..\..\src\Myriad.Core\build\Myriad.Core.props" />
+  <Import Project="..\..\src\Myriad.Core\build\Myriad.Core.InTest.props" />
   <!-- include example1 plugin -->
-  <Import Project="..\Myriad.Plugins.Example1\build\Myriad.Plugins.Example1.props" />
+  <Import Project="..\Myriad.Plugins.Example1\build\Myriad.Plugins.Example1.InTest.props" />
   <!-- paket -->
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
