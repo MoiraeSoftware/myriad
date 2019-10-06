@@ -373,3 +373,4 @@ MigrationBackup/
 /test/Myriad.IntegrationPluginTests/Generated.fs
 /test/Myriad.IntegrationPluginTests/Generated2.fs
 .ionide/
+/src/ExampleWithPlugin/Generated.fs
