@@ -370,3 +370,7 @@ MigrationBackup/
 .DS_Store
 .idea
 /test/Myriad.IntegrationTests/Generated.fs
+/test/Myriad.IntegrationPluginTests/Generated.fs
+/test/Myriad.IntegrationPluginTests/Generated2.fs
+.ionide/
+/src/ExampleWithPlugin/Generated.fs

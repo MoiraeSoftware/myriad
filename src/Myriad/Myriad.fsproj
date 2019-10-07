@@ -10,5 +10,8 @@
     <Compile Include="Program.fs" />
     <None Include="paket.references" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Myriad.Core\Myriad.Core.fsproj" />
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

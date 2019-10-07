@@ -12,6 +12,7 @@ module Main =
         | [<Mandatory>] InputFile of string
         | Namespace of string
         | [<Mandatory>] OutputFile of string
+        | Plugin of string
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -19,6 +20,7 @@ module Main =
                 | InputFile _ -> "specify a file to use as input."
                 | Namespace _ -> "specify a namespace to use."
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
+                | Plugin _ -> "Register an assembly plugin."
 
     [<EntryPoint>]
     let main argv =
@@ -32,6 +34,44 @@ module Main =
                 match results.TryGetResult Namespace with
                 | Some ns -> ns
                 | None -> Path.GetFileNameWithoutExtension(inputFile)
+            let plugins = results.GetResults Plugin
+
+#if DEBUG
+            printfn "Plugins:"
+            plugins
+            |> List.iter (printfn "- '%s'")
+
+            let findPlugins (path: string) =
+                let assembly = System.Reflection.Assembly.LoadFrom(path)
+
+                let gens =
+                    [ for t in assembly.GetTypes() do
+                        if t.GetCustomAttributes(typeof<Myriad.Core.MyriadSdkGeneratorAttribute>, true).Length > 0 then
+                            yield t ]
+                gens
+            
+            let generators =
+                plugins
+                |> List.collect findPlugins
+
+            printfn "Generators:"
+            generators
+            |> List.iter (fun t -> printfn "- '%s'" t.FullName)
+
+            let execGen (genType: Type) =
+                let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGen
+
+                printfn "Executing: %s..." genType.FullName
+
+                let result = instance.DoThings()
+
+                printfn "Result: '%s'" result
+
+            printfn "Exec generators:"
+            generators
+            |> List.iter execGen
+
+#endif
 
             let ast = Ast.getAst inputFile
             let records = Ast.extractRecordMeta ast
