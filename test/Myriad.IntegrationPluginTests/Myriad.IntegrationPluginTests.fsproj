@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger> -->
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\Example\Library.fs" />
     <Compile Include="Generated.fs">

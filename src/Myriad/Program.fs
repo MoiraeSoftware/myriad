@@ -13,6 +13,7 @@ module Main =
         | Namespace of string
         | [<Mandatory>] OutputFile of string
         | Plugin of string
+        | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -21,6 +22,7 @@ module Main =
                 | Namespace _ -> "specify a namespace to use."
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
                 | Plugin _ -> "Register an assembly plugin."
+                | WaitForDebugger _ -> "Wait for the debugger to attach."
 
     [<EntryPoint>]
     let main argv =
@@ -28,6 +30,14 @@ module Main =
 
         try
             let results = parser.Parse argv
+
+            match results.TryGetResult WaitForDebugger with
+            | None -> ()
+            | Some _ ->
+                while not(System.Diagnostics.Debugger.IsAttached) do
+                  System.Threading.Thread.Sleep(100)
+                System.Diagnostics.Debugger.Break()
+
             let inputFile = results.GetResult InputFile
             let outputFile = results.GetResult OutputFile
             let namespace' =
