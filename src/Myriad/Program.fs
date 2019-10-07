@@ -38,8 +38,8 @@ module Main =
 
 #if DEBUG
             printfn "Plugins:"
-            plugins
-            |> List.iter (printfn "- '%s'")
+            plugins |> List.iter (printfn "- '%s'")
+#endif
 
             let findPlugins (path: string) =
                 let assembly = System.Reflection.Assembly.LoadFrom(path)
@@ -53,42 +53,38 @@ module Main =
             let generators =
                 plugins
                 |> List.collect findPlugins
-
+                
+#if DEBUG
             printfn "Generators:"
-            generators
-            |> List.iter (fun t -> printfn "- '%s'" t.FullName)
-
-            let execGen (genType: Type) =
+            generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
+#endif
+            
+            let execGen namespace' parsedInput (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGen
 
+#if DEBUG
                 printfn "Executing: %s..." genType.FullName
-
-                let result = instance.DoThings()
-
-                printfn "Result: '%s'" result
-
-            printfn "Exec generators:"
-            generators
-            |> List.iter execGen
-
 #endif
 
-            let ast = Ast.getAst inputFile
-            let records = Ast.extractRecordMeta ast
-            let modules = 
-                records
-                |> List.map (fun (ns, p,fs) -> Ast.createRecordModule ns p fs )
-    
-            let namespace' = 
-                {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                    with    
-                        IsRecursive = true
-                        Declarations = modules }
+                let result = instance.Generate(namespace', parsedInput)
+#if DEBUG
+                printfn "Result: '%A'" result
+#endif
+                result
+#if DEBUG
+            printfn "Exec generators:"
+#endif
+            let ast = Myriad.Core.Ast.getAst inputFile
+            
+            let generated =
+                generators
+                |> List.map (execGen namespace' ast)
 
             let parseTree =
                 ParsedInput.CreateImplFile(
                     ParsedImplFileInputRcd.CreateFs(outputFile)
-                        .AddModule(namespace'))
+                        .AddModules generated)
+
 
             let formattedCode = formatAst parseTree
 
