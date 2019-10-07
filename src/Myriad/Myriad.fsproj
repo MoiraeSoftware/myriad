@@ -6,7 +6,6 @@
     <ToolCommandName>myriad</ToolCommandName>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ast.fs" />
     <Compile Include="Program.fs" />
     <None Include="paket.references" />
   </ItemGroup>
