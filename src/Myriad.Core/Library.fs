@@ -18,7 +18,7 @@ type IMyriadGen =
     abstract member Generate: namespace': string * ast:ParsedInput -> SynModuleOrNamespaceRcd
     
 [<MyriadSdkGenerator("fields")>]
-type Example1Gen() =
+type FieldsGenerator() =
     interface IMyriadGen with
         member __.Generate(namespace', ast: ParsedInput) =
             
