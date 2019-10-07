@@ -1,4 +1,4 @@
-namespace Myriad
+namespace Myriad.Core
 open System
 open Fantomas
 open System.IO
@@ -68,18 +68,18 @@ module Ast =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create recordType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createRecordModule (namespace': LongIdent) (parentId: LongIdent) (fields : SynFields) =
+    let createRecordModule (data: {| namespaceId: LongIdent; recordId: LongIdent; recordFields : SynFields|}) =
 
-        let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespace' |> List.map (fun ident -> ident.idText)))
+        let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (data.namespaceId |> List.map (fun ident -> ident.idText)))
 
-        let fieldMaps = fields |> List.map (createMap parentId)
-        let create = createCreate parentId fields
+        let fieldMaps = data.recordFields |> List.map (createMap data.recordId)
+        let create = createCreate data.recordId data.recordFields
         let declarations = [
             yield openParent
             yield!fieldMaps
             yield create ]
 
-        let info = SynComponentInfoRcd.Create parentId
+        let info = SynComponentInfoRcd.Create data.recordId
         SynModuleDecl.CreateNestedModule(info, declarations)
 
     let getAst filename =
@@ -100,7 +100,7 @@ module Ast =
                                 | SynTypeDefnRepr.Exception(a) -> ()
                                 | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()
                                 | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(access2, fields, _), _) ->
-                                    yield (namespaceIdent, recordIdent, fields)
+                                    yield {|namespaceId = namespaceIdent; recordId = recordIdent; recordFields = fields|}
                                 | _ -> ()
                         | _ -> ()
             | _ -> () ]
