@@ -135,8 +135,6 @@ module Ast =
             | _ -> false
                   
         typeNameMatches && argumentMatched        
-                  //= typeName && attrib.ArgExpr = attributeArg
-
         
     let extractRecordMeta ast =
         let records = [
