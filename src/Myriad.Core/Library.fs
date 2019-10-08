@@ -3,24 +3,14 @@
 open System
 open Microsoft.FSharp.Compiler.Ast
 open FsAst
-
-type MyriadGenAttribute(generator: string) =
-    inherit Attribute()
-    
-    member __.Generator = generator
-
-type MyriadSdkGeneratorAttribute(name: string) =
-    inherit Attribute()
-
-    member __.Name = name
-
-type IMyriadGen =
-    abstract member Generate: namespace': string * ast:ParsedInput -> SynModuleOrNamespaceRcd
     
 [<MyriadSdkGenerator("fields")>]
 type FieldsGenerator() =
+        
     interface IMyriadGen with
         member __.Generate(namespace', ast: ParsedInput) =
+            //check for valid attribute
+
             
             let records = Ast.extractRecordMeta ast
             let modules = records |> List.map Ast.createRecordModule

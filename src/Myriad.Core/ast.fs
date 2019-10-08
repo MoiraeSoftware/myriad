@@ -86,7 +86,58 @@ module Ast =
         let s = File.ReadAllText filename
         let ast = CodeFormatter.Parse(filename, s)
         ast
+        
+    //{TypeName =
+    //     LongIdentWithDots
+    //       ([Myriad; Core; MyriadSdkGenerator],
+    //        [Library.fs (3,8--3,9) IsSynthetic=false;
+    //         Library.fs (3,13--3,14) IsSynthetic=false]);
+    //    ArgExpr =
+    //     Paren
+    //       (Const
+    //          (String
+    //             ("fields",
+    //              Library.fs (3,33--3,41) IsSynthetic=false),
+    //           Library.fs (3,33--3,41) IsSynthetic=false),
+    //        Library.fs (3,32--3,33) IsSynthetic=false,
+    //        Some
+    //          Library.fs (3,41--3,42) IsSynthetic=false,
+    //        Library.fs (3,32--3,42) IsSynthetic=false);
+    //    Target = None;
+    //    AppliesToGetterAndSetter = false;
+    //    Range =
+    //     Library.fs (3,2--3,32) IsSynthetic=false;}
+    
+    let hasAttribute  (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
+        let attributeIdent = attributeType.FullName
+        let typeNameMatches =
+            match attrib.TypeName with
+            | LongIdentWithDots(ident, _range) ->
+                printfn "attributeIdent:%A -> ident:%A" attributeIdent ident
+                let ident =
+                    ident
+                    |> List.map(fun id -> id.ToString())
+                    |> String.concat(".")
+                    |> function s -> if s.EndsWith "Attribute" then s else s + "Attribute"
+                printfn "attributeIdent:%A -> ident:%A" attributeIdent ident
+                ident = attributeIdent
+                
+        let argumentMatched =
+            match attrib.ArgExpr with
+            | SynExpr.Paren(p,_,_,_) ->
+                match p with
+                | SynExpr.Const(c, _r) ->
+                    printfn "%A" c
+                    match c with
+                    | SynConst.String(text,_range) -> text = attributeArg
+                    | _ -> false
+                | _ -> false
+            | _ -> false
+                  
+        typeNameMatches && argumentMatched        
+                  //= typeName && attrib.ArgExpr = attributeArg
 
+        
     let extractRecordMeta ast =
         let records = [
             match ast with
@@ -96,6 +147,9 @@ module Ast =
                         match moduleDecl with
                         | SynModuleDecl.Types(types, _) ->
                             for TypeDefn( ComponentInfo(attribs, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
+                                let hasAttribute =
+                                    attribs |> List.tryFind (fun a -> hasAttribute typeof<MyriadSdkGeneratorAttribute> "fields" a)
+                                printfn "**hasAttribute: %A" hasAttribute
                                 match typeDefRepr with
                                 | SynTypeDefnRepr.Exception(a) -> ()
                                 | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()

@@ -76,6 +76,10 @@ module Main =
 #endif
             let ast = Myriad.Core.Ast.getAst inputFile
             
+#if DEBUG
+            printfn "Input AST:\n:%A" ast 
+#endif
+            
             let generated =
                 generators
                 |> List.map (execGen namespace' ast)
