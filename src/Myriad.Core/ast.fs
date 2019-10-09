@@ -105,55 +105,48 @@ module Ast =
     //        Library.fs (3,32--3,42) IsSynthetic=false);
     //    Target = None;
     //    AppliesToGetterAndSetter = false;
-    //    Range =
-    //     Library.fs (3,2--3,32) IsSynthetic=false;}
+    //    Range = Library.fs (3,2--3,32) IsSynthetic=false;}
     
-    let hasAttribute  (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
-        let attributeIdent = attributeType.FullName
-        let typeNameMatches =
+    let hasAttributeWithConst  (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
+        let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
             match attrib.TypeName with
             | LongIdentWithDots(ident, _range) ->
-                printfn "attributeIdent:%A -> ident:%A" attributeIdent ident
                 let ident =
                     ident
                     |> List.map(fun id -> id.ToString())
                     |> String.concat(".")
                     |> function s -> if s.EndsWith "Attribute" then s else s + "Attribute"
-                printfn "attributeIdent:%A -> ident:%A" attributeIdent ident
-                ident = attributeIdent
+                ident = attributeType.FullName
                 
-        let argumentMatched =
-            match attrib.ArgExpr with
-            | SynExpr.Paren(p,_,_,_) ->
-                match p with
-                | SynExpr.Const(c, _r) ->
-                    printfn "%A" c
-                    match c with
-                    | SynConst.String(text,_range) -> text = attributeArg
-                    | _ -> false
-                | _ -> false
+        let argumentMatched attrib attributeArg =
+            match attrib with
+            | SynExpr.Paren(SynExpr.Const(SynConst.String(text,_range), _r),_,_,_) -> text = attributeArg
             | _ -> false
                   
-        typeNameMatches && argumentMatched        
+        typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
         
+    let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
+        attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
+
     let extractRecordMeta ast =
         let records = [
             match ast with
-            | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules , g)) ->
+            | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules, g)) ->
                 for SynModuleOrNamespace(namespaceIdent, isRecursive, isModule, moduleDecls, preXmlDoc, attributes, access, _) in modules do
                     for moduleDecl in moduleDecls do
                         match moduleDecl with
                         | SynModuleDecl.Types(types, _) ->
-                            for TypeDefn( ComponentInfo(attribs, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
-                                let hasAttribute =
-                                    attribs |> List.tryFind (fun a -> hasAttribute typeof<MyriadSdkGeneratorAttribute> "fields" a)
-                                printfn "**hasAttribute: %A" hasAttribute
-                                match typeDefRepr with
-                                | SynTypeDefnRepr.Exception(a) -> ()
-                                | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()
-                                | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(access2, fields, _), _) ->
-                                    yield {|namespaceId = namespaceIdent; recordId = recordIdent; recordFields = fields|}
-                                | _ -> ()
+                            for TypeDefn( ComponentInfo(attributes, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
+                                if attributes
+                                   |> List.exists (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
+                                then
+                                    match typeDefRepr with
+                                    | SynTypeDefnRepr.Exception(a) -> ()
+                                    | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()
+                                    | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(access2, fields, _), _) ->
+                                        yield {|namespaceId = namespaceIdent; recordId = recordIdent; recordFields = fields|}
+                                    | _ -> ()
+                                else ()
                         | _ -> ()
             | _ -> () ]
         records
