@@ -6,14 +6,13 @@ open FsAst
     
 [<MyriadSdkGenerator("fields")>]
 type FieldsGenerator() =
-        
+
     interface IMyriadGen with
         member __.Generate(namespace', ast: ParsedInput) =
             //check for valid attribute
 
-            
             let records = Ast.extractRecordMeta ast
-            let modules = records |> List.map Ast.createRecordModule
+            let modules = records |> List.map Myriad.Core.Create.createRecordModule
             
             let namespace' =
                 {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')

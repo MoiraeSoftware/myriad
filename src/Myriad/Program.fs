@@ -74,7 +74,7 @@ module Main =
 #if DEBUG
             printfn "Exec generators:"
 #endif
-            let ast = Myriad.Core.Ast.getAst inputFile
+            let ast = Myriad.Core.Ast.fromFilename inputFile
             
 #if DEBUG
             printfn "Input AST:\n:%A" ast 

@@ -5,7 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Types.fs" />
-    <Compile Include="ast.fs" />
+    <Compile Include="Creation.fs" />
+    <Compile Include="Ast.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
   <ItemGroup>
