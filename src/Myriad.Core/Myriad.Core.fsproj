@@ -4,7 +4,9 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ast.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Creation.fs" />
+    <Compile Include="Ast.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
   <ItemGroup>

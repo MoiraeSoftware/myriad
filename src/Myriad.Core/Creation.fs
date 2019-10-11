@@ -1,11 +1,8 @@
-namespace Myriad
-open System
-open Fantomas
-open System.IO
+namespace Myriad.Core
 open Microsoft.FSharp.Compiler.Ast
 open FsAst
 
-module Ast =
+module Create =
     let createMap (parent: LongIdent) (field: SynField)  =
         let field = field.ToRcd
         let fieldName = match field.Id with None -> failwith "no field name" | Some f -> f 
@@ -68,40 +65,16 @@ module Ast =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create recordType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createRecordModule (namespace': LongIdent) (parentId: LongIdent) (fields : SynFields) =
+    let createRecordModule (data: {| namespaceId: LongIdent; recordId: LongIdent; recordFields : SynFields|}) =
 
-        let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespace' |> List.map (fun ident -> ident.idText)))
+        let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (data.namespaceId |> List.map (fun ident -> ident.idText)))
 
-        let fieldMaps = fields |> List.map (createMap parentId)
-        let create = createCreate parentId fields
+        let fieldMaps = data.recordFields |> List.map (createMap data.recordId)
+        let create = createCreate data.recordId data.recordFields
         let declarations = [
             yield openParent
             yield!fieldMaps
             yield create ]
 
-        let info = SynComponentInfoRcd.Create parentId
+        let info = SynComponentInfoRcd.Create data.recordId
         SynModuleDecl.CreateNestedModule(info, declarations)
-
-    let getAst filename =
-        let s = File.ReadAllText filename
-        let ast = CodeFormatter.Parse(filename, s)
-        ast
-
-    let extractRecordMeta ast =
-        let records = [
-            match ast with
-            | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules , g)) ->
-                for SynModuleOrNamespace(namespaceIdent, isRecursive, isModule, moduleDecls, preXmlDoc, attributes, access, _) in modules do
-                    for moduleDecl in moduleDecls do
-                        match moduleDecl with
-                        | SynModuleDecl.Types(types, _) ->
-                            for TypeDefn( ComponentInfo(attribs, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
-                                match typeDefRepr with
-                                | SynTypeDefnRepr.Exception(a) -> ()
-                                | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()
-                                | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(access2, fields, _), _) ->
-                                    yield (namespaceIdent, recordIdent, fields)
-                                | _ -> ()
-                        | _ -> ()
-            | _ -> () ]
-        records
