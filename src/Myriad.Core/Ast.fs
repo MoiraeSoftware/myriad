@@ -2,7 +2,11 @@ namespace Myriad.Core
 open System
 open Fantomas
 open System.IO
+open Microsoft.FSharp.Compiler
 open Microsoft.FSharp.Compiler.Ast
+open Microsoft.FSharp.Compiler.SourceCodeServices
+
+open Fantomas
 open FsAst
 
 module Ast =
@@ -53,7 +57,8 @@ module Ast =
     let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
         attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
 
-    let extractRecordMeta ast =
+    let extractRecordMeta (ast: ParsedInput) =
+
         let records = [
             match ast with
             | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules, g)) ->
