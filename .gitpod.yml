@@ -1,5 +1,4 @@
-image: gitpod/workspace-dotnet
-
+image: mcr.microsoft.com/dotnet/core/sdk:3.0
 tasks:
   - init: dotnet tool install --tool-path .paket Paket && export PATH=.paket:$PATH
 
