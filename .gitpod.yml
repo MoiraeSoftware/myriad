@@ -20,3 +20,7 @@ github:
     addBadge: false
     # add a label once the prebuild is ready to pull requests (defaults to false)
     addLabel: false
+
+vscode:
+  extensions:
+    - Ionide.Ionide-fsharp@4.2.0:Q7XB/NSFH0fmgeyRUb6e0g==
