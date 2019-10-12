@@ -15,27 +15,7 @@ module Ast =
         let s = File.ReadAllText filename
         let ast = CodeFormatter.Parse(filename, s)
         ast
-        
-    //{TypeName =
-    //     LongIdentWithDots
-    //       ([Myriad; Core; MyriadSdkGenerator],
-    //        [Library.fs (3,8--3,9) IsSynthetic=false;
-    //         Library.fs (3,13--3,14) IsSynthetic=false]);
-    //    ArgExpr =
-    //     Paren
-    //       (Const
-    //          (String
-    //             ("fields",
-    //              Library.fs (3,33--3,41) IsSynthetic=false),
-    //           Library.fs (3,33--3,41) IsSynthetic=false),
-    //        Library.fs (3,32--3,33) IsSynthetic=false,
-    //        Some
-    //          Library.fs (3,41--3,42) IsSynthetic=false,
-    //        Library.fs (3,32--3,42) IsSynthetic=false);
-    //    Target = None;
-    //    AppliesToGetterAndSetter = false;
-    //    Range = Library.fs (3,2--3,32) IsSynthetic=false;}
-    
+
     let hasAttributeWithConst  (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
         let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
             match attrib.TypeName with
@@ -46,37 +26,43 @@ module Ast =
                     |> String.concat(".")
                     |> function s -> if s.EndsWith "Attribute" then s else s + "Attribute"
                 ident = attributeType.FullName
-                
+
         let argumentMatched attrib attributeArg =
             match attrib with
             | SynExpr.Paren(SynExpr.Const(SynConst.String(text,_range), _r),_,_,_) -> text = attributeArg
             | _ -> false
-                  
+
         typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
-        
+
     let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
         attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
 
-    let extractRecordMeta (ast: ParsedInput) =
-
-        let records = [
-            match ast with
+    let extractTypeDefn (ast: ParsedInput) =
+        [ match ast with
             | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules, g)) ->
-                for SynModuleOrNamespace(namespaceIdent, isRecursive, isModule, moduleDecls, preXmlDoc, attributes, access, _) in modules do
+                for SynModuleOrNamespace(namespaceId, _isRecursive, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
                     for moduleDecl in moduleDecls do
                         match moduleDecl with
-                        | SynModuleDecl.Types(types, _) ->
-                            for TypeDefn( ComponentInfo(attributes, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
-                                if attributes
-                                   |> List.exists (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
-                                then
-                                    match typeDefRepr with
-                                    | SynTypeDefnRepr.Exception(a) -> ()
-                                    | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()
-                                    | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(access2, fields, _), _) ->
-                                        yield {|namespaceId = namespaceIdent; recordId = recordIdent; recordFields = fields|}
-                                    | _ -> ()
-                                else ()
+                        | SynModuleDecl.Types(types, _) -> yield (ns, types)
                         | _ -> ()
             | _ -> () ]
+
+    let isRecord (TypeDefn(_componentInfo, typeDefRepr, _memberDefs, _)) =
+        match typeDefRepr with
+        | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record _, _) -> true
+        | _ -> false
+
+    let extractRecords (ast: ParsedInput) =
+
+        let records =
+            let types = extractTypeDefn ast
+            let onlyRecords =
+                types
+                |> List.map (fun (ns, types) -> ns, types |> List.filter isRecord )
+            onlyRecords
+
         records
+
+    let hasFieldsAttribute (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _)) =
+        attributes
+        |> List.exists (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
