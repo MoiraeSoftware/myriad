@@ -57,26 +57,38 @@ module Ast =
     let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
         attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
 
-    let extractRecordMeta (ast: ParsedInput) =
-
-        let records = [
-            match ast with
+    let extractTypeDefn ast =
+        [ match ast with
             | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules, g)) ->
-                for SynModuleOrNamespace(namespaceIdent, isRecursive, isModule, moduleDecls, preXmlDoc, attributes, access, _) in modules do
+                for SynModuleOrNamespace(namespaceId, _isRecursive, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
                     for moduleDecl in moduleDecls do
                         match moduleDecl with
-                        | SynModuleDecl.Types(types, _) ->
-                            for TypeDefn( ComponentInfo(attributes, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), typeDefRepr, memberDefs, _) in types do
-                                if attributes
-                                   |> List.exists (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
-                                then
-                                    match typeDefRepr with
-                                    | SynTypeDefnRepr.Exception(a) -> ()
-                                    | SynTypeDefnRepr.ObjectModel(kind, defs, _) -> ()
-                                    | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(access2, fields, _), _) ->
-                                        yield {|namespaceId = namespaceIdent; recordId = recordIdent; recordFields = fields|}
-                                    | _ -> ()
-                                else ()
+                        | SynModuleDecl.Types(types, _) -> yield (ns, types)
                         | _ -> ()
             | _ -> () ]
+    
+    let isRecord (TypeDefn(_componentInfo, typeDefRepr, _memberDefs, _)) =
+        match typeDefRepr with
+        | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record _ as record,_) -> true
+        | _ -> false
+        
+    let hasAttribute (TypeDefn( ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), typeDefRepr, _memberDefs, _)) =
+        attributes |> List.exists (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
+        
+    let extractRecords (ast: ParsedInput) =
+
+        let records =
+            let types = extractTypeDefn ast
+            let onlyRecordsWithAttrib =
+                types
+                |> List.map (fun (ns, types) -> ns, types |> List.filter (fun typ -> isRecord typ && hasAttribute typ) )
+                
+            let mapped =
+                onlyRecordsWithAttrib
+                |> List.map (fun t ->
+                                    let TypeDefn( ComponentInfo(attributes, typeParams, constraints, recordIdent, doc, preferPostfix, access1, _), SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_, fields, _), _), memberDefs, _) = t
+                                    let xx = {|namespaceId = namespaceIdent; recordId = recordIdent; recordFields = fields|}
+                                    xx)
+            mapped
+
         records
