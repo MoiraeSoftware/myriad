@@ -1,9 +1,9 @@
-﻿namespace Myriad.Core
+namespace Myriad.Core
 
 open System
 open Microsoft.FSharp.Compiler.Ast
 open FsAst
-    
+
 [<MyriadSdkGenerator("fields")>]
 type FieldsGenerator() =
 
@@ -11,13 +11,18 @@ type FieldsGenerator() =
         member __.Generate(namespace', ast: ParsedInput) =
             //check for valid attribute
 
-            let records = Ast.extractRecordMeta ast
-            let modules = records |> List.map Myriad.Core.Create.createRecordModule
-            
+            let namespaceAndrecords = Ast.extractRecords ast
+            let modules =
+                namespaceAndrecords
+                |> List.collect (fun (ns, records) ->
+                                    records
+                                    |> List.filter Ast.hasFieldsAttribute
+                                    |> List.map (Create.createRecordModule ns))
+
             let namespace' =
                 {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                    with    
+                    with
                         IsRecursive = true
                         Declarations = modules }
-            
+
             namespace'
