@@ -4,15 +4,15 @@ open System
 open Microsoft.FSharp.Compiler.Ast
 open FsAst
 
-type MyriadGenAttribute(generator: string) =
+type MyriadGenerateAttribute(generator: string) =
     inherit Attribute()
     
     member __.Generator = generator
 
-type MyriadSdkGeneratorAttribute(name: string) =
+type MyriadGeneratorAttribute(name: string) =
     inherit Attribute()
 
     member __.Name = name
 
-type IMyriadGen =
+type IMyriadGenerator =
     abstract member Generate: namespace': string * ast:ParsedInput -> SynModuleOrNamespaceRcd

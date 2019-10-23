@@ -2,12 +2,7 @@ namespace Myriad.Core
 open System
 open Fantomas
 open System.IO
-open Microsoft.FSharp.Compiler
 open Microsoft.FSharp.Compiler.Ast
-open Microsoft.FSharp.Compiler.SourceCodeServices
-
-open Fantomas
-open FsAst
 
 module Ast =
 
@@ -35,12 +30,12 @@ module Ast =
         typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
 
     let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
-        attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
+        attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
 
     let extractTypeDefn (ast: ParsedInput) =
         [ match ast with
-            | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules, g)) ->
-                for SynModuleOrNamespace(namespaceId, _isRecursive, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
+            | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g)) ->
+                for SynModuleOrNamespace(_namespaceId, _isRecursive, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
                     for moduleDecl in moduleDecls do
                         match moduleDecl with
                         | SynModuleDecl.Types(types, _) -> yield (ns, types)
@@ -65,4 +60,4 @@ module Ast =
 
     let hasFieldsAttribute (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _)) =
         attributes
-        |> List.exists (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
+        |> List.exists (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
