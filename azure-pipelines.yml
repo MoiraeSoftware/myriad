@@ -6,7 +6,8 @@ jobs:
   steps:
   - task: UseDotNet@2
     inputs:
-      version: '3.0.100'
+      version: 3.0.x
+      performMultiLevelLookup: true
   - powershell: |
       $buildId = $env:BUILD_BUILDNUMBER.PadLeft(7, '0');
       $versionSuffixPR = "-PR$($env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)-$buildId";
