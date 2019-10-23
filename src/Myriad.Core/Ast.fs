@@ -34,8 +34,8 @@ module Ast =
 
     let extractTypeDefn (ast: ParsedInput) =
         [ match ast with
-            | ParsedInput.ImplFile(ParsedImplFileInput(name, isScript, qualifiedNameOfFile, scopedPragmas, hashDirectives, modules, g)) ->
-                for SynModuleOrNamespace(namespaceId, _isRecursive, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
+            | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g)) ->
+                for SynModuleOrNamespace(_namespaceId, _isRecursive, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
                     for moduleDecl in moduleDecls do
                         match moduleDecl with
                         | SynModuleDecl.Types(types, _) -> yield (ns, types)
