@@ -10,7 +10,7 @@ module Main =
 
     type Arguments =
         | [<Mandatory>] InputFile of string
-        | Namespace of string
+        | [<Mandatory>] Namespace of string
         | [<Mandatory>] OutputFile of string
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
@@ -56,7 +56,7 @@ module Main =
 
                 let gens =
                     [ for t in assembly.GetTypes() do
-                        if t.GetCustomAttributes(typeof<Myriad.Core.MyriadSdkGeneratorAttribute>, true).Length > 0 then
+                        if t.GetCustomAttributes(typeof<Myriad.Core.MyriadGeneratorAttribute>, true).Length > 0 then
                             yield t ]
                 gens
             
@@ -70,7 +70,7 @@ module Main =
 #endif
             
             let execGen namespace' parsedInput (genType: Type) =
-                let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGen
+                let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
 #if DEBUG
                 printfn "Executing: %s..." genType.FullName

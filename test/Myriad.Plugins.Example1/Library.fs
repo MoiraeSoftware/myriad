@@ -1,23 +1,26 @@
 ﻿namespace Myriad.Plugins.Example1
 
+open System
 open Myriad.Core
 open Microsoft.FSharp.Compiler.Ast
 open FsAst
 
-[<MyriadSdkGenerator("example1")>]
+[<MyriadGenerator("example1")>]
 type Example1Gen() =
-    interface IMyriadGen with
+    interface IMyriadGenerator with
         member __.Generate(namespace', _ast) =
-            let ident = LongIdentWithDots.CreateString "test"
-            let lid = ident.Lid
-            let modu = SynModuleOrNamespaceRcd.CreateModule(lid)
-            
+
             let let42 =
                 SynModuleDecl.CreateLet
-                    [{SynBindingRcd.Let with
-                        Pattern = SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateString "fourtyTwo", [])
-                        Expr = SynExpr.CreateConst(SynConst.Int32 42)
-                        (*ValData = valData*) }]
-            
-            let final = modu.AddDeclaration let42
-            final
+                    [ { SynBindingRcd.Let with
+                            Pattern = SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateString "fourtyTwo", [])
+                            Expr = SynExpr.CreateConst(SynConst.Int32 42) } ]
+
+            let componentInfo = SynComponentInfoRcd.Create [ Ident.Create "example1" ]
+            let nestedModule = SynModuleDecl.CreateNestedModule(componentInfo, [ let42 ])
+
+            let namespaceOrModule =
+                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+                    with Declarations = [ nestedModule ] }
+
+            namespaceOrModule

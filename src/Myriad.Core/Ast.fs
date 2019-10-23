@@ -2,12 +2,7 @@ namespace Myriad.Core
 open System
 open Fantomas
 open System.IO
-open Microsoft.FSharp.Compiler
 open Microsoft.FSharp.Compiler.Ast
-open Microsoft.FSharp.Compiler.SourceCodeServices
-
-open Fantomas
-open FsAst
 
 module Ast =
 
@@ -35,7 +30,7 @@ module Ast =
         typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
 
     let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
-        attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
+        attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
 
     let extractTypeDefn (ast: ParsedInput) =
         [ match ast with
@@ -65,4 +60,4 @@ module Ast =
 
     let hasFieldsAttribute (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _)) =
         attributes
-        |> List.exists (hasAttributeWithConst typeof<MyriadSdkGeneratorAttribute> "fields")
+        |> List.exists (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
