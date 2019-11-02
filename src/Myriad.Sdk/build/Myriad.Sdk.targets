@@ -19,7 +19,7 @@
         </ItemGroup>
 
         <PropertyGroup>
-            <_MyriadSdkCodeGenInputCache>$(IntermediateOutputPath)$(MSBuildProjectFile).FalanxSdkCodeGenInputs.cache</_MyriadSdkCodeGenInputCache>
+            <_MyriadSdkCodeGenInputCache>$(IntermediateOutputPath)$(MSBuildProjectFile).MyriadSdkCodeGenInputs.cache</_MyriadSdkCodeGenInputCache>
         </PropertyGroup>
     </Target>
 
