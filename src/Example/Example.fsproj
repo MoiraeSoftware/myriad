@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Library.fs"/>
+        <Compile Include="Library.fs" />
         <Compile Include="Generated.fs">
             <MyriadFile>Library.fs</MyriadFile>
             <MyriadNameSpace>Test</MyriadNameSpace>
@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Myriad.Sdk" Version="0.1.*" PrivateAssets="All" />
+      <PackageReference Include="Myriad.Sdk" Version="0.2.0" />
     </ItemGroup>
 
 </Project>
