@@ -14,6 +14,8 @@
 
     <ItemGroup>
       <PackageReference Include="Myriad.Sdk" Version="0.2.3" />
+      <PackageReference Include="Myriad.Core" Version="0.2.3" />
+
     </ItemGroup>
 
 </Project>

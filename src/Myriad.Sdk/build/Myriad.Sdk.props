@@ -4,8 +4,5 @@
         <MyriadSdk_Generator_ExeHost>dotnet </MyriadSdk_Generator_ExeHost>
         <MyriadSdk_Generator_Exe>$(MSBuildThisFileDirectory)../tools/netcoreapp3.0/any/myriad.dll</MyriadSdk_Generator_Exe>
     </PropertyGroup>
-    <ItemGroup>
-        <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../tools/netcoreapp3.0/any/Myriad.Core.dll" Condition=" '@(MyriadSdkGenerator)' == '' " />
-    </ItemGroup>
 
 </Project>
