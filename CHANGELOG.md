@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4]
+- Fixed Example via direct reference to Myriad.Core
+- Remove duplicate ItemGroup reference
+- 
 ## [0.2.3]
 - Corrected issue with plugin targets using PropertyGroup rather than ItemGroup
   
@@ -21,9 +25,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Plugin API
 
 ## [0.1.0] - 2019-04-19
-
-### Changed
 - Stopped using Fields as a nested module.
-
-### Fixed
 - Opened namespace of enclosing record so references are found.
