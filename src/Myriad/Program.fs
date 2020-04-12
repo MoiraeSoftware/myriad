@@ -2,7 +2,7 @@
 open System
 open Fantomas
 open System.IO
-open Microsoft.FSharp.Compiler.Ast
+open FSharp.Compiler.Ast
 open FsAst
 open Argu
 
@@ -59,16 +59,16 @@ module Main =
                         if t.GetCustomAttributes(typeof<Myriad.Core.MyriadGeneratorAttribute>, true).Length > 0 then
                             yield t ]
                 gens
-            
+
             let generators =
                 plugins
                 |> List.collect findPlugins
-                
+
 //#if DEBUG
             printfn "Generators:"
             generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
 //#endif
-            
+
             let execGen namespace' parsedInput (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
@@ -84,12 +84,16 @@ module Main =
 //#if DEBUG
             printfn "Exec generators:"
 //#endif
-            let ast = Myriad.Core.Ast.fromFilename inputFile
-            
+            let ast =
+                Myriad.Core.Ast.fromFilename inputFile
+                |> Async.RunSynchronously
+                |> Array.head
+                |> fst
+
 //#if DEBUG
-            printfn "Input AST:\n:%A" ast 
+            printfn "Input AST:\n:%A" ast
 //#endif
-            
+
             let generated =
                 generators
                 |> List.map (execGen namespace' ast)
@@ -100,7 +104,7 @@ module Main =
                         .AddModules generated)
 
 
-            let formattedCode = formatAst parseTree
+            let formattedCode = formatAst parseTree |> Async.RunSynchronously
 
             let code =
                 [   "//------------------------------------------------------------------------------"

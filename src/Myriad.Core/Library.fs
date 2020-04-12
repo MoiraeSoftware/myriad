@@ -1,7 +1,7 @@
 namespace Myriad.Core
 
 open System
-open Microsoft.FSharp.Compiler.Ast
+open FSharp.Compiler.Ast
 open FsAst
 
 [<MyriadGenerator("fields")>]
