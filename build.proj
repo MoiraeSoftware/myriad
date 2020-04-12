@@ -16,7 +16,6 @@
     </Target>
 
     <Target Name="Test" DependsOnTargets="Build">
-        <Exec Command='dotnet build test/Myriad.IntegrationTests -c Release -v n' />
         <Exec Command='dotnet build test/Myriad.IntegrationPluginTests -c Release -v n' />
     </Target>
 
