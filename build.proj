@@ -16,7 +16,7 @@
     </Target>
 
     <Target Name="Test" DependsOnTargets="Build">
-        <Exec Command='dotnet build test/Myriad.IntegrationPluginTests -c Release -v n' />
+        <Exec Command='dotnet test test/Myriad.IntegrationPluginTests -c Release -v n -l:"trx;LogFileName=$(NupkgsDir)\..\..\TestOutput.xml"' />
     </Target>
 
     <Target Name="VSTest" DependsOnTargets="Test" />
