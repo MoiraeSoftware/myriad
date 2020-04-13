@@ -1,10 +1,13 @@
-namespace Myriad.Core
+﻿namespace Myriad.Plugins
 
-open FSharp.Compiler
+open System
 open FSharp.Compiler.Ast
 open FsAst
+open Myriad.Core
 
-module Create =
+module internal Create =
+    open FSharp.Compiler.Range
+
     let createFieldMap (parent: LongIdent) (field: SynField)  =
         let field = field.ToRcd
         let fieldName = match field.Id with None -> failwith "no field name" | Some f -> f
@@ -62,7 +65,7 @@ module Create =
                                         let ident = SynExpr.CreateIdent fieldIdent
                                         RecordFieldName(name, true), Some ident, None)
 
-            let newRecord = SynExpr.Record(None, None, fields, Range.range.Zero )
+            let newRecord = SynExpr.Record(None, None, fields, range.Zero )
             SynExpr.CreateTyped(newRecord, recordType)
 
         let returnTypeInfo = SynBindingReturnInfoRcd.Create recordType
@@ -89,3 +92,24 @@ module Create =
             let info = SynComponentInfoRcd.Create recordId
             SynModuleDecl.CreateNestedModule(info, declarations)
         | _ -> failwithf "Not a record type"
+
+[<MyriadGenerator("fields")>]
+type FieldsGenerator() =
+
+    interface IMyriadGenerator with
+        member __.Generate(namespace', ast: ParsedInput) =
+            let namespaceAndrecords = Ast.extractRecords ast
+            let modules =
+                namespaceAndrecords
+                |> List.collect (fun (ns, records) ->
+                                    records
+                                    |> List.filter (Ast.hasAttribute "fields")
+                                    |> List.map (Create.createRecordModule ns))
+
+            let namespaceOrModule =
+                {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+                    with
+                        IsRecursive = true
+                        Declarations = modules }
+
+            namespaceOrModule
