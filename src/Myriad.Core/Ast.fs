@@ -15,16 +15,22 @@ module Ast =
         CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString s, parsingOpts, checker)
 
 
-    let hasAttributeWithConst  (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
-        let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
-            match attrib.TypeName with
-            | LongIdentWithDots(ident, _range) ->
-                let ident =
-                    ident
-                    |> List.map(fun id -> id.ToString())
-                    |> String.concat(".")
-                    |> function s -> if s.EndsWith "Attribute" then s else s + "Attribute"
+    let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
+        match attrib.TypeName with
+        | LongIdentWithDots(ident, _range) ->
+            let ident =
+                ident
+                |> List.map(fun id -> id.ToString())
+                |> String.concat(".")
+                |> function s -> if s.EndsWith "Attribute" then s else s + "Attribute"
+            //Support both full name and opened namespace.
+            if ident.Contains "." then
                 ident = attributeType.FullName
+            else
+                ident = attributeType.Name
+
+
+    let hasAttributeWithConst (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
 
         let argumentMatched attrib attributeArg =
             match attrib with
@@ -63,6 +69,11 @@ module Ast =
 
         records
 
-    let hasAttribute (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+    let hasAttribute<'a> (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
         attributes
-        |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName))
+        |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<'a> attributeName))
+
+    let getAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+        attributes
+        |> List.collect (fun n -> n.Attributes)
+        |> List.tryFind (typeNameMatches typeof<'a>)

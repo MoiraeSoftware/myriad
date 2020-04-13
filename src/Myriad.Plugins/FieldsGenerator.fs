@@ -103,7 +103,7 @@ type FieldsGenerator() =
                 namespaceAndrecords
                 |> List.collect (fun (ns, records) ->
                                     records
-                                    |> List.filter (Ast.hasAttribute "fields")
+                                    |> List.filter (Attributes.checkIfPluginUsed Plugin.Fields)
                                     |> List.map (Create.createRecordModule ns))
 
             let namespaceOrModule =

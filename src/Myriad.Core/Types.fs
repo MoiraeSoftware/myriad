@@ -3,11 +3,6 @@ namespace Myriad.Core
 open System
 open FSharp.Compiler.Ast
 
-type MyriadGenerateAttribute(generator: string) =
-    inherit Attribute()
-
-    member __.Generator = generator
-
 type MyriadGeneratorAttribute(name: string) =
     inherit Attribute()
 
