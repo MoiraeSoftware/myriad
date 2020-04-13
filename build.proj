@@ -3,6 +3,8 @@
     <Import Project="Directory.Build.props" />
 
     <Target Name="Build">
+        <!-- Build Myriad first to build Myriad engine, than build whole solution (including tests)  -->
+        <Exec Command='dotnet build src/Myriad/Myriad.fsproj -c Release' />
         <Exec Command='dotnet build src/Myriad.sln -c Release' />
     </Target>
 
@@ -13,6 +15,7 @@
         <Exec Command='dotnet dotnet-mergenupkg --source "$(NupkgsDir)/Myriad.Sdk.$(Version).nupkg" --other "$(NupkgsDir)/Myriad.$(Version).nupkg" --tools --only-files' />
 
         <Exec Command='dotnet pack src/Myriad.Core -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
+        <Exec Command='dotnet pack src/Myriad.Plugins -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
     </Target>
 
     <Target Name="Test" DependsOnTargets="Build">

@@ -33,10 +33,10 @@ module Ast =
 
         typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
 
-    let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
+    let (|HasAttribute|_|) (attributeName: string) (attributes: SynAttributes) =
         attributes
         |> List.collect (fun n -> n.Attributes)
-        |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
+        |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName)
 
     let extractTypeDefn (ast: ParsedInput) =
         [ match ast with
@@ -54,7 +54,6 @@ module Ast =
         | _ -> false
 
     let extractRecords (ast: ParsedInput) =
-
         let records =
             let types = extractTypeDefn ast
             let onlyRecords =
@@ -64,6 +63,6 @@ module Ast =
 
         records
 
-    let hasFieldsAttribute (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _)) =
+    let hasAttribute (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
         attributes
-        |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields"))
+        |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName))
