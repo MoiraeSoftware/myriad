@@ -1,15 +1,19 @@
 namespace Myriad.Core
+
 open System
 open Fantomas
 open System.IO
-open Microsoft.FSharp.Compiler.Ast
+open FSharp.Compiler.Ast
+open FSharp.Compiler.SourceCodeServices
 
 module Ast =
 
     let fromFilename filename =
         let s = File.ReadAllText filename
-        let ast = CodeFormatter.Parse(filename, s)
-        ast
+        let parsingOpts = {FSharpParsingOptions.Default with SourceFiles = [| filename |] }
+        let checker = FSharpChecker.Create()
+        CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString s, parsingOpts, checker)
+
 
     let hasAttributeWithConst  (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
         let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
@@ -30,7 +34,9 @@ module Ast =
         typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
 
     let (|HasFieldsAttribute|_|) (attributes: SynAttributes) =
-        attributes |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
+        attributes
+        |> List.collect (fun n -> n.Attributes)
+        |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
 
     let extractTypeDefn (ast: ParsedInput) =
         [ match ast with
@@ -60,4 +66,4 @@ module Ast =
 
     let hasFieldsAttribute (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _)) =
         attributes
-        |> List.exists (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields")
+        |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<MyriadGeneratorAttribute> "fields"))

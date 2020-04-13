@@ -1,6 +1,7 @@
 namespace Myriad.Core
-open Microsoft.FSharp.Compiler
-open Microsoft.FSharp.Compiler.Ast
+
+open FSharp.Compiler
+open FSharp.Compiler.Ast
 open FsAst
 
 module Create =

@@ -6,8 +6,10 @@ jobs:
   steps:
   - task: UseDotNet@2
     inputs:
-      version: 3.0.x
+      useGlobalJson: true
       performMultiLevelLookup: true
+  - script: dotnet tool restore
+    displayName: Install local tools
   - powershell: |
       $buildId = $env:BUILD_BUILDNUMBER.PadLeft(7, '0');
       $versionSuffixPR = "-PR$($env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER)-$buildId";
@@ -21,15 +23,15 @@ jobs:
     displayName: Create package
     env:
       VersionSuffix: '$(VersionSuffix)'
-  # - script: dotnet test build.proj -v n
-  #   displayName: Run tests
-  #   env:
-  #     VersionSuffix: '$(VersionSuffix)'
-  # - task: PublishTestResults@2
-  #   inputs:
-  #     testResultsFormat: 'VSTest'
-  #     testResultsFiles: 'bin/test_results/*TestResults.xml'
-  #   condition: succeededOrFailed()
+  - script: dotnet test build.proj -v n
+    displayName: Run tests
+    env:
+      VersionSuffix: '$(VersionSuffix)'
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'VSTest'
+      testResultsFiles: 'TestOutput.xml'
+    condition: succeededOrFailed()
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: 'bin/nupkg'

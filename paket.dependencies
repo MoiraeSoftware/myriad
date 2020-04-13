@@ -1,22 +1,12 @@
-version 5.203.2
-
-source https://www.nuget.org/api/v2
+source https://api.nuget.org/v3/index.json
 framework: netcoreapp3.0, netstandard2.1
 storage: none
 
-nuget ArgU
-nuget FSAst
-nuget FSharp.Compiler.Service
+nuget Argu
+nuget FSAst 0.2
+nuget FSharp.Compiler.Service 34.1
 nuget FSharp.Core strategy: min
-nuget Fantomas
 
 nuget Microsoft.NET.Test.Sdk ~> 15.9.0
 nuget xunit ~> 2.4.0
 nuget xunit.runner.visualstudio ~> 2.4.0
-
-group MergeNupkgTool
-source https://www.nuget.org/api/v2
-frameworks: netcoreapp3.0, netstandard2.1
-storage: none
-
-clitool dotnet-mergenupkg ~> 2.4
