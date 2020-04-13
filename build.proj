@@ -15,6 +15,7 @@
         <Exec Command='dotnet dotnet-mergenupkg --source "$(NupkgsDir)/Myriad.Sdk.$(Version).nupkg" --other "$(NupkgsDir)/Myriad.$(Version).nupkg" --tools --only-files' />
 
         <Exec Command='dotnet pack src/Myriad.Core -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
+        <Exec Command='dotnet pack src/Myriad.Plugins -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
     </Target>
 
     <Target Name="Test" DependsOnTargets="Build">
