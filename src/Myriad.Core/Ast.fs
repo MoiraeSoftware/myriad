@@ -23,9 +23,10 @@ module Ast =
                 |> List.map(fun id -> id.ToString())
                 |> String.concat(".")
                 |> function s -> if s.EndsWith "Attribute" then s else s + "Attribute"
-            //Support both full name and opened namespace.
+            //Support both full name and opened namespace - this is not 100% accurate, and it can't be without full type information, but it should be good enough in practice
+            //Replace `+` with `.` - `+` is naming convention for embeded types - in out case it may be attribute type defined inside module.
             if ident.Contains "." then
-                ident = attributeType.FullName
+                attributeType.FullName.Replace("+", ".").EndsWith(ident)
             else
                 ident = attributeType.Name
 
@@ -69,9 +70,14 @@ module Ast =
 
         records
 
-    let hasAttribute<'a> (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+    let hasAttributeWithName<'a> (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
         attributes
         |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<'a> attributeName))
+
+    let hasAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+        attributes
+        |> List.collect (fun n -> n.Attributes)
+        |> List.exists (typeNameMatches typeof<'a>)
 
     let getAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
         attributes
