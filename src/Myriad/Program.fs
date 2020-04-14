@@ -46,10 +46,10 @@ module Main =
                 | None -> Path.GetFileNameWithoutExtension(inputFile)
             let plugins = results.GetResults Plugin
 
-//#if DEBUG
+#if DEBUG
             printfn "Plugins:"
             plugins |> List.iter (printfn "- '%s'")
-//#endif
+#endif
 
             let findPlugins (path: string) =
                 let assembly = System.Reflection.Assembly.LoadFrom(path)
@@ -64,35 +64,35 @@ module Main =
                 plugins
                 |> List.collect findPlugins
 
-//#if DEBUG
+#if DEBUG
             printfn "Generators:"
             generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
-//#endif
+#endif
 
             let execGen namespace' parsedInput (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
-//#if DEBUG
+#if DEBUG
                 printfn "Executing: %s..." genType.FullName
-//#endif
+#endif
 
                 let result = instance.Generate(namespace', parsedInput)
-//#if DEBUG
+#if DEBUG
                 printfn "Result: '%A'" result
-//#endif
+#endif
                 result
-//#if DEBUG
+#if DEBUG
             printfn "Exec generators:"
-//#endif
+#endif
             let ast =
                 Myriad.Core.Ast.fromFilename inputFile
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
 
-//#if DEBUG
+#if DEBUG
             printfn "Input AST:\n:%A" ast
-//#endif
+#endif
 
             let generated =
                 generators
@@ -117,10 +117,10 @@ module Main =
             File.WriteAllText(outputFile, code)
 
             printfn "%A" code
-//#if DEBUG
+#if DEBUG
             printfn "AST-----------------------------------------------"
             printfn "%A" parseTree
-//#endif
+#endif
             0 // return an integer exit code
 
         with
