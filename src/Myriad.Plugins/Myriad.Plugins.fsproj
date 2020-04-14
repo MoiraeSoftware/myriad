@@ -8,6 +8,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attribute.fs" />
     <Compile Include="FieldsGenerator.fs" />
   </ItemGroup>
   <ItemGroup>
