@@ -103,12 +103,6 @@ module internal Create =
             SynPatRcd.CreateLongIdent(varIdent, allArgs)
 
         let expr =
-            //Record of 
-            // baseInfo : option<SynType * SynExpr * range * option<BlockSeparator> * range>
-            // * copyInfo : option<SynExpr * BlockSeparator>
-            // * recordFields : list<RecordFieldName * option<SynExpr>
-            // * option<BlockSeparator>>
-            // * range : range
             let copyInfo =
                 let blockSep = (range.Zero, None) : BlockSeparator
                 Some (SynExpr.CreateIdent recordPrimeIdent, blockSep)
@@ -128,23 +122,10 @@ module internal Create =
 
                     rfn, Some update, (None : Option<BlockSeparator>)
 
-
                 let arguments =
                     recordFields
                     |> List.map mapField
                                           
-                // ((LongIdentWithDots ([one],[]), true),
-                //        Some
-                //          (App
-                //             (NonAtomic,false,Ident mapone,
-                //              LongIdent
-                //                (false,
-                //                 LongIdentWithDots
-                //                   ([record'; one],
-                //                    [Script.fsx (5,30--5,31) IsSynthetic=false]),
-                //                 None,Script.fsx (5,23--5,34) IsSynthetic=false),
-                //              Script.fsx (5,16--5,34) IsSynthetic=false)),
-                //        Some (Script.fsx (5,35--6,10) IsSynthetic=false, None))
                 arguments
 
             SynExpr.Record(None, copyInfo, fieldUpdates, range.Zero )
