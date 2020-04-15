@@ -27,3 +27,10 @@ module Test2 =
     let create (one : Test1) (two : string) : Test2 =
         { one = one
           two = two }
+
+    let map (mapone : int -> int) (maptwo : string -> string) (mapthree : float -> float) (mapfour : float32 -> float32) (record': Test1) =
+      { record' with
+          one = mapone record'.one
+          two = maptwo record'.two
+          three = mapthree record'.three
+          four = mapfour record'.four }

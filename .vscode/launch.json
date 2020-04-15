@@ -15,10 +15,12 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/myriad/bin/Debug/netcoreapp2.2/myriad.dll",
+            "program": "${workspaceFolder}/src/myriad/bin/Debug/netcoreapp3.0/myriad.dll",
             "args": [
-                "--inputfile", "${workspaceFolder}/src/myriad/data.fs",
-                "--outputfile",  "${workspaceFolder}/src/myriad/outputdata.fs",
+                "--plugin", "${workspaceFolder}/src/Myriad.Plugins/bin/Debug/netstandard2.1/Myriad.Plugins.dll",
+                "--inputfile", "${workspaceFolder}/samples/Example/Library.fs",
+                "--outputfile",  "${workspaceFolder}/samples/Example/Verify.fs",
+                "--namespace", "Test"
             ],
             "cwd": "${workspaceFolder}/src/myriad",
             "console": "internalConsole",
