@@ -46,13 +46,21 @@ module Ast =
         |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName)
 
     let extractTypeDefn (ast: ParsedInput) =
-        [ match ast with
+        let rec extractTypes (moduleDecls: SynModuleDecls) (ns: LongIdent) =
+            [   for moduleDecl in moduleDecls do
+                    match moduleDecl with
+                    | SynModuleDecl.Types(types, _) ->
+                        yield (ns, types)
+                    | SynModuleDecl.NestedModule(ComponentInfo(attribs, typeParams, constraints, longId, xmlDoc, preferPostfix, accessibility, range), isRec, decls, _, _range) ->
+                        let combined = longId |> List.append ns
+                        yield! (extractTypes decls combined)
+                    | other -> printfn "other: %A" other
+            ]
+
+        [   match ast with
             | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g)) ->
-                for SynModuleOrNamespace(_namespaceId, _isRecursive, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
-                    for moduleDecl in moduleDecls do
-                        match moduleDecl with
-                        | SynModuleDecl.Types(types, _) -> yield (ns, types)
-                        | _ -> ()
+                for SynModuleOrNamespace(namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _range) as ns in modules do
+                    yield! extractTypes moduleDecls namespaceId
             | _ -> () ]
 
     let isRecord (TypeDefn(_componentInfo, typeDefRepr, _memberDefs, _)) =
