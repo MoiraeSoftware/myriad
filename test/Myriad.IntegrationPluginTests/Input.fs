@@ -12,3 +12,4 @@ type Currency =
     | PLN
     | EUR
     | USD
+    | Custom of string
