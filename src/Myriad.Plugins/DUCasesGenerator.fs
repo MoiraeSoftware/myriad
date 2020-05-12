@@ -85,9 +85,8 @@ module internal CreateDUModule =
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
 
-    let createDuModule (moduleOrNamespace: SynModuleOrNamespace) (typeDefn: SynTypeDefn) =
+    let createDuModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
-        let (SynModuleOrNamespace(namespaceId, _isRecursive, _isModule, _moduleDecls, _preXmlDoc, _attributes, _access, _)) = moduleOrNamespace
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
         match synTypeDefnRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(_accessibility, cases, _recordRange), _range) ->
