@@ -1,0 +1,49 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*' # Publish on any new tag
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+        dotnet: [3.1.201]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet }}
+    - name: Restore tools
+      run: dotnet tool restore
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Run build
+      run: dotnet pack -v n
+    - name: Run Test
+      run: dotnet test -v n
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: ""
+        draft: false
+        prerelease: false
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v1-release
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: bin/nupkg/*.nupkg
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
