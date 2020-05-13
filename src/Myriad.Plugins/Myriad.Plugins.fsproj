@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Description>Set of built-in Myriad plugins</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Myriad.Core\Myriad.Core.fsproj">

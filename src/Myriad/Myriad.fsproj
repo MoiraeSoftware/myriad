@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>myriad</ToolCommandName>
+    <Description>Myriad CLI tool</Description>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.fs" />
