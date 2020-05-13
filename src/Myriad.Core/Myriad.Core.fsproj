@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Description>Core Myriad library used for developing plugins</Description>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Types.fs" />

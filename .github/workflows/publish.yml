@@ -25,9 +25,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Run build
-      run: dotnet pack -v n
+      run: dotnet fake build -t Pack
     - name: Run Test
-      run: dotnet test -v n
+      run: dotnet fake build
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
