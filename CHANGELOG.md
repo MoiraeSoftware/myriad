@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5]
+- New feature - DuCases
+- New feature - Added map function to Fields plugin
+
 ## [0.2.4]
 - Fixed Example via direct reference to Myriad.Core
 - Remove duplicate ItemGroup reference
