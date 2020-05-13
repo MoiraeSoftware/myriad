@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26]
+### Added
+- Update CI infrastructure and release pipeline
+
 ## [0.2.5]
 ### Added
 - New feature - DuCases generator added
