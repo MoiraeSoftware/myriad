@@ -30,7 +30,7 @@ module internal CreateDUModule =
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
                     let hasFields =
                         match case.Type with
-                        | UnionCaseFields cases -> not cases.IsEmpty
+                        | UnionCaseFields fields -> not fields.IsEmpty
                         | _ -> false
                     let args = if hasFields then [SynPatRcd.CreateWild ] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
@@ -42,7 +42,7 @@ module internal CreateDUModule =
                 let ident = LongIdentWithDots.CreateString inputIdent
                 SynExpr.CreateLongIdent(false, ident, None)
 
-            SynExpr.Match(SequencePointInfoForBinding.NoSequencePointAtLetBinding, matchOn, matches, range.Zero)
+            SynExpr.Match(NoSequencePointAtLetBinding, matchOn, matches, range.Zero)
 
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
@@ -71,7 +71,7 @@ module internal CreateDUModule =
                 |> List.filter (fun c -> //Only provide `fromString` for cases with no fields
                     let case = c.ToRcd
                     match case.Type with
-                    | UnionCaseFields cases -> cases.IsEmpty
+                    | UnionCaseFields fields -> fields.IsEmpty
                     | _ -> false)
                 |> List.map (fun c ->
                     let case = c.ToRcd
@@ -81,17 +81,17 @@ module internal CreateDUModule =
                         let f = SynExpr.Ident (Ident("Some", range.Zero))
                         let x = SynExpr.Ident (Ident(case.Id.idText, range.Zero))
                         SynExpr.App(ExprAtomicFlag.NonAtomic, false, f, x, range.Zero)
-                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, SequencePointInfoForTarget.SequencePointAtTarget )
+                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, SequencePointAtTarget )
                 )
             let wildCase =
                 let rhs = SynExpr.Ident (Ident("None", range.Zero))
-                SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, SequencePointInfoForTarget.SequencePointAtTarget)
+                SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, SequencePointAtTarget)
 
             let matchOn =
                 let ident = LongIdentWithDots.CreateString inputIdent
                 SynExpr.CreateLongIdent(false, ident, None)
 
-            SynExpr.Match(SequencePointInfoForBinding.NoSequencePointAtLetBinding, matchOn, [yield! matches; wildCase], range.Zero)
+            SynExpr.Match(NoSequencePointAtLetBinding, matchOn, [yield! matches; wildCase], range.Zero)
 
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
@@ -118,19 +118,19 @@ module internal CreateDUModule =
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
                     let hasFields =
                         match case.Type with
-                        | UnionCaseFields cases -> not cases.IsEmpty
+                        | UnionCaseFields fields -> not fields.IsEmpty
                         | _ -> false
                     let args = if hasFields then [SynPatRcd.CreateWild ] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
                     let rhs =
                        SynExpr.Const(SynConst.Int32 i, range.Zero)
-                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, SequencePointInfoForTarget.SequencePointAtTarget )
+                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, SequencePointAtTarget )
                 )
             let matchOn =
                 let ident = LongIdentWithDots.CreateString inputIdent
                 SynExpr.CreateLongIdent(false, ident, None)
 
-            SynExpr.Match(SequencePointInfoForBinding.NoSequencePointAtLetBinding, matchOn, matches, range.Zero)
+            SynExpr.Match(NoSequencePointAtLetBinding, matchOn, matches, range.Zero)
 
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
@@ -162,17 +162,17 @@ module internal CreateDUModule =
                     let p = SynPatRcd.CreateLongIdent(indent, args)
 
                     let rhs = SynExpr.Const (SynConst.Bool true, range.Zero)
-                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, SequencePointInfoForTarget.SequencePointAtTarget)
+                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, SequencePointAtTarget)
 
                 let wildCase =
                     let rhs = SynExpr.Const (SynConst.Bool false, range.Zero)
-                    SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, SequencePointInfoForTarget.SequencePointAtTarget)
+                    SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, SequencePointAtTarget)
 
                 let matchOn =
                     let ident = LongIdentWithDots.CreateString inputIdent
                     SynExpr.CreateLongIdent(false, ident, None)
 
-                SynExpr.Match(SequencePointInfoForBinding.NoSequencePointAtLetBinding, matchOn, [matchCase; wildCase], range.Zero)
+                SynExpr.Match(NoSequencePointAtLetBinding, matchOn, [matchCase; wildCase], range.Zero)
 
             let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
             SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
