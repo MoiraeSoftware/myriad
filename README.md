@@ -116,16 +116,18 @@ Plugins for Myriad are supplied by simply including the nuget package in your pr
 The nuget package for Myriad can be found here:
 [Nuget package](https://www.nuget.org/packages/myriad/)
 
-## How to build
+## How to build and test
 
 1. Make sure you have .Net Core SDK installed - check required version in [global.json](global.json)
 2. Run `dotnet tool restore`
-3. Run `dotnet build`
+3. Run `dotnet fake build`
 
-## How to test
+## How to release new version
 
-1. Make sure you can build project
-2. Run `dotnet test -v n`. Test output will be at the end of the log.
+1. Update [CHANGLOG.md](./CHANGELOG.md) by adding new entry (`## [0.X.X]`) and commit it.
+2. Create version tag (`git tag v0.X.X`)
+3. Push the tag to the repo `git push origin v0.X.X` - this will start CI process that will create GitHub release and put generated NuGet packages in it
+4. Upload generated packages into NuGet.org
 
 ### Also see
 * [Applied Metaprogramming with Myriad And Falanx](https://7sharp9.dev/2019/04/24/2019-04-24-applied-metaprogramming-with-myriad/)
