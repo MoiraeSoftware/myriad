@@ -2,11 +2,11 @@
 
 Myriad is a code generator, put plainly it takes an abstract syntax tree from a source and uses that to produce F# code.
 
-Myriad can be used from either an MSBuild extension or from its CLI tool.  
+Myriad can be used from either an MSBuild extension or from its CLI tool.
 
-The idea behind Myriad is to un-complicate, as far as possible, the ability to generate and do meta-programming in F#.  By meta-programming in F# I mean generating actual F# code like discriminated unions and records, not just IL output.  
+The idea behind Myriad is to un-complicate, as far as possible, the ability to generate and do meta-programming in F#.  By meta-programming in F# I mean generating actual F# code like discriminated unions and records, not just IL output.
 
-Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation.  Myriad aims to make it easy to extend the compiler via Myriad plugins rather than modifying or adjusting Type Providers and other F# improvement that would be a long time to be developed and released.  The idea is you write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project.  Thus the compiler can optimise and tooling can operate effectively too.  
+Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation.  Myriad aims to make it easy to extend the compiler via Myriad plugins rather than modifying or adjusting Type Providers and other F# improvement that would be a long time to be developed and released.  The idea is you write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project.  Thus the compiler can optimise and tooling can operate effectively too.
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K115UYS)
 
@@ -32,7 +32,7 @@ An input file is specified by using the usual `Compile` element:
 
 This is configuring Myriad so that a file called `Generated.fs` will be included in the build using `Library.fs` as input to the Myriad and `Test` as the namespace.
 
-Myriad works by using plugins to generate code.  A plugin called fields is included with Myriad which takes inspiration from OCamls [ppx_fields_conv](https://github.com/janestreet/ppx_fields_conv) plugin of the same name.  
+Myriad works by using plugins to generate code.  A plugin called fields is included with Myriad which takes inspiration from OCamls [ppx_fields_conv](https://github.com/janestreet/ppx_fields_conv) plugin of the same name.
 
 The input file in this example `Library.fs` looks like this:
 ```fsharp
@@ -44,7 +44,7 @@ type Test1 = { one: int; two: string; three: float; four: float32 }
 type Test2 = { one: Test1; two: string }
 ```
 
-An attribute is used by the plugin so that the code generator plugin knows which parts of the input AST are to be used by the plugin.  If you had several records and you only want the fields plugin to operate on `Test1` then the attrivute would be used like in the example about to only apply `Generator.Fields` to `Test1`.  Note, if you wanted a plugin that just needs the whole input AST then there is no need to provide an input.  Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code.  
+An attribute is used by the plugin so that the code generator plugin knows which parts of the input AST are to be used by the plugin.  If you had several records and you only want the fields plugin to operate on `Test1` then the attrivute would be used like in the example about to only apply `Generator.Fields` to `Test1`.  Note, if you wanted a plugin that just needs the whole input AST then there is no need to provide an input.  Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code.
 
 The fields plugin in this example will generate the following code at prebuild time and compile the code into your assembly:
 ```fsharp
@@ -77,10 +77,10 @@ module Test1 =
           four = mapfour record'.four }
 ```
 
-The fields plugin generates a `map` for each field in the input record, a `create` function taking each field, and a `map` function that takes one function per field in the input record.  
+The fields plugin generates a `map` for each field in the input record, a `create` function taking each field, and a `map` function that takes one function per field in the input record.
 
 The map functions for each field are useful in situations where you just want to use a single field from a record in a lambda like a list of records:
-```fsharp 
+```fsharp
 let records = [{one = "a"; two = "aa"; three = 42.0; four = 172.0f}
                {one = "b"; two = "bb"; three = 42.0; four = 172.0f}]
  records |> List.sortBy Test1.one
@@ -109,7 +109,7 @@ The full fsproj is detail below:
 
 ## Plugins
 
-Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used my Myriad automatically.  Further details for building plugins will follow but following the source for the fields plugin can be used as reference until I write further documentation.  
+Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used my Myriad automatically.  Further details for building plugins will follow but following the source for the fields plugin can be used as reference until I write further documentation.
 
 
 ## Nuget
@@ -125,8 +125,7 @@ The nuget package for Myriad can be found here:
 ## How to test
 
 1. Make sure you can build project
-2. Run `dotnet test`
-3. In case test failed check `TestOutput.xml` for test logs
+2. Run `dotnet test -v n`. Test output will be at the end of the log.
 
 ### Also see
 * [Applied Metaprogramming with Myriad And Falanx](https://7sharp9.dev/2019/04/24/2019-04-24-applied-metaprogramming-with-myriad/)

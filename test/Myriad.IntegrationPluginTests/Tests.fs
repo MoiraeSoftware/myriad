@@ -1,35 +1,41 @@
 module Tests
 
 open System
-open Xunit
+open Expecto
 open Example
 
-[<Fact>]
-let ``Test namespace generated`` () =
-    Assert.Equal(42, Test.example1.fourtyTwo)
+let tests =
+    testList "basic tests" [
 
-[<Fact>]
-let ``Test2 namespace generated`` () =
-    Assert.Equal(42, Test2.example1.fourtyTwo)
+        test "Test namespace generated" {
+            Expect.equal Test.example1.fourtyTwo 42 "generated value should be 42"
+        }
 
-[<Fact>]
-let ``Test1 create Test`` () =
-    let t = Test.Test1.create 1 "2" 3. (float32 4)
-    Assert.Equal({Test1.one = 1; two = "2"; three = 3.; four = float32 4 }, t)
+        test "Test2 namespace generated" {
+            Expect.equal Test2.example1.fourtyTwo 42 "generated value should be 42"
+        }
 
-[<Fact>]
-let ``Test2 create Test`` () =
-    let t = Test2.Test1.create 1 "2" 3. (float32 4)
-    Assert.Equal({Test1.one = 1; two = "2"; three = 3.; four = float32 4 }, t)
+        test "Test1 create Test" {
+            let t = Test.Test1.create 1 "2" 3. (float32 4)
+            Expect.equal t {Test1.one = 1; two = "2"; three = 3.; four = float32 4 } "generated records should be ok"
+        }
 
-[<Fact>]
-let ``Test1 accessor Test`` () =
-    let t = Test.Test1.create 1 "2" 3. (float32 4)
-    let z = Test.Test1.one t
-    Assert.Equal(1, z)
+        test "Test2 create Test" {
+            let t = Test2.Test1.create 1 "2" 3. (float32 4)
+            Expect.equal t {Test1.one = 1; two = "2"; three = 3.; four = float32 4 } "generated records should be ok"
+        }
 
-[<Fact>]
-let ``Test2 accessor Test`` () =
-    let t = Test2.Test1.create 1 "2" 3. (float32 4)
-    let z = Test2.Test1.one t
-    Assert.Equal(1, z)
+        test "Test1 accessor Test" {
+            let t = Test.Test1.create 1 "2" 3. (float32 4)
+            let z = Test.Test1.one t
+            Expect.equal z 1 "generated getters should be ok"
+        }
+
+        test "Test2 accessor Test" {
+            let t = Test2.Test1.create 1 "2" 3. (float32 4)
+            let z = Test2.Test1.one t
+            Expect.equal z 1 "generated getters should be ok"
+        }
+
+
+    ]
