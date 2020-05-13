@@ -22,10 +22,10 @@ jobs:
         dotnet-version: ${{ matrix.dotnet }}
     - name: Restore tools
       run: dotnet tool restore
-    - name: Run build
-      run: dotnet fake build -t Pack
     - name: Run Test
       run: dotnet fake build
+    - name: Run build
+      run: dotnet fake build -t Pack
     - name: Get Changelog Entry
       id: changelog_reader
       uses: mindsers/changelog-reader-action@v1.1.0
