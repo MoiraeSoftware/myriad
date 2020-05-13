@@ -120,7 +120,7 @@ Target.create "Pack" (fun _ ->
 )
 
 Target.create "Test" (fun _ ->
-    let cmd = sprintf  @"run --project .\test\Myriad.IntegrationPluginTests -c %s" (configuration.ToString())
+    let cmd = sprintf  @"run --project .\test\Myriad.IntegrationPluginTests\Myriad.IntegrationPluginTests.fsproj -c %s" (configuration.ToString())
     exec "dotnet" cmd  "."
 )
 
