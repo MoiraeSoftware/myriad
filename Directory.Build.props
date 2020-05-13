@@ -1,7 +1,7 @@
 <Project ToolsVersion="15.0">
 
   <PropertyGroup>
-    <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">0.2.4</VersionPrefix>
+    <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">0.2.5</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,11 +15,11 @@
 
   <PropertyGroup>
     <Authors>7sharp9</Authors>
-    <PackageProjectUrl>https://github.com/7sharp9/myriad/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/MoiraeSoftware/myriad/</PackageProjectUrl>
     <PackageTags>fsharp;codegen;generation</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/7sharp/myriad.git</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/7sharp9/myriad/blob/v$(VersionPrefix)/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/MoiraeSoftware/myriad.git</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/MoiraeSoftware/myriad/blob/v$(VersionPrefix)/LICENSE</PackageLicenseUrl>
     <Copyright>Dave Thomas</Copyright>
     <PackageReleaseNotes>see $(PackageProjectUrl)blob/master/CHANGELOG.md#v$(VersionPrefix)</PackageReleaseNotes>
   </PropertyGroup>
