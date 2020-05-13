@@ -28,6 +28,12 @@ jobs:
       run: dotnet fake build -t Pack
     - name: Run Test
       run: dotnet fake build
+    - name: Get Changelog Entry
+      id: changelog_reader
+      uses: mindsers/changelog-reader-action@v1.1.0
+      with:
+        version: ${{ github.ref }}
+        path: ./CHANGELOG.md
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
@@ -36,7 +42,7 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: ${{ github.ref }}
-        body: ""
+        body: ${{ steps.changelog_reader.outputs.log_entry }}
         draft: false
         prerelease: false
     - name: Upload binaries to release
