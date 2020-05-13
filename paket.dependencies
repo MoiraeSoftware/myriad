@@ -7,6 +7,4 @@ nuget FSAst 0.2.1
 nuget FSharp.Compiler.Service 34.1
 nuget FSharp.Core strategy: min
 
-nuget Microsoft.NET.Test.Sdk ~> 15.9.0
-nuget xunit ~> 2.4.0
-nuget xunit.runner.visualstudio ~> 2.4.0
+nuget Expecto
