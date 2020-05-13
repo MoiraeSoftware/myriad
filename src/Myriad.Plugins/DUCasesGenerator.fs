@@ -28,11 +28,7 @@ module internal CreateDUModule =
                 |> List.map (fun c ->
                     let case = c.ToRcd
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let hasFields =
-                        match case.Type with
-                        | UnionCaseFields fields -> not fields.IsEmpty
-                        | _ -> false
-                    let args = if hasFields then [SynPatRcd.CreateWild ] else []
+                    let args = if case.HasFields then [SynPatRcd.CreateWild ] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
                     let rhs =
                        SynExpr.Const(SynConst.CreateString case.Id.idText, range.Zero)
@@ -68,11 +64,8 @@ module internal CreateDUModule =
         let expr =
             let matches =
                 cases
-                |> List.filter (fun c -> //Only provide `fromString` for cases with no fields
-                    let case = c.ToRcd
-                    match case.Type with
-                    | UnionCaseFields fields -> fields.IsEmpty
-                    | _ -> false)
+                //Only provide `fromString` for cases with no fields
+                |> List.filter (fun c -> not (c.ToRcd.HasFields)) 
                 |> List.map (fun c ->
                     let case = c.ToRcd
                     let rcd = {SynPatConstRcd.Const = SynConst.CreateString case.Id.idText; Range = range.Zero }
@@ -116,11 +109,7 @@ module internal CreateDUModule =
                 |> List.mapi (fun i c ->
                     let case = c.ToRcd
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let hasFields =
-                        match case.Type with
-                        | UnionCaseFields fields -> not fields.IsEmpty
-                        | _ -> false
-                    let args = if hasFields then [SynPatRcd.CreateWild ] else []
+                    let args = if case.HasFields then [SynPatRcd.CreateWild ] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
                     let rhs =
                        SynExpr.Const(SynConst.Int32 i, range.Zero)
@@ -154,11 +143,7 @@ module internal CreateDUModule =
             let expr =
                 let matchCase =
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let hasFields =
-                        match case.Type with
-                        | UnionCaseFields cases -> not cases.IsEmpty
-                        | _ -> false
-                    let args = if hasFields then [SynPatRcd.CreateWild ] else []
+                    let args = if case.HasFields then [SynPatRcd.CreateWild ] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
 
                     let rhs = SynExpr.Const (SynConst.Bool true, range.Zero)
