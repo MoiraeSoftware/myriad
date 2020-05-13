@@ -68,15 +68,27 @@ module Ast =
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record _, _) -> true
         | _ -> false
 
-    let extractRecords (ast: ParsedInput) =
-        let records =
-            let types = extractTypeDefn ast
-            let onlyRecords =
-                types
-                |> List.map (fun (ns, types) -> ns, types |> List.filter isRecord )
-            onlyRecords
+    let isDu (TypeDefn(_componentInfo, typeDefRepr, _memberDefs, _)) =
+        match typeDefRepr with
+        | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union _, _) -> true
+        | _ -> false
 
-        records
+
+    let extractRecords (ast: ParsedInput) =
+        let types = extractTypeDefn ast
+        let onlyRecords =
+            types
+            |> List.map (fun (ns, types) -> ns, types |> List.filter isRecord )
+        onlyRecords
+
+
+
+    let extractDU (ast: ParsedInput) =
+        let types = extractTypeDefn ast
+        let onlyDus =
+            types
+            |> List.map (fun (ns, types) -> ns, types |> List.filter isDu )
+        onlyDus
 
     let hasAttributeWithName<'a> (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
         attributes

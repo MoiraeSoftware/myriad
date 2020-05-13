@@ -7,3 +7,6 @@ open System
 module Generator =
     type FieldsAttribute() =
         inherit Attribute()
+
+    type DuCasesAttribute() =
+        inherit Attribute()

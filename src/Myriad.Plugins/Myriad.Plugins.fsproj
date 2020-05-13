@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="Attribute.fs" />
     <Compile Include="FieldsGenerator.fs" />
+    <Compile Include="DUCasesGenerator.fs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build\Myriad.Plugins.props">
