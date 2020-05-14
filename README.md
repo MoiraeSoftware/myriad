@@ -118,9 +118,9 @@ Plugins for Myriad are supplied by simply including the nuget package in your pr
 To consume your own plugins that aren't part of the default set included in the `Myriad.Plugins` package, you must register them with Myriad. The way to do this is by passing in the `--plugin <path to dll>` command-line argument. For MSBuild, this can be done by adding to the `MyriadSdkGenerator` property like so:
 
 ```xml
-<PropertyGroup>
+<ItemGroup>
     <MyriadSdkGenerator Include="<path to plugin dll>" />
-</PropertyGroup>
+</ItemGroup>
 ```
 
 ## Nuget
