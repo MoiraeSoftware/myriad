@@ -113,6 +113,15 @@ The full fsproj is detail below:
 
 Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used my Myriad automatically.  Further details for building plugins will follow but following the source for the fields plugin can be used as reference until I write further documentation.
 
+### Using your own Plugins
+
+To consume your own plugins that aren't part of the default set included in the `Myriad.Plugins` package, you must register them with Myriad. The way to do this is by passing in the `--plugin <path to dll>` command-line argument. For MSBuild, this can be done by adding to the `MyriadSdkGenerator` property like so:
+
+```xml
+<PropertyGroup>
+    <MyriadSdkGenerator Include="<path to plugin dll>" />
+</PropertyGroup>
+```
 
 ## Nuget
 The nuget package for Myriad can be found here:
