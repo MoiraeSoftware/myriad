@@ -111,7 +111,7 @@ The full fsproj is detail below:
 
 ## Plugins
 
-Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used my Myriad automatically.  Further details for building plugins will follow but following the source for the fields plugin can be used as reference until I write further documentation.
+Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used my Myriad automatically.  Following the source for the fields plugin can be used as reference until more details about authoring plugins is created.
 
 ### Using your own Plugins
 
@@ -120,6 +120,26 @@ To consume your own plugins that aren't part of the default set included in the 
 ```xml
 <ItemGroup>
     <MyriadSdkGenerator Include="<path to plugin dll>" />
+</ItemGroup>
+```
+
+For example, if you had a project layout like this:
+
+```
+\src
+-\GeneratorLib
+ - Generator.fs
+ - Generator.fsproj
+-\GeneratorTests
+ - Tests.fs
+ - GeneratorTests.fsproj
+```
+
+The matching element for the tests fsproj would be something like
+
+```
+<ItemGroup>
+    <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../GeneratorLib/bin/$(Configuration)/$(TargetFramework)/GeneratorLib.dll" />
 </ItemGroup>
 ```
 
