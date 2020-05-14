@@ -123,6 +123,15 @@ To consume your own plugins that aren't part of the default set included in the 
 </ItemGroup>
 ```
 
+## Debugging
+
+To debug Myriad, you can use the following two command line options:
+
+* `--verbose` - write diagnostic logs out to standard out
+* `--wait-for-debugger` - causes myriad to wait for a debugger to attach to the myriad process
+
+These can be triggered from msbuild by the `<MyriadSdkVerboseOutput>true</MyriadSdkVerboseOutput>` and `<MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>` properties, respectively.
+
 ## Nuget
 The nuget package for Myriad can be found here:
 [Nuget package](https://www.nuget.org/packages/myriad/)
