@@ -111,8 +111,46 @@ The full fsproj is detail below:
 
 ## Plugins
 
-Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used my Myriad automatically.  Further details for building plugins will follow but following the source for the fields plugin can be used as reference until I write further documentation.
+Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used my Myriad automatically.  Following the source for the fields plugin can be used as reference until more details about authoring plugins is created.
 
+### Using your own Plugins
+
+To consume your own plugins that aren't part of the default set included in the `Myriad.Plugins` package, you must register them with Myriad. The way to do this is by passing in the `--plugin <path to dll>` command-line argument. For MSBuild, this can be done by adding to the `MyriadSdkGenerator` property like so:
+
+```xml
+<ItemGroup>
+    <MyriadSdkGenerator Include="<path to plugin dll>" />
+</ItemGroup>
+```
+
+For example, if you had a project layout like this:
+
+```
+\src
+-\GeneratorLib
+ - Generator.fs
+ - Generator.fsproj
+-\GeneratorTests
+ - Tests.fs
+ - GeneratorTests.fsproj
+```
+
+The matching element for the tests fsproj would be something like
+
+```
+<ItemGroup>
+    <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../GeneratorLib/bin/$(Configuration)/$(TargetFramework)/GeneratorLib.dll" />
+</ItemGroup>
+```
+
+## Debugging
+
+To debug Myriad, you can use the following two command line options:
+
+* `--verbose` - write diagnostic logs out to standard out
+* `--wait-for-debugger` - causes myriad to wait for a debugger to attach to the myriad process
+
+These can be triggered from msbuild by the `<MyriadSdkVerboseOutput>true</MyriadSdkVerboseOutput>` and `<MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>` properties, respectively.
 
 ## Nuget
 The nuget package for Myriad can be found here:
