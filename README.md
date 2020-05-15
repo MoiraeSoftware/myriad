@@ -135,12 +135,43 @@ For example, if you had a project layout like this:
  - GeneratorTests.fsproj
 ```
 
-The matching element for the tests fsproj would be something like
-
+You would add the following to Generator.fsproj:
+```xml
+  <ItemGroup>
+    <Content Include="build\Generator.props">
+      <Pack>true</Pack>
+      <PackagePath>%(Identity)</PackagePath>
+      <Visible>true</Visible>
+    </Content>
+  </ItemGroup>
 ```
-<ItemGroup>
-    <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../GeneratorLib/bin/$(Configuration)/$(TargetFramework)/GeneratorLib.dll" />
-</ItemGroup>
+
+Then add a new folder `build` with the `Generator.props` file within:
+```xml
+<Project>
+    <ItemGroup>
+        <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../lib/netstandard2.1/Generator.dll" />
+    </ItemGroup>
+</Project>
+```
+
+Often an additional props file (In this smaple the file would be `Generator.InTest.props`) is used to make testing easier.  The matching element for the tests fsproj would be something like this:
+
+```xml
+<Project>
+    <ItemGroup>
+        <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../bin/$(Configuration)/netstandard2.1/Generator.dll" />
+    </ItemGroup>
+</Project>
+```
+
+Notice the Include path is pointing locally rather than within the packaged nuget folder structure.  
+
+In your testing `fsproj` you would add the following to allow the plugin to be used locally rather that having to consume a nuget package:
+
+```xml
+<!-- include plugin -->
+<Import Project="<Path to Generator plugin location>\build\Myriad.Plugins.InTest.props" />
 ```
 
 ## Debugging
