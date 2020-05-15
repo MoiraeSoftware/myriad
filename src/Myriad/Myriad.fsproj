@@ -5,6 +5,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>myriad</ToolCommandName>
     <Description>Myriad CLI tool</Description>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.fs" />

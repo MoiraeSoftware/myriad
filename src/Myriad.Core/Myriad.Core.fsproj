@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Description>Core Myriad library used for developing plugins</Description>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Types.fs" />

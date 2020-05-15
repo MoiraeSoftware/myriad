@@ -14,6 +14,7 @@ module Main =
         | [<Mandatory>] OutputFile of string
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
+        | Verbose
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -23,6 +24,7 @@ module Main =
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
+                | Verbose -> "Log verbose processing details"
 
     [<EntryPoint>]
     let main argv =
@@ -30,6 +32,8 @@ module Main =
 
         try
             let results = parser.Parse argv
+
+            let verbose = results.Contains Verbose
 
             match results.TryGetResult WaitForDebugger with
             | None -> ()
@@ -46,10 +50,9 @@ module Main =
                 | None -> Path.GetFileNameWithoutExtension(inputFile)
             let plugins = results.GetResults Plugin
 
-#if DEBUG
-            printfn "Plugins:"
-            plugins |> List.iter (printfn "- '%s'")
-#endif
+            if verbose then
+                printfn "Plugins:"
+                plugins |> List.iter (printfn "- '%s'")
 
             let findPlugins (path: string) =
                 let assembly = System.Reflection.Assembly.LoadFrom(path)
@@ -64,35 +67,34 @@ module Main =
                 plugins
                 |> List.collect findPlugins
 
-#if DEBUG
-            printfn "Generators:"
-            generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
-#endif
+            if verbose then 
+                printfn "Generators:"
+                generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
 
             let execGen namespace' parsedInput (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
-#if DEBUG
-                printfn "Executing: %s..." genType.FullName
-#endif
+                if verbose then 
+                    printfn "Executing: %s..." genType.FullName
 
                 let result = instance.Generate(namespace', parsedInput)
-#if DEBUG
-                printfn "Result: '%A'" result
-#endif
+
+                if verbose then
+                    printfn "Result: '%A'" result
+
                 result
-#if DEBUG
-            printfn "Exec generators:"
-#endif
+
+            if verbose then
+                printfn "Exec generators:"
+
             let ast =
                 Myriad.Core.Ast.fromFilename inputFile
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
 
-#if DEBUG
-            printfn "Input AST:\n:%A" ast
-#endif
+            if verbose then
+                printfn "Input AST:\n:%A" ast
 
             let generated =
                 generators
@@ -117,10 +119,10 @@ module Main =
             File.WriteAllText(outputFile, code)
 
             printfn "%A" code
-#if DEBUG
-            printfn "AST-----------------------------------------------"
-            printfn "%A" parseTree
-#endif
+
+            if verbose then
+                printfn "AST-----------------------------------------------"
+                printfn "%A" parseTree
             0 // return an integer exit code
 
         with
