@@ -3,8 +3,8 @@ framework: netcoreapp3.0, netstandard2.1
 storage: none
 
 nuget Argu
-nuget FSAst 0.2.1
-nuget FSharp.Compiler.Service 34.1
+nuget FSAst 0.3.0
+nuget FSharp.Compiler.Service 35.0
 nuget FSharp.Core strategy: min
 
 nuget Expecto
