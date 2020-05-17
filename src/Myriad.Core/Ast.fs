@@ -3,7 +3,7 @@ namespace Myriad.Core
 open System
 open Fantomas
 open System.IO
-open FSharp.Compiler.Ast
+open FSharp.Compiler.SyntaxTree
 open FSharp.Compiler.SourceCodeServices
 
 module Ast =
@@ -46,7 +46,7 @@ module Ast =
         |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName)
 
     let extractTypeDefn (ast: ParsedInput) =
-        let rec extractTypes (moduleDecls: SynModuleDecls) (ns: LongIdent) =
+        let rec extractTypes (moduleDecls: SynModuleDecl list) (ns: LongIdent) =
             [   for moduleDecl in moduleDecls do
                     match moduleDecl with
                     | SynModuleDecl.Types(types, _) ->

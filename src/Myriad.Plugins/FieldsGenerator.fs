@@ -1,7 +1,7 @@
 ﻿namespace Myriad.Plugins
 
 open System
-open FSharp.Compiler.Ast
+open FSharp.Compiler.SyntaxTree
 open FsAst
 open Myriad.Core
 
@@ -40,7 +40,7 @@ module internal Create =
                                     Expr = expr
                                     ValData = valData }]
 
-    let createCreate (parent: LongIdent) (fields: SynFields) =
+    let createCreate (parent: LongIdent) (fields: SynField list) =
         let varIdent = LongIdentWithDots.CreateString "create"
 
         let recordType =
@@ -71,7 +71,7 @@ module internal Create =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create recordType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createMap (recordId: LongIdent) (recordFields: SynFields) : SynModuleDecl =
+    let createMap (recordId: LongIdent) (recordFields: SynField list) : SynModuleDecl =
         let varIdent = LongIdentWithDots.CreateString "map"
         let recordPrimeIdent =  Ident.Create "record'"
 
@@ -91,7 +91,7 @@ module internal Create =
 
             let recordParam =
                 let name = SynPatRcd.CreateNamed(recordPrimeIdent, SynPatRcd.CreateWild)
-                let typ = 
+                let typ =
                     LongIdentWithDots.Create (recordId |> List.map (fun i -> i.idText))
                     |> SynType.CreateLongIdent
 
@@ -125,7 +125,7 @@ module internal Create =
                 let arguments =
                     recordFields
                     |> List.map mapField
-                                          
+
                 arguments
 
             SynExpr.Record(None, copyInfo, fieldUpdates, range.Zero )

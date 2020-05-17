@@ -2,7 +2,7 @@
 
 open System
 open Myriad.Core
-open FSharp.Compiler.Ast
+open FSharp.Compiler.SyntaxTree
 open FsAst
 
 [<MyriadGenerator("example1")>]

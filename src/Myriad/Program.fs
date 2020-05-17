@@ -2,7 +2,7 @@
 open System
 open Fantomas
 open System.IO
-open FSharp.Compiler.Ast
+open FSharp.Compiler.SyntaxTree
 open FsAst
 open Argu
 
@@ -67,14 +67,14 @@ module Main =
                 plugins
                 |> List.collect findPlugins
 
-            if verbose then 
+            if verbose then
                 printfn "Generators:"
                 generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
 
             let execGen namespace' parsedInput (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
-                if verbose then 
+                if verbose then
                     printfn "Executing: %s..." genType.FullName
 
                 let result = instance.Generate(namespace', parsedInput)
