@@ -195,7 +195,7 @@ The nuget package for Myriad can be found here:
 
 ## How to release new version
 
-1. Update [CHANGLOG.md](./CHANGELOG.md) by adding new entry (`## [0.X.X]`) and commit it.
+1. Update [CHANGELOG.md](./CHANGELOG.md) by adding new entry (`## [0.X.X]`) and commit it.
 2. Create version tag (`git tag v0.X.X`)
 3. Push the tag to the repo `git push origin v0.X.X` - this will start CI process that will create GitHub release and put generated NuGet packages in it
 4. Upload generated packages into NuGet.org
