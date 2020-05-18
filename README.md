@@ -197,7 +197,7 @@ The nuget package for Myriad can be found here:
 
 1. Update [CHANGELOG.md](./CHANGELOG.md) by adding new entry (`## [0.X.X]`) and commit it.
 2. Create version tag (`git tag v0.X.X`)
-3. Run `dotnet fake build -t Pack` to create the nuget package
+3. Run `dotnet fake build -t Pack` to create the nuget package and test/examine it locally.
 4. Push the tag to the repo `git push origin v0.X.X` - this will start CI process that will create GitHub release and put generated NuGet packages in it
 5. Upload generated packages into NuGet.org
 
