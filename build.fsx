@@ -90,7 +90,7 @@ Target.create "Pack" (fun _ ->
         ("RepositoryUrl", gitUrl)
         ("PackageLicenseUrl", gitUrl + "/LICENSE")
         ("Copyright", copyright)
-        ("PackageReleaseNotes", gitUrl + "/blob/" + latestEntry.NuGetVersion + "/CHANGELOG.md")
+        ("PackageReleaseNotes", sprintf "%s/blob/v%s/CHANGELOG.md" gitUrl latestEntry.NuGetVersion)
         ("EnableSourceLink", "true")
     ]
 
