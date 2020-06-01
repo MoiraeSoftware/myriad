@@ -10,3 +10,7 @@ module Generator =
 
     type DuCasesAttribute() =
         inherit Attribute()
+
+    /// Instructs to generate lenses for each property of the record
+    type LensesAttribute() =
+        inherit Attribute()

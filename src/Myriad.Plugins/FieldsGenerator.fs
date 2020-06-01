@@ -1,6 +1,5 @@
 ﻿namespace Myriad.Plugins
 
-open System
 open FSharp.Compiler.SyntaxTree
 open FsAst
 open Myriad.Core
@@ -20,7 +19,7 @@ module internal Create =
         let pattern =
             let name = LongIdentWithDots.CreateString fieldName.idText
             let arg =
-                let named = SynPatRcd.CreateNamed(Ident.Create varName, SynPatRcd.CreateWild )
+                let named = SynPatRcd.CreateNamed(Ident.Create varName, SynPatRcd.CreateWild)
                 SynPatRcd.CreateTyped(named, recordType)
                 |> SynPatRcd.CreateParen
 
@@ -50,9 +49,9 @@ module internal Create =
         let pattern =
             let arguments =
                 fields
-                |> List.map (fun f ->let field = f.ToRcd
-                                     let name = SynPatRcd.CreateNamed(field.Id.Value, SynPatRcd.CreateWild)
-                                     SynPatRcd.CreateTyped(name, field.Type) |> SynPatRcd.CreateParen)
+                |> List.map (fun f -> let field = f.ToRcd
+                                      let name = SynPatRcd.CreateNamed(field.Id.Value, SynPatRcd.CreateWild)
+                                      SynPatRcd.CreateTyped(name, field.Type) |> SynPatRcd.CreateParen)
 
             SynPatRcd.CreateLongIdent(varIdent, arguments)
 
@@ -171,9 +170,9 @@ type FieldsGenerator() =
 
     interface IMyriadGenerator with
         member __.Generate(namespace', ast: ParsedInput) =
-            let namespaceAndrecords = Ast.extractRecords ast
+            let namespaceAndRecords = Ast.extractRecords ast
             let modules =
-                namespaceAndrecords
+                namespaceAndRecords
                 |> List.collect (fun (ns, records) ->
                                     records
                                     |> List.filter (Ast.hasAttribute<Generator.FieldsAttribute>)
