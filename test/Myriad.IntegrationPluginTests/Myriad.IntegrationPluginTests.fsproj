@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger> -->
+<!--     <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Input.fs" />

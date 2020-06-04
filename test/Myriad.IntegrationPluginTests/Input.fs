@@ -20,7 +20,7 @@ type Test2 =
 type Test1WithWrappedLens =
     { one: int }
 
-[<Generator.Lenses("Lens")>]
+[<Generator.Lenses("")>]
 type Test1WithEmptyWrapperName =
     { one_empty_wrapper_name: int }
 
@@ -32,10 +32,17 @@ type Test1WithWrappedLensWithTypedefof =
 type Test1WithWrappedLensWithTypeof =
     { one_typeof: Option<int> }
 
-[<Generator.DuCases>]
-type Currency =
-    | CAD
-    | PLN
-    | EUR
-    | USD
-    | Custom of string
+[<Generator.Lenses>]
+type SingleCaseDU = Single of int
+
+[<Generator.Lenses(typeof<Lens<_, _>>)>]
+type WrappedSingleCaseDU = SingleWrapped of int
+
+
+//[<Generator.DuCases>]
+//type Currency =
+//    | CAD
+//    | PLN
+//    | EUR
+//    | USD
+//    | Custom of string
