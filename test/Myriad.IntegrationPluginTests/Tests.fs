@@ -53,14 +53,14 @@ let tests =
 
                 test "Wrapped getter" {
                     let (Lens(getter, _)) = Test.Test1WithWrappedLensLenses.one
-                    let src : Test1WithWrappedLens = { one = 1 }
+                    let src : RecordWithWrappedLens = { one = 1 }
                     let value = getter src
                     Expect.equal 1 value "getter returns the value"
                 }
 
                 test "Wrapped setter" {
                     let (Lens(_, setter)) = Test.Test1WithWrappedLensLenses.one
-                    let src : Test1WithWrappedLens = { one = 1 }
+                    let src : RecordWithWrappedLens = { one = 1 }
                     let updated = setter src 2
                     Expect.equal { one = 2 } updated "setter updates the value"
                 }
