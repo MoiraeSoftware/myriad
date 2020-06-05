@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.8]
+### Changed
+- Updated to latest version of FsAst 0.5.0
+
 ## [0.2.7]
 ### Added
 - Verbose output flag added to CLI tool for diagnostics
