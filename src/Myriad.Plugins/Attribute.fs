@@ -5,8 +5,8 @@ open System
 
 [<RequireQualifiedAccess>]
 module Generator =
-    type FieldsAttribute() =
+    type FieldsAttribute(configGroup: string) =
         inherit Attribute()
 
-    type DuCasesAttribute() =
+    type DuCasesAttribute(configGroup: string) =
         inherit Attribute()

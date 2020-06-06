@@ -6,6 +6,7 @@ nuget Argu
 nuget FSAst 0.5.0
 nuget FSharp.Compiler.Service 35.0
 nuget FSharp.Core strategy: min
+nuget Tomlyn
 
 nuget Expecto
 

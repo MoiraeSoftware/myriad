@@ -3,10 +3,8 @@ namespace Myriad.Core
 open System
 open FSharp.Compiler.SyntaxTree
 
-type MyriadGeneratorAttribute(name: string) =
+type MyriadGeneratorAttribute() =
     inherit Attribute()
 
-    member __.Name = name
-
 type IMyriadGenerator =
-    abstract member Generate: namespace': string * ast:ParsedInput -> FsAst.AstRcd.SynModuleOrNamespaceRcd
+    abstract member Generate: configGetter:(string -> (string * obj) seq) * ast:ParsedInput -> FsAst.AstRcd.SynModuleOrNamespaceRcd list

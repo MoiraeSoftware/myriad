@@ -2,3 +2,4 @@ FSharp.Core
 FSharp.Compiler.Service
 ArgU
 FSAst
+Tomlyn

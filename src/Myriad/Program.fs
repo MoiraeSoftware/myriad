@@ -5,13 +5,15 @@ open System.IO
 open FSharp.Compiler.SyntaxTree
 open FsAst
 open Argu
+open Tomlyn
+open System.Collections.Generic
 
 module Main =
 
     type Arguments =
         | [<Mandatory>] InputFile of string
-        | [<Mandatory>] Namespace of string
         | [<Mandatory>] OutputFile of string
+        | ConfigFile of string
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
@@ -20,8 +22,8 @@ module Main =
             member s.Usage =
                 match s with
                 | InputFile _ -> "specify a file to use as input."
-                | Namespace _ -> "specify a namespace to use."
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
+                | ConfigFile _ -> "Specify a TOML file to use as a config"
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
                 | Verbose -> "Log verbose processing details"
@@ -44,10 +46,13 @@ module Main =
 
             let inputFile = results.GetResult InputFile
             let outputFile = results.GetResult OutputFile
-            let namespace' =
-                match results.TryGetResult Namespace with
-                | Some ns -> ns
-                | None -> Path.GetFileNameWithoutExtension(inputFile)
+            let configFile =
+                results.TryGetResult ConfigFile
+                |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
+
+            let configFileCnt = File.ReadAllText configFile
+            let config = Tomlyn.Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
+
             let plugins = results.GetResults Plugin
 
             if verbose then
@@ -71,13 +76,31 @@ module Main =
                 printfn "Generators:"
                 generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
 
-            let execGen namespace' parsedInput (genType: Type) =
+            let execGen parsedInput (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
+
+                let handler =
+                    fun str ->
+                        printfn "CONFIG %A" config
+                        printfn "LOOKING FOR: %s" str
+                        match config.TryGetToml str with
+                        | true, x when x.Kind = Model.ObjectKind.Table ->
+                            try
+                                let x = (x :?> Model.TomlTable)
+                                let x = (x :> IDictionary<string,obj>)
+                                x |> Seq.map (|KeyValue|)
+                            with
+                            | _ ->
+                                printfn "FAIL !"
+                                Seq.empty
+                        | _ ->
+                            printfn "FAIL @"
+                            Seq.empty
 
                 if verbose then
                     printfn "Executing: %s..." genType.FullName
 
-                let result = instance.Generate(namespace', parsedInput)
+                let result = instance.Generate(handler, parsedInput)
 
                 if verbose then
                     printfn "Result: '%A'" result
@@ -96,9 +119,10 @@ module Main =
             if verbose then
                 printfn "Input AST:\n:%A" ast
 
+
             let generated =
                 generators
-                |> List.map (execGen namespace' ast)
+                |> List.collect (execGen ast)
 
             let parseTree =
                 ParsedInput.CreateImplFile(

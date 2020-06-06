@@ -5,10 +5,10 @@ open Myriad.Core
 open FSharp.Compiler.SyntaxTree
 open FsAst
 
-[<MyriadGenerator("example1")>]
+[<MyriadGenerator>]
 type Example1Gen() =
     interface IMyriadGenerator with
-        member __.Generate(namespace', _ast) =
+        member __.Generate(configGetter, _ast) =
 
             let let42 =
                 SynModuleDecl.CreateLet
@@ -19,8 +19,9 @@ type Example1Gen() =
             let componentInfo = SynComponentInfoRcd.Create [ Ident.Create "example1" ]
             let nestedModule = SynModuleDecl.CreateNestedModule(componentInfo, [ let42 ])
 
+            let namespace' = "Example"
             let namespaceOrModule =
                 { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
                     with Declarations = [ nestedModule ] }
 
-            namespaceOrModule
+            [namespaceOrModule]

@@ -30,15 +30,20 @@ module Ast =
             else
                 ident = attributeType.Name
 
+    let getAttributeConstant (attrib: SynAttribute) =
+        match attrib.ArgExpr with
+        | SynExpr.Paren(SynExpr.Const(SynConst.String(text,_range), _r),_,_,_) -> Some text
+        | SynExpr.Const(SynConst.String(text,_range), _r) -> Some text
+        | _ -> None
 
     let hasAttributeWithConst (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
 
-        let argumentMatched attrib attributeArg =
-            match attrib with
-            | SynExpr.Paren(SynExpr.Const(SynConst.String(text,_range), _r),_,_,_) -> text = attributeArg
-            | _ -> false
+        let argumentMatched attributeArg =
+            match getAttributeConstant attrib with
+            | None -> false
+            | Some t -> t = attributeArg
 
-        typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
+        typeNameMatches attributeType attrib && (argumentMatched attributeArg)
 
     let (|HasAttribute|_|) (attributeName: string) (attributes: SynAttributes) =
         attributes

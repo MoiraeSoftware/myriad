@@ -15,11 +15,6 @@
       <MyriadNameSpace>Test</MyriadNameSpace>
     </Compile>
 
-    <Compile Include="Generated2.fs">
-      <MyriadFile>Input.fs</MyriadFile>
-      <MyriadNameSpace>Test2</MyriadNameSpace>
-    </Compile>
-
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
