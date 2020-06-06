@@ -52,25 +52,26 @@ let tests =
                 }
 
                 test "Wrapped getter" {
-                    let (Lens(getter, _)) = Test.Test1WithWrappedLensLenses.one
+                    let (Lens(getter, _)) = Test.RecordWithWrappedLensLenses.one
                     let src : RecordWithWrappedLens = { one = 1 }
                     let value = getter src
                     Expect.equal 1 value "getter returns the value"
                 }
 
                 test "Wrapped setter" {
-                    let (Lens(_, setter)) = Test.Test1WithWrappedLensLenses.one
+                    let (Lens(_, setter)) = Test.RecordWithWrappedLensLenses.one
                     let src : RecordWithWrappedLens = { one = 1 }
                     let updated = setter src 2
                     Expect.equal { one = 2 } updated "setter updates the value"
                 }
 
                 test "Empty wrapper name" {
-                    let (getter, _) = Test.Test1WithEmptyWrapperNameLenses.one_empty_wrapper_name
+                    let (getter, _) = Test.RecordWithEmptyWrapperNameLenses.one_empty_wrapper_name
                     let src = { one_empty_wrapper_name = 1 }
                     Expect.equal 1 (getter src) "getter returns the value"
                 }
             ]
+
             testList "Single-case DUs" [
                 test "Unwrapped getter" {
                     let getter = fst Test.SingleCaseDULenses._Lens

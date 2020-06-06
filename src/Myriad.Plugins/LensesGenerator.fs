@@ -71,7 +71,7 @@ module internal CreateLenses =
                                     Pattern = pattern
                                     Expr = expr }]
 
-    let private createLensForDU (parent: LongIdent) (wrapperName : Option<string>) (du : SynUnionCase) =
+    let private createLensForDU (requiresQualifiedAccess : bool) (parent: LongIdent) (wrapperName : Option<string>) (du : SynUnionCase) =
         let duRCD = du.ToRcd
         let singleCase =
             match duRCD.Type with
@@ -87,12 +87,21 @@ module internal CreateLenses =
         let pattern =
             SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateString "_Lens", [])
 
+        let matchCaseIdentParts =
+            if requiresQualifiedAccess then
+                (parent |> List.map (fun i -> i.idText)) @ [duRCD.Id.idText]
+            else
+                [duRCD.Id.idText]
+
+        // The name of the DU case, optionally preceded by the name of the DU itself, if
+        // fully qualified access is required
+        let fullCaseName = LongIdentWithDots.Create matchCaseIdentParts
+
         let lensExpression =
             let matchCase =
                 let caseVariableName = "x"
-                let matchCaseIdent = LongIdentWithDots.CreateString (duRCD.Id.idText)
                 let args = [SynPatRcd.CreateLongIdent (LongIdentWithDots.CreateString caseVariableName, [])]
-                let matchCaseIdent = SynPatRcd.CreateLongIdent(matchCaseIdent, args)
+                let matchCaseIdent = SynPatRcd.CreateLongIdent(fullCaseName, args)
 
                 let rhs = SynExpr.CreateIdent (Ident.Create caseVariableName)
                 SynMatchClause.Clause(matchCaseIdent.FromRcd, None, rhs, range.Zero, DebugPointForTarget.No)
@@ -114,7 +123,7 @@ module internal CreateLenses =
                     |> SynType.CreateLongIdent
 
                 let createCase =
-                    SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.Ident duRCD.Id, SynExpr.Ident valueIdent, r)
+                    SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.LongIdent (false, fullCaseName, None, r), SynExpr.Ident valueIdent, r)
                 let innerLambdaWithValue =
                     SynExpr.Lambda (false, true, valueArgPatterns, createCase, r)
                 let recordArg = SynSimplePat.Typed(SynSimplePat.Id (Ident.Create "_", None, false, false, false, r), duType, r)
@@ -161,7 +170,7 @@ module internal CreateLenses =
         | SynType.App (name, _, _, _, _, _, _) -> Some name
         | _ -> None
 
-    let createRecordModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn, attr: SynAttribute) =
+    let createLensModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn, attr: SynAttribute) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
 
@@ -191,7 +200,8 @@ module internal CreateLenses =
 
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(_accessibility, [singleCase], _recordRange), _range) ->
-            let lens = createLensForDU recordId wrapperName singleCase
+            let requiresQualifiedAccess = Ast.getAttribute<RequireQualifiedAccessAttribute> typeDefn |> Option.isSome
+            let lens = createLensForDU requiresQualifiedAccess recordId wrapperName singleCase
 
             let declarations = [
                 openParent
@@ -212,11 +222,10 @@ type LensesGenerator() =
                 |> List.collect (
                     fun (ns, records) ->
                     records
-                    |> List.map (fun r ->
+                    |> List.choose (fun r ->
                         let attr = Ast.getAttribute<Generator.LensesAttribute> r
                         Option.map (fun a -> r, a) attr)
-                    |> List.choose id
-                    |> List.map (CreateLenses.createRecordModule ns))
+                    |> List.map (CreateLenses.createLensModule ns))
 
             let namespaceAndDUs = Ast.extractDU ast
             let duModules =
@@ -224,11 +233,10 @@ type LensesGenerator() =
                 |> List.collect (
                     fun (ns, dus) ->
                     dus
-                    |> List.map (fun r ->
-                        let attr = Ast.getAttribute<Generator.LensesAttribute> r
-                        Option.map (fun a -> r, a) attr)
-                    |> List.choose id
-                    |> List.map (CreateLenses.createRecordModule ns))
+                    |> List.choose (fun du ->
+                        let attr = Ast.getAttribute<Generator.LensesAttribute> du
+                        Option.map (fun a -> du, a) attr)
+                    |> List.map (CreateLenses.createLensModule ns))
 
             let namespaceOrModule =
                 { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')

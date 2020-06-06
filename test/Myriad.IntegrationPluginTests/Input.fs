@@ -49,12 +49,14 @@ module ModuleWithDUs =
     [<Generator.Lenses("Example.Lens")>]
     type Module_WrappedSingleCaseDU = SingleWrapped of int
 
+    [<Generator.Lenses>]
+    [<RequireQualifiedAccess>]
+    type Module_FullyQualifiedDU = FullyQualifiedCase of int
 
-
-//[<Generator.DuCases>]
-//type Currency =
-//    | CAD
-//    | PLN
-//    | EUR
-//    | USD
-//    | Custom of string
+[<Generator.DuCases>]
+type Currency =
+    | CAD
+    | PLN
+    | EUR
+    | USD
+    | Custom of string
