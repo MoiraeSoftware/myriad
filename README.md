@@ -4,9 +4,9 @@ Myriad is a code generator, put plainly it takes an abstract syntax tree from a 
 
 Myriad can be used from either an MSBuild extension or from its CLI tool.
 
-The idea behind Myriad is to un-complicate, as far as possible, the ability to generate and do meta-programming in F#.  By meta-programming in F# I mean generating actual F# code like discriminated unions and records, not just IL output.
+The idea behind Myriad is to un-complicate, as far as possible, the ability to generate and do meta-programming in F#. By meta-programming in F# I mean generating actual F# code like discriminated unions and records, not just IL output.
 
-Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation.  Myriad aims to make it easy to extend the compiler via Myriad plugins rather than modifying or adjusting Type Providers and other F# improvement that would be a long time to be developed and released.  The idea is you write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project.  Thus the compiler can optimise and tooling can operate effectively too.
+Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins rather than modifying or adjusting Type Providers and other F# improvement that would be a long time to be developed and released.  The idea is you write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project.  Thus the compiler can optimise and tooling can operate effectively too.
 
 ![Build](https://github.com/MoiraeSoftware/myriad/workflows/Build/badge.svg)
 
@@ -46,7 +46,7 @@ type Test1 = { one: int; two: string; three: float; four: float32 }
 type Test2 = { one: Test1; two: string }
 ```
 
-An attribute is used by the plugin so that the code generator plugin knows which parts of the input AST are to be used by the plugin.  If you had several records and you only want the fields plugin to operate on `Test1` then the attrivute would be used like in the example about to only apply `Generator.Fields` to `Test1`.  Note, if you wanted a plugin that just needs the whole input AST then there is no need to provide an input.  Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code.
+An attribute is used by the plugin so that the code generator plugin knows which parts of the input AST are to be used by the plugin.  If you had several records and you only want the fields plugin to operate on `Test1` then the attribute would be used like in the example about to only apply `Generator.Fields` to `Test1`.  Note, if you wanted a plugin that just needs the whole input AST then there is no need to provide an input.  Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code.
 
 The fields plugin in this example will generate the following code at prebuild time and compile the code into your assembly:
 ```fsharp
@@ -111,7 +111,7 @@ The full fsproj is detail below:
 
 ## Plugins
 
-Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used by Myriad automatically.  Following the source for the fields plugin can be used as reference until more details about authoring plugins is created.
+Plugins for Myriad are supplied by simply including the nuget package in your project, the nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used by Myriad automatically. Following the source for the fields plugin can be used as reference until more details about authoring plugins is created.
 
 ### Using external Plugins
 
@@ -178,14 +178,14 @@ In your testing `fsproj` you would add the following to allow the plugin to be u
 
 To debug Myriad, you can use the following two command line options:
 
-* `--verbose` - write diagnostic logs out to standard out
-* `--wait-for-debugger` - causes myriad to wait for a debugger to attach to the myriad process
+* `--verbose` — write diagnostic logs out to standard out
+* `--wait-for-debugger` — causes Myriad to wait for a debugger to attach to the Myriad process
 
 These can be triggered from msbuild by the `<MyriadSdkVerboseOutput>true</MyriadSdkVerboseOutput>` and `<MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>` properties, respectively.
 
 ## Nuget
 The nuget package for Myriad can be found here:
-[Nuget package](https://www.nuget.org/packages/myriad/)
+[Nuget package](https://www.nuget.org/packages/myriad/).
 
 ## How to build and test
 
