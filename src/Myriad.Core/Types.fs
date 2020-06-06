@@ -10,4 +10,4 @@ type MyriadGeneratorAttribute(name: string) =
 
 type IMyriadGenerator =
     abstract member ValidInputExtensions: string seq
-    abstract member Generate: namespace': string * inputFilename: string -> FsAst.AstRcd.SynModuleOrNamespaceRcd
+    abstract member Generate: configGetter:(string -> (string * obj) seq) * inputFilename: string -> FsAst.AstRcd.SynModuleOrNamespaceRcd list

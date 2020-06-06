@@ -163,7 +163,8 @@ module internal CreateDUModule =
         ]
 
 
-    let createDuModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) =
+    let createDuModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (config: (string * obj) seq) =
+        printfn "CONFIG: %A" config
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
         match synTypeDefnRepr with
@@ -184,7 +185,15 @@ module internal CreateDUModule =
                 yield! iss ]
 
             let info = SynComponentInfoRcd.Create recordId
-            SynModuleDecl.CreateNestedModule(info, declarations)
+            let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
+            let namespace' =
+                config
+                |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                |> Option.defaultValue "UnknownNamespace"
+            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+                with
+                    IsRecursive = true
+                    Declarations = [mdl] }
         | _ -> failwithf "Not a record type"
 
 
@@ -194,24 +203,18 @@ type DUCasesGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(namespace', inputFile: string) =
+        member __.Generate(configGetter, inputFile: string) =
             let ast =
                 Ast.fromFilename inputFile
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
-            let namespaceAndRecords = Ast.extractDU ast
+            let namespaceAndrecords = Ast.extractDU ast
             let modules =
-                namespaceAndRecords
+                namespaceAndrecords
                 |> List.collect (fun (ns, dus) ->
                                     dus
-                                    |> List.filter (Ast.hasAttribute<Generator.DuCasesAttribute>)
-                                    |> List.map (CreateDUModule.createDuModule ns))
+                                    |> List.map (fun du -> let config = Generator.getConfigFromAttribute<Generator.DuCasesAttribute> configGetter du
+                                                           CreateDUModule.createDuModule ns du config))
 
-            let namespaceOrModule =
-                {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                    with
-                        IsRecursive = true
-                        Declarations = modules }
-
-            namespaceOrModule
+            modules

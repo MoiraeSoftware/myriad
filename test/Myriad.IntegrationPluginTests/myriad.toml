@@ -1,0 +1,8 @@
+[fields]
+namespace = "TestFields"
+
+[dus]
+namespace = "TestDus"
+
+[lens]
+namespace = "TestLens"

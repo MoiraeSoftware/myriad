@@ -29,15 +29,25 @@ module Ast =
             else
                 ident = attributeType.Name
 
+    let getAttributeConstants (attrib: SynAttribute) =
+        let (|StringConst|_|) = function
+            | SynExpr.Const(SynConst.String(text,_), _) -> Some text
+            | _ -> None
+
+        match attrib.ArgExpr with
+        | SynExpr.Paren(StringConst text,_,_,_) -> [text]
+        | SynExpr.Paren(SynExpr.Tuple(_,entries,_,_),_,_,_) -> entries |> List.choose (|StringConst|_|)
+        | StringConst text -> [text]
+        | _ -> []
 
     let hasAttributeWithConst (attributeType: Type) (attributeArg: string) (attrib: SynAttribute) =
 
-        let argumentMatched attrib attributeArg =
-            match attrib with
-            | SynExpr.Paren(SynExpr.Const(SynConst.String(text,_range), _r),_,_,_) -> text = attributeArg
-            | _ -> false
+        let argumentMatched attributeArg =
+            match getAttributeConstants attrib with
+            | [] -> false
+            | t -> t  |> List.contains attributeArg
 
-        typeNameMatches attributeType attrib && (argumentMatched attrib.ArgExpr attributeArg)
+        typeNameMatches attributeType attrib && (argumentMatched attributeArg)
 
     let (|HasAttribute|_|) (attributeName: string) (attributes: SynAttributes) =
         attributes

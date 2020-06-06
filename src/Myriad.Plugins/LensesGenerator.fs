@@ -179,12 +179,12 @@ module internal CreateLenses =
 
         let wrapperName =
             match attr.ArgExpr with
-            | SynExpr.Const (SynConst.Unit, _) -> None
-            | SynExpr.Paren(SynExpr.Const ((SynConst.String(s, _)), _), _leftParenRange, _rightParenRange, _range) -> Some s
-            | SynExpr.Paren(SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent (LongIdentLid (wrapperIdent :: _)))], _, _, _, _), _, _, _)
-                when ident.idText = "typedefof" || ident.idText = "typeof" ->
-                Some wrapperIdent.idText
-            | _ -> failwithf "Unsupported syntax of specifying the wrapper name for type %A." recordId
+            | SynExpr.Paren(SynExpr.Const _,_,_,_) -> None
+            | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig; SynExpr.Const((SynConst.String(s, _)), _)],_,_),_,_,_) -> Some s
+            | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig
+                                             SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent (LongIdentLid (wrapperIdent :: _)))], _, _, _, _)],_,_),_,_,_)
+                                             when ident.idText = "typedefof" || ident.idText = "typeof" -> Some wrapperIdent.idText
+            | expr-> failwithf "Unsupported syntax of specifying the wrapper name for type %A.\nExpr: %A" recordId expr
 
         let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText)))
         let moduleInfo = SynComponentInfoRcd.Create moduleIdent
@@ -193,20 +193,14 @@ module internal CreateLenses =
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_accessibility, recordFields, _recordRange), _range) ->
             let fieldLenses = recordFields |> List.map (createLensForRecordField recordId wrapperName)
 
-            let declarations = [
-                yield openParent
-                yield! fieldLenses
-            ]
+            let declarations = [yield openParent; yield! fieldLenses ]
 
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(_accessibility, [singleCase], _recordRange), _range) ->
             let requiresQualifiedAccess = Ast.getAttribute<RequireQualifiedAccessAttribute> typeDefn |> Option.isSome
             let lens = createLensForDU requiresQualifiedAccess recordId wrapperName singleCase
 
-            let declarations = [
-                openParent
-                lens
-            ]
+            let declarations = [ openParent; lens ]
 
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
         | _ -> failwithf "%A is not a record type." recordId
@@ -216,7 +210,7 @@ type LensesGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(namespace', inputFile: string) =
+        member __.Generate(configGetter, inputFile: string) =
             let ast =
                 Ast.fromFilename inputFile
                 |> Async.RunSynchronously
@@ -246,9 +240,9 @@ type LensesGenerator() =
                     |> List.map (CreateLenses.createLensModule ns))
 
             let namespaceOrModule =
-                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong "getFromConfig")
                     with
                         IsRecursive = true
                         Declarations = recordsModules @ duModules }
 
-            namespaceOrModule
+            [namespaceOrModule]
