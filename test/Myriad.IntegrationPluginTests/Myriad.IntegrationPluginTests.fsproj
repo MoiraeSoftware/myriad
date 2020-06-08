@@ -9,6 +9,7 @@
 <!--     <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Lenses.fs" />
     <Compile Include="Input.fs" />
     <Compile Include="Generated.fs">
       <MyriadFile>Input.fs</MyriadFile>

@@ -244,5 +244,4 @@ type LensesGenerator() =
                         IsRecursive = true
                         Declarations = recordsModules @ duModules }
 
-            // todo brinchuk support single-case DU
             namespaceOrModule

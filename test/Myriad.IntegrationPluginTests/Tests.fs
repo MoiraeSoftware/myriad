@@ -2,6 +2,7 @@ module Tests
 
 open Expecto
 open Example
+open Test
 
 let tests =
     testList "basic tests" [
@@ -102,5 +103,25 @@ let tests =
                     Expect.equal actualValue 2 "getter returns the value"
                 }
             ]
+
+            test "Lens composition" {
+                let houseNumberLens = PersonLenses.Address << AddressLenses.HouseNumber
+                let person = {
+                    Name = "Sherlock"
+                    Address = {
+                        Street = "Baker st."
+                        HouseNumber = 221
+                    }
+                }
+
+                let houseNumber = Lens.get houseNumberLens person
+
+                Expect.equal houseNumber 221 "Gets correct house number"
+
+                let updatedPerson = person |> Lens.set houseNumberLens 1
+                let updatedHouseNumber = Lens.get houseNumberLens updatedPerson
+
+                Expect.equal updatedHouseNumber 1 "Gets updated value"
+            }
         ]
     ]

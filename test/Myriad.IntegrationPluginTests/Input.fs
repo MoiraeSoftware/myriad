@@ -2,8 +2,6 @@
 
 open Myriad.Plugins
 
-type Lens<'r, 't> = Lens of (('r -> 't) * ('r -> 't -> 'r))
-
 [<Generator.Fields>]
 [<Generator.Lenses>]
 type Test1 =
@@ -52,6 +50,18 @@ module ModuleWithDUs =
     [<Generator.Lenses>]
     [<RequireQualifiedAccess>]
     type Module_FullyQualifiedDU = FullyQualifiedCase of int
+
+[<Generator.Lenses("Lens")>]
+type Address = {
+    Street : string
+    HouseNumber : int
+}
+
+[<Generator.Lenses("Lens")>]
+type Person = {
+    Name : string
+    Address : Address
+}
 
 [<Generator.DuCases>]
 type Currency =
