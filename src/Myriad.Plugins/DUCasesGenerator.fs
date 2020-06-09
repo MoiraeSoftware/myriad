@@ -1,6 +1,5 @@
 namespace Myriad.Plugins
 
-open System
 open FSharp.Compiler.SyntaxTree
 open FsAst
 open Myriad.Core
@@ -28,7 +27,7 @@ module internal CreateDUModule =
                 |> List.map (fun c ->
                     let case = c.ToRcd
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let args = if case.HasFields then [SynPatRcd.CreateWild ] else []
+                    let args = if case.HasFields then [SynPatRcd.CreateWild] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
                     let rhs =
                        SynExpr.Const(SynConst.CreateString case.Id.idText, range.Zero)
@@ -109,7 +108,7 @@ module internal CreateDUModule =
                 |> List.mapi (fun i c ->
                     let case = c.ToRcd
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let args = if case.HasFields then [SynPatRcd.CreateWild ] else []
+                    let args = if case.HasFields then [SynPatRcd.CreateWild] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
                     let rhs =
                        SynExpr.Const(SynConst.Int32 i, range.Zero)
@@ -143,7 +142,7 @@ module internal CreateDUModule =
             let expr =
                 let matchCase =
                     let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let args = if case.HasFields then [SynPatRcd.CreateWild ] else []
+                    let args = if case.HasFields then [SynPatRcd.CreateWild] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
 
                     let rhs = SynExpr.Const (SynConst.Bool true, range.Zero)
@@ -195,9 +194,9 @@ type DUCasesGenerator() =
 
     interface IMyriadGenerator with
         member __.Generate(namespace', ast: ParsedInput) =
-            let namespaceAndrecords = Ast.extractDU ast
+            let namespaceAndRecords = Ast.extractDU ast
             let modules =
-                namespaceAndrecords
+                namespaceAndRecords
                 |> List.collect (fun (ns, dus) ->
                                     dus
                                     |> List.filter (Ast.hasAttribute<Generator.DuCasesAttribute>)

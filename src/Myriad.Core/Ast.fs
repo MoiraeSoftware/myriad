@@ -14,7 +14,6 @@ module Ast =
         let checker = FSharpChecker.Create()
         CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString s, parsingOpts, checker)
 
-
     let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
         match attrib.TypeName with
         | LongIdentWithDots(ident, _range) ->

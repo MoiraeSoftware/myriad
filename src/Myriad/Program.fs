@@ -77,7 +77,25 @@ module Main =
                 if verbose then
                     printfn "Executing: %s..." genType.FullName
 
-                let result = instance.Generate(namespace', parsedInput)
+                let result =
+                    try
+                        instance.Generate(namespace', parsedInput)
+                    with
+                    | exc ->
+                        // emit the module with exception text
+                        let info = SynComponentInfoRcd.Create (Ident.CreateLong (sprintf "%sFailure" genType.Name))
+                        let pattern =
+                            // intentionally generating invalid identifier name to fail the compilation
+                            let name = LongIdentWithDots.CreateString "!CompilationError"
+                            SynPatRcd.CreateLongIdent(name, [])
+                        let letBinding =
+                            { SynBindingRcd.Let with
+                                  Pattern = pattern
+                                  Expr = SynExpr.CreateConstString exc.Message }
+                        let module' = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
+                        let namespace' = SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+                        { namespace' with IsRecursive = true; Declarations = [module'] }
+
 
                 if verbose then
                     printfn "Result: '%A'" result

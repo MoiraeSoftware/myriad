@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attribute.fs" />
+    <Compile Include="LensesGenerator.fs" />
     <Compile Include="FieldsGenerator.fs" />
     <Compile Include="DUCasesGenerator.fs" />
   </ItemGroup>
