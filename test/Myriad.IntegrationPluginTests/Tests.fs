@@ -75,13 +75,13 @@ let tests =
 
             testList "Single-case DUs" [
                 test "Unwrapped getter" {
-                    let getter = fst Test.SingleCaseDULenses._Lens
+                    let getter = fst Test.SingleCaseDULenses.Lens'
                     let t = Single 1
 
                     Expect.equal (getter t) 1 "getter returns the value"
                 }
                 test "Unwrapped setter" {
-                    let setter = snd Test.SingleCaseDULenses._Lens
+                    let setter = snd Test.SingleCaseDULenses.Lens'
                     let t = Single 1
 
                     let updated = setter t 2
@@ -89,13 +89,13 @@ let tests =
                     Expect.equal actualValue 2 "getter returns the value"
                 }
                 test "Wrapped getter" {
-                    let (Lens (getter, _)) = Test.WrappedSingleCaseDULenses._Lens
+                    let (Lens (getter, _)) = Test.WrappedSingleCaseDULenses.Lens'
                     let t = SingleWrapped 1
 
                     Expect.equal (getter t) 1 "getter returns the value"
                 }
                 test "Wrapped setter" {
-                    let (Lens (_, setter)) = Test.WrappedSingleCaseDULenses._Lens
+                    let (Lens (_, setter)) = Test.WrappedSingleCaseDULenses.Lens'
                     let t = SingleWrapped 1
 
                     let updated = setter t 2
