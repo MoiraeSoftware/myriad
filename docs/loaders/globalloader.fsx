@@ -15,7 +15,7 @@ let config = {
       #if WATCH
         "http://localhost:8080/"
       #else
-        "http://MoiraeSoftware.github.io/myriad/"
+        "https://moiraesoftware.github.io/myriad/"
       #endif
 }
 
