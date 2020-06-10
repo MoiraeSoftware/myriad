@@ -18,8 +18,6 @@ jobs:
         dotnet-version: 3.1.201
     - name: Restore tools
       run: dotnet tool restore
-    - name: Restore dependencies
-      run: dotnet restore
     - name: Run Fornax
       run: dotnet fake build -t Docs
     - name: Deploy
