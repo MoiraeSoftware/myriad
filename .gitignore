@@ -375,3 +375,6 @@ MigrationBackup/
 .ionide/
 /src/ExampleWithPlugin/Generated.fs
 TestOutput.xml
+
+_public
+temp
