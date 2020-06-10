@@ -80,6 +80,24 @@ Target.create "Build" (fun _ ->
         "src/Myriad.sln"
 )
 
+//Build release version that can be used as an input for documentation genration
+Target.create "BuildForDocs" (fun _ ->
+    //Build Myriad first to build Myriad engine, than build whole solution (including tests)
+    DotNet.build
+        (fun c -> {
+            c with
+                OutputPath = Some "./temp/"
+                Configuration =  DotNet.BuildConfiguration.Release})
+        "src/Myriad/Myriad.fsproj"
+
+    DotNet.build
+        (fun c -> {
+            c with
+                OutputPath = Some "./temp/"
+                Configuration =  DotNet.BuildConfiguration.Release})
+        "src/Myriad.sln"
+)
+
 Target.create "Pack" (fun _ ->
     let properties = [
         ("Version", latestEntry.NuGetVersion);
@@ -124,12 +142,23 @@ Target.create "Test" (fun _ ->
     exec "dotnet" cmd  "."
 )
 
+Target.create "Docs" (fun _ ->
+  Shell.cleanDirs ["docs\\_public";]
+  exec "dotnet"  @"fornax build" "docs"
+)
+
+
 Target.create "Default" DoNothing
 
 "Clean"
   ==> "Build"
   ==> "Test"
   ==> "Default"
+
+"Clean"
+  ==> "Build"
+  ==> "BuildForDocs"
+  ==> "Docs"
 
 "Build"
   ==> "Pack"

@@ -99,7 +99,7 @@ To create lenses for your type, first annotate the type for which you want lense
 type Record =
     { one: int
       two: string }
-``` 
+```
 
 Myriad will generate the following code:
 
@@ -203,7 +203,7 @@ Often an additional props file (In this smaple the file would be `Generator.InTe
 </Project>
 ```
 
-Notice the Include path is pointing locally rather than within the packaged nuget folder structure.  
+Notice the Include path is pointing locally rather than within the packaged nuget folder structure.
 
 In your testing `fsproj` you would add the following to allow the plugin to be used locally rather that having to consume a nuget package:
 
@@ -230,6 +230,25 @@ The nuget package for Myriad can be found here:
 1. Make sure you have .Net Core SDK installed - check required version in [global.json](global.json)
 2. Run `dotnet tool restore`
 3. Run `dotnet fake build`
+
+## Documentation
+
+### How to generate docs
+
+1. Make sure you have .Net Core SDK installed - check required version in [global.json](global.json)
+2. Run `dotnet tool restore`
+3. Run `dotnet fake build -t Generate docs`
+
+### Working with docs in Watch Mode
+
+1. Make sure you've generated docs as described above
+2. `cd docs`
+3. `dotnet fornax watch` - this will start local web server hosting documentation regenerating changes on any file edit.
+
+### Publishing docs
+
+1. Docs will be published automatically by GitHub Action into `gh-pages` branch on any pushed git tag
+
 
 ## How to release new version
 
