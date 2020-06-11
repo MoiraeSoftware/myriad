@@ -12,11 +12,11 @@ open Myriad.Plugins
 
 [<Generator.DuCases>]
 type Currency =
-    | CAD
-    | PLN
-    | EUR
-    | USD
-    | Custom of string
+| CAD
+| PLN
+| EUR
+| USD
+| Custom of string
 
 ```
 
