@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1]
+- Added lens generation
+
 ## [0.2.8]
 ### Changed
 - Updated to latest version of FsAst 0.5.0
