@@ -123,8 +123,8 @@ module Main =
                     ParsedImplFileInputRcd.CreateFs(outputFile)
                         .AddModules generated)
 
-
-            let formattedCode = formatAst parseTree |> Async.RunSynchronously
+            let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true } 
+            let formattedCode = CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
 
             let code =
                 [   "//------------------------------------------------------------------------------"
