@@ -53,7 +53,7 @@ module Ast =
                     | SynModuleDecl.NestedModule(ComponentInfo(attribs, typeParams, constraints, longId, xmlDoc, preferPostfix, accessibility, range), isRec, decls, _, _range) ->
                         let combined = longId |> List.append ns
                         yield! (extractTypes decls combined)
-                    | other -> printfn "other: %A" other
+                    | other -> ()
             ]
 
         [   match ast with
