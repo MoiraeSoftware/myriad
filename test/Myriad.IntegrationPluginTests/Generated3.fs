@@ -29,6 +29,11 @@ module TestDU =
             | TestDU.DUcase1 _ -> TestDUKind.DUcase1
             | TestDU.DUcase2 _ -> TestDUKind.DUcase2
             | TestDU.DUcase3 -> TestDUKind.DUcase3
+
+    type TestDURecord =
+        { DUcase0: int
+          DUcase1: int
+          DUcase2: string * int }
 namespace Test3
 
 module example1 =

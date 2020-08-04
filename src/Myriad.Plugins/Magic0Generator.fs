@@ -162,6 +162,39 @@ module internal Magic0Module =
             SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
         ]
 
+    let createUnionRec (recordId:LongIdent) (cases:SynUnionCase list)=
+        let fields=seq{
+                for x in cases do
+                    let case=x.ToRcd
+                    if case.HasFields then
+                        match case.Type with
+                        | UnionCaseFields(cs) ->
+                                    printfn "==================================================="
+                                    printfn "%A=%A" cs.Length cs
+                                    if 1=cs.Length then
+                                       let field= cs.[0].ToRcd
+                                       let field={field with Id=Some case.Id}
+                                       yield field
+                                    if 1<cs.Length then
+                                        let flds=[for i in 0..cs.Length-2 -> (false, cs.[i].ToRcd.Type)]
+                                        let flds=flds@[(true, cs.[cs.Length-1].ToRcd.Type)]
+                                        let field= cs.[0].ToRcd
+                                        let field={field with Id=Some case.Id; Type = SynType.Tuple(false,flds, range0)}
+                                        yield field
+                    else
+                        ()
+            }
+
+        printfn "%A" fields
+
+        let fields=Seq.toList fields
+
+        let rc=SynTypeDefnSimpleReprRecordRcd.Create fields
+        let lid=LongIdentWithDots.CreateFromLongIdent(recordId).AsString + "Record"
+        printfn "%A" lid
+        let ci=SynComponentInfoRcd.Create(Ident.CreateLong lid)
+        SynModuleDecl.CreateSimpleType(ci,SynTypeDefnSimpleReprRcd.Record rc)
+        
     let createKindFun (recordId:LongIdent) (cases:SynUnionCase list)=
         let clauses= cases|>List.map (fun x ->
             let case=x.ToRcd
@@ -217,6 +250,7 @@ module internal Magic0Module =
 
             let kindDU = createKindDU recordId cases
             let kindFun= createKindFun recordId cases
+            let UnionRec=createUnionRec recordId cases
             // let toString = createToString recordId cases
             // let fromString = createFromString recordId cases
             // let toTag = createToTag recordId cases
@@ -226,6 +260,7 @@ module internal Magic0Module =
                 openParent
                 kindDU
                 kindFun
+                UnionRec
                 ]
 
             let info = SynComponentInfoRcd.Create recordId
