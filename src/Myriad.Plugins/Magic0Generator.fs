@@ -216,7 +216,28 @@ module internal Magic0Module =
 
             let patargs=SynPatRcd.CreateLongIdent(LongIdentWithDots.Create ["this";"Create"],args)
             
-            let mexp=SynExpr.CreateConstString "2"
+            let mutable clauses:SynMatchClause list=[]
+            let lid=LongIdentWithDots.CreateFromLongIdent(recordId).AsString + "Kind"
+            let lid=Ident.CreateLong lid
+            if x.HasFields then
+                for y in item.Value do
+                    let pat= SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(lid@[y.Id]), [])
+
+                    let exp=SynExpr.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(recordId@[y.Id]))
+                    let clause=SynMatchClause.Clause (pat.FromRcd, None, exp, range0, DebugPointForTarget.No)
+                    clauses <- clauses @ [clause]
+            else
+                for y in item.Value do
+                    let pat= SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(lid@[y.Id]), [])
+
+                    let exp=SynExpr.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(recordId@[y.Id]))
+                    let clause=SynMatchClause.Clause (pat.FromRcd, None, exp, range0, DebugPointForTarget.No)
+                    clauses <- clauses @ [clause]            
+
+
+            // let mexp=SynExpr.CreateConstString "2"
+            let mexp=SynExpr.CreateMatch(SynExpr.CreateIdent(Ident("this",range0)),clauses)
+            
             let bind=SynBindingRcd.Null
             let bind={bind with Expr=mexp; Pattern=patargs;}
 
@@ -338,7 +359,9 @@ module internal Magic0Module =
                 createExt
                 ]
 
-            let info = SynComponentInfoRcd.Create recordId
+            let lid=LongIdentWithDots.CreateFromLongIdent(recordId).AsString + "Module"
+            let lid=Ident.CreateLong lid
+            let info = SynComponentInfoRcd.Create lid
             SynModuleDecl.CreateNestedModule(info, declarations)
         | _ -> failwithf "Not a record type"
 

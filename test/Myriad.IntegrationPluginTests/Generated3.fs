@@ -13,7 +13,7 @@ namespace rec Test3
 
 namespace rec Test3
 
-module TestDU =
+module TestDUModule =
     open Example3
 
     type TestDUKind =
@@ -36,9 +36,18 @@ module TestDU =
           DUcase2: string * int }
 
     type TestDUKind with
-        member this.Create() = "2"
-        member this.Create((x0: int)) = "2"
-        member this.Create((x0: string), (x1: int)) = "2"
+        member this.Create() =
+            match this with
+            | TestDUKind.DUcase3 -> TestDU.DUcase3
+
+        member this.Create((x0: int)) =
+            match this with
+            | TestDUKind.DUcase0 -> TestDU.DUcase0
+            | TestDUKind.DUcase1 -> TestDU.DUcase1
+
+        member this.Create((x0: string), (x1: int)) =
+            match this with
+            | TestDUKind.DUcase2 -> TestDU.DUcase2
 namespace Test3
 
 module example1 =
