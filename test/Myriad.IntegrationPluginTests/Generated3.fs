@@ -34,6 +34,11 @@ module TestDU =
         { DUcase0: int
           DUcase1: int
           DUcase2: string * int }
+
+    type TestDUKind with
+        member this.Create() = "2"
+        member this.Create((x0: int)) = "2"
+        member this.Create((x0: string), (x1: int)) = "2"
 namespace Test3
 
 module example1 =

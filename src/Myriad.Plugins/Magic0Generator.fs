@@ -1,5 +1,7 @@
 namespace Myriad.Plugins
 
+open System.Text
+
 open FSharp.Compiler.SyntaxTree
 open FsAst
 open Myriad.Core
@@ -162,6 +164,80 @@ module internal Magic0Module =
             SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
         ]
 
+
+    let createCreateExt (recordId:LongIdent) (cases:SynUnionCase list)=
+        let mutable map0=new Map<string,SynUnionCaseRcd list>(Seq.empty)
+        for case in cases do
+            let x=case.ToRcd
+            let sb=new StringBuilder()
+            match x.Type with
+                | UnionCaseFields(cs) ->
+                        for c in cs do
+                            match c with
+                                | SynField.Field(attr, isStatic,idOpt, field, IsMutable,xmldoc, acces,range) ->
+                                            sb.AppendLine(field.ToString()) |> ignore
+                                            ()
+                            ()                    
+                        ()
+            let key=sb.ToString()
+            if Map.containsKey key map0 then
+                let v=Map.find key map0
+                map0 <- Map.add key (v @ [x]) map0
+            else
+                map0 <- Map.add key [x] map0
+            ()
+
+        let mutable mbrs:SynMemberDefns=[]
+        for item in map0 do
+            printfn "@@@@%A" item.Value
+            let x=item.Value.Head
+
+            let n={SynPatConstRcd.Const=SynConst.Unit;Range=range0}
+            let mutable args=[SynPatRcd.CreateParen n.FromRcd.ToRcd]
+
+            if x.HasFields then
+                // let ident = Ident("x", range.Zero)
+                // let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
+                // let arg0 = SynPatRcd.CreateTyped(name, SynType.String()) |> SynPatRcd.CreateParen
+                // let arg1 = SynPatRcd.CreateTyped(name, SynType.String()) |> SynPatRcd.CreateParen
+                args <-[]
+                let mutable i = -1
+                match x.Type with
+                    | UnionCaseFields(cs) ->
+                        for c in cs do
+                            match c with
+                                | SynField.Field(attr, isStatic,idOpt, field, IsMutable,xmldoc, acces,range) ->
+                                        i <- i + 1
+                                        let ident = Ident(sprintf "x%i" i, range0)
+                                        let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
+                                        let arg = SynPatRcd.CreateTyped(name, field) |> SynPatRcd.CreateParen
+                                        args <- args @ [arg]
+                args <- [{SynPatTupleRcd.Patterns=args; Range=range0}.FromRcd.ToRcd |> SynPatRcd.CreateParen]
+
+            let patargs=SynPatRcd.CreateLongIdent(LongIdentWithDots.Create ["this";"Create"],args)
+            
+            let mexp=SynExpr.CreateConstString "2"
+            let bind=SynBindingRcd.Null
+            let bind={bind with Expr=mexp; Pattern=patargs;}
+
+            let mbr=SynMemberDefn.CreateMember bind
+            mbrs <- mbrs @ [mbr]
+
+        ()
+
+
+
+
+        let lid=LongIdentWithDots.CreateFromLongIdent(recordId).AsString + "Kind"
+        let lid=Ident.CreateLong lid
+        let ci=SynComponentInfoRcd.Create(lid)
+        let obm=SynTypeDefnReprObjectModelRcd.Create []
+        let obm={obm with Kind=SynTypeDefnKind.TyconAugmentation}
+        let typ=TypeDefn(ci.FromRcd,obm.FromRcd,mbrs,range0)
+        SynModuleDecl.Types([typ],range0)
+
+
+
     let createUnionRec (recordId:LongIdent) (cases:SynUnionCase list)=
         let fields=seq{
                 for x in cases do
@@ -251,16 +327,15 @@ module internal Magic0Module =
             let kindDU = createKindDU recordId cases
             let kindFun= createKindFun recordId cases
             let UnionRec=createUnionRec recordId cases
-            // let toString = createToString recordId cases
-            // let fromString = createFromString recordId cases
-            // let toTag = createToTag recordId cases
-            // let iss = createIsCase recordId cases
+
+            let createExt=createCreateExt recordId cases
 
             let declarations = [
                 openParent
                 kindDU
                 kindFun
                 UnionRec
+                createExt
                 ]
 
             let info = SynComponentInfoRcd.Create recordId
