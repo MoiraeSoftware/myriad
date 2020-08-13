@@ -7,5 +7,6 @@ open Myriad.Plugins
 type TestDU =
     | DUcase0 of int
     | DUcase1 of int
-    | DUcase2 of string*int
-    | DUcase3
+    | DUcase2 of string
+    | DUcase3 of string*int
+    | DUcase4

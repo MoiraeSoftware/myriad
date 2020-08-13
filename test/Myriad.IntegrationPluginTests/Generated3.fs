@@ -21,6 +21,7 @@ module TestDUModule =
         | DUcase1
         | DUcase2
         | DUcase3
+        | DUcase4
 
     type TestDU with
         member this.kind =
@@ -28,17 +29,19 @@ module TestDUModule =
             | TestDU.DUcase0 _ -> TestDUKind.DUcase0
             | TestDU.DUcase1 _ -> TestDUKind.DUcase1
             | TestDU.DUcase2 _ -> TestDUKind.DUcase2
-            | TestDU.DUcase3 -> TestDUKind.DUcase3
+            | TestDU.DUcase3 _ -> TestDUKind.DUcase3
+            | TestDU.DUcase4 -> TestDUKind.DUcase4
 
     type TestDURecord =
         { DUcase0: int
           DUcase1: int
-          DUcase2: string * int }
+          DUcase2: string
+          DUcase3: string * int }
 
     type TestDUKind with
         member this.Create() =
             match this with
-            | TestDUKind.DUcase3 -> Some TestDU.DUcase3
+            | TestDUKind.DUcase4 -> Some TestDU.DUcase4
             | _ -> None
 
         member this.Create((x0: int)) =
@@ -47,9 +50,14 @@ module TestDUModule =
             | TestDUKind.DUcase1 -> Some(TestDU.DUcase1(x0))
             | _ -> None
 
+        member this.Create((x0: string)) =
+            match this with
+            | TestDUKind.DUcase2 -> Some(TestDU.DUcase2(x0))
+            | _ -> None
+
         member this.Create((x0: string), (x1: int)) =
             match this with
-            | TestDUKind.DUcase2 -> Some(TestDU.DUcase2(x0, x1))
+            | TestDUKind.DUcase3 -> Some(TestDU.DUcase3(x0, x1))
             | _ -> None
 namespace Test3
 
