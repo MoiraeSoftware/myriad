@@ -195,13 +195,13 @@ module internal Magic0Module =
             let n={SynPatConstRcd.Const=SynConst.Unit;Range=range0}
             let mutable args=[SynPatRcd.CreateParen n.FromRcd.ToRcd]
 
+            let mutable i = -1
             if x.HasFields then
                 // let ident = Ident("x", range.Zero)
                 // let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
                 // let arg0 = SynPatRcd.CreateTyped(name, SynType.String()) |> SynPatRcd.CreateParen
                 // let arg1 = SynPatRcd.CreateTyped(name, SynType.String()) |> SynPatRcd.CreateParen
-                args <-[]
-                let mutable i = -1
+                args <-[]                
                 match x.Type with
                     | UnionCaseFields(cs) ->
                         for c in cs do
@@ -223,7 +223,13 @@ module internal Magic0Module =
                 for y in item.Value do
                     let pat= SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(lid@[y.Id]), [])
 
-                    let exp=SynExpr.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(recordId@[y.Id]))
+                    let exp=[for ii in 0..i -> SynExpr.CreateIdentString (sprintf "x%i" ii)]
+                    let exp=SynExpr.CreateTuple exp |> SynExpr.CreateParen
+                    let exp0=SynExpr.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(recordId@[y.Id]))
+
+                    let exp=SynExpr.CreateApp(exp0,exp) |> SynExpr.CreateParen
+                    let exp=SynExpr.CreateApp( SynExpr.CreateIdentString "Some" ,exp)
+
                     let clause=SynMatchClause.Clause (pat.FromRcd, None, exp, range0, DebugPointForTarget.No)
                     clauses <- clauses @ [clause]
             else
@@ -231,9 +237,13 @@ module internal Magic0Module =
                     let pat= SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(lid@[y.Id]), [])
 
                     let exp=SynExpr.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(recordId@[y.Id]))
+                    let exp=SynExpr.CreateApp( SynExpr.CreateIdentString "Some" ,exp)
+                    
                     let clause=SynMatchClause.Clause (pat.FromRcd, None, exp, range0, DebugPointForTarget.No)
                     clauses <- clauses @ [clause]            
 
+            let clause=SynMatchClause.Clause (SynPatRcd.CreateWild.FromRcd, None, SynExpr.CreateIdentString "None", range0, DebugPointForTarget.No)
+            clauses <- clauses @ [clause]
 
             // let mexp=SynExpr.CreateConstString "2"
             let mexp=SynExpr.CreateMatch(SynExpr.CreateIdent(Ident("this",range0)),clauses)

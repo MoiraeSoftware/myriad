@@ -38,16 +38,19 @@ module TestDUModule =
     type TestDUKind with
         member this.Create() =
             match this with
-            | TestDUKind.DUcase3 -> TestDU.DUcase3
+            | TestDUKind.DUcase3 -> Some TestDU.DUcase3
+            | _ -> None
 
         member this.Create((x0: int)) =
             match this with
-            | TestDUKind.DUcase0 -> TestDU.DUcase0
-            | TestDUKind.DUcase1 -> TestDU.DUcase1
+            | TestDUKind.DUcase0 -> Some(TestDU.DUcase0(x0))
+            | TestDUKind.DUcase1 -> Some(TestDU.DUcase1(x0))
+            | _ -> None
 
         member this.Create((x0: string), (x1: int)) =
             match this with
-            | TestDUKind.DUcase2 -> TestDU.DUcase2
+            | TestDUKind.DUcase2 -> Some(TestDU.DUcase2(x0, x1))
+            | _ -> None
 namespace Test3
 
 module example1 =
