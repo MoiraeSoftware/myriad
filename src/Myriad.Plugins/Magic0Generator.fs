@@ -9,162 +9,6 @@ open Myriad.Core
 module internal Magic0Module =
     open FSharp.Compiler.Range
 
-    let createToString (parent: LongIdent) (cases: SynUnionCase list) =
-        let varIdent = LongIdentWithDots.CreateString "toString"
-        let inputIdent = "x"
-
-        let duType =
-            LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
-            |> SynType.CreateLongIdent
-
-        let pattern =
-            let ident = Ident(inputIdent, range.Zero)
-            let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
-            let args = SynPatRcd.CreateTyped(name, duType) |> SynPatRcd.CreateParen
-            SynPatRcd.CreateLongIdent(varIdent, [args])
-
-        let expr =
-            let matches =
-                cases
-                |> List.map (fun c ->
-                    let case = c.ToRcd
-                    let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let args = if case.HasFields then [SynPatRcd.CreateWild] else []
-                    let p = SynPatRcd.CreateLongIdent(indent, args)
-                    let rhs =
-                       SynExpr.Const(SynConst.CreateString case.Id.idText, range.Zero)
-                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, DebugPointForTarget.Yes )
-                )
-            let matchOn =
-                let ident = LongIdentWithDots.CreateString inputIdent
-                SynExpr.CreateLongIdent(false, ident, None)
-
-            SynExpr.Match(DebugPointForBinding.NoDebugPointAtInvisibleBinding , matchOn, matches, range.Zero)
-
-        let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
-        SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
-
-    let createFromString (parent: LongIdent) (cases: SynUnionCase list) =
-        let varIdent = LongIdentWithDots.CreateString "fromString"
-        let inputIdent = "x"
-
-        let duType =
-            LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
-            |> SynType.CreateLongIdent
-
-        let inputType =
-            LongIdentWithDots.CreateString "string"
-            |> SynType.CreateLongIdent
-
-        let pattern =
-            let ident = Ident(inputIdent, range.Zero)
-            let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
-            let args = SynPatRcd.CreateTyped(name, inputType) |> SynPatRcd.CreateParen
-            SynPatRcd.CreateLongIdent(varIdent, [args])
-
-        let expr =
-            let matches =
-                cases
-                //Only provide `fromString` for cases with no fields
-                |> List.filter (fun c -> not (c.ToRcd.HasFields))
-                |> List.map (fun c ->
-                    let case = c.ToRcd
-                    let rcd = {SynPatConstRcd.Const = SynConst.CreateString case.Id.idText; Range = range.Zero }
-                    let p = SynPatRcd.Const (rcd)
-                    let rhs =
-                        let f = SynExpr.Ident (Ident("Some", range.Zero))
-                        let x = SynExpr.Ident (Ident(case.Id.idText, range.Zero))
-                        SynExpr.App(ExprAtomicFlag.NonAtomic, false, f, x, range.Zero)
-                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, DebugPointForTarget.No )
-                )
-            let wildCase =
-                let rhs = SynExpr.Ident (Ident("None", range.Zero))
-                SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, DebugPointForTarget.No)
-
-            let matchOn =
-                let ident = LongIdentWithDots.CreateString inputIdent
-                SynExpr.CreateLongIdent(false, ident, None)
-
-            SynExpr.Match(DebugPointForBinding.NoDebugPointAtLetBinding, matchOn, [yield! matches; wildCase], range.Zero)
-
-        let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
-        SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
-
-    let createToTag (parent: LongIdent) (cases: SynUnionCase list) =
-        let varIdent = LongIdentWithDots.CreateString "toTag"
-        let inputIdent = "x"
-
-        let duType =
-            LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
-            |> SynType.CreateLongIdent
-
-        let pattern =
-            let ident = Ident(inputIdent, range.Zero)
-            let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
-            let args = SynPatRcd.CreateTyped(name, duType) |> SynPatRcd.CreateParen
-            SynPatRcd.CreateLongIdent(varIdent, [args])
-
-        let expr =
-            let matches =
-                cases
-                |> List.mapi (fun i c ->
-                    let case = c.ToRcd
-                    let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let args = if case.HasFields then [SynPatRcd.CreateWild] else []
-                    let p = SynPatRcd.CreateLongIdent(indent, args)
-                    let rhs =
-                       SynExpr.Const(SynConst.Int32 i, range.Zero)
-                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, DebugPointForTarget.No )
-                )
-            let matchOn =
-                let ident = LongIdentWithDots.CreateString inputIdent
-                SynExpr.CreateLongIdent(false, ident, None)
-
-            SynExpr.Match(DebugPointForBinding.NoDebugPointAtLetBinding , matchOn, matches, range.Zero)
-
-        let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
-        SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
-
-    let createIsCase (parent: LongIdent) (cases: SynUnionCase list) =
-        [ for c in cases do
-            let case = c.ToRcd
-            let varIdent = LongIdentWithDots.CreateString (sprintf "is%s" case.Id.idText)
-            let inputIdent = "x"
-
-            let duType =
-                LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
-                |> SynType.CreateLongIdent
-
-            let pattern =
-                let ident = Ident(inputIdent, range.Zero)
-                let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
-                let args = SynPatRcd.CreateTyped(name, duType) |> SynPatRcd.CreateParen
-                SynPatRcd.CreateLongIdent(varIdent, [args])
-
-            let expr =
-                let matchCase =
-                    let indent = LongIdentWithDots.CreateString (case.Id.idText)
-                    let args = if case.HasFields then [SynPatRcd.CreateWild] else []
-                    let p = SynPatRcd.CreateLongIdent(indent, args)
-
-                    let rhs = SynExpr.Const (SynConst.Bool true, range.Zero)
-                    SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, DebugPointForTarget.No)
-
-                let wildCase =
-                    let rhs = SynExpr.Const (SynConst.Bool false, range.Zero)
-                    SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, DebugPointForTarget.No)
-
-                let matchOn =
-                    let ident = LongIdentWithDots.CreateString inputIdent
-                    SynExpr.CreateLongIdent(false, ident, None)
-
-                SynExpr.Match(NoDebugPointAtLetBinding, matchOn, [matchCase; wildCase], range.Zero)
-
-            let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
-            SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
-        ]
-
-
     let createCreateExt (recordId:LongIdent) (cases:SynUnionCase list)=
         let mutable map0=new Map<string,SynUnionCaseRcd list>(Seq.empty)
         for case in cases do
@@ -189,13 +33,13 @@ module internal Magic0Module =
 
         let mutable mbrs:SynMemberDefns=[]
         for item in map0 do
-            printfn "@@@@%A" item.Value
+            // printfn "@@@@%A" item.Value
             let x=item.Value.Head
 
             let n={SynPatConstRcd.Const=SynConst.Unit;Range=range0}
             let mutable args=[SynPatRcd.CreateParen n.FromRcd.ToRcd]
 
-            let mutable i = -1
+            let mutable argi = -1
             if x.HasFields then
                 // let ident = Ident("x", range.Zero)
                 // let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
@@ -207,8 +51,8 @@ module internal Magic0Module =
                         for c in cs do
                             match c with
                                 | SynField.Field(attr, isStatic,idOpt, field, IsMutable,xmldoc, acces,range) ->
-                                        i <- i + 1
-                                        let ident = Ident(sprintf "x%i" i, range0)
+                                        argi <- argi + 1
+                                        let ident = Ident(sprintf "x%i" argi, range0)
                                         let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
                                         let arg = SynPatRcd.CreateTyped(name, field) |> SynPatRcd.CreateParen
                                         args <- args @ [arg]
@@ -223,7 +67,7 @@ module internal Magic0Module =
                 for y in item.Value do
                     let pat= SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(lid@[y.Id]), [])
 
-                    let exp=[for ii in 0..i -> SynExpr.CreateIdentString (sprintf "x%i" ii)]
+                    let exp=[for i in 0..argi -> SynExpr.CreateIdentString (sprintf "x%i" i)]
                     let exp=SynExpr.CreateTuple exp |> SynExpr.CreateParen
                     let exp0=SynExpr.CreateLongIdent(LongIdentWithDots.CreateFromLongIdent(recordId@[y.Id]))
 
@@ -255,9 +99,6 @@ module internal Magic0Module =
             mbrs <- mbrs @ [mbr]
 
         ()
-
-
-
 
         let lid=LongIdentWithDots.CreateFromLongIdent(recordId).AsString + "Kind"
         let lid=Ident.CreateLong lid
@@ -292,13 +133,13 @@ module internal Magic0Module =
                         ()
             }
 
-        printfn "%A" fields
+        // printfn "%A" fields
 
         let fields=Seq.toList fields
 
         let rc=SynTypeDefnSimpleReprRecordRcd.Create fields
         let lid=LongIdentWithDots.CreateFromLongIdent(recordId).AsString + "Record"
-        printfn "%A" lid
+        
         let ci=SynComponentInfoRcd.Create(Ident.CreateLong lid)
         SynModuleDecl.CreateSimpleType(ci,SynTypeDefnSimpleReprRcd.Record rc)
         
@@ -326,8 +167,7 @@ module internal Magic0Module =
         let obm=SynTypeDefnReprObjectModelRcd.Create []
 
         let obm={obm with Kind=SynTypeDefnKind.TyconAugmentation}
-        printfn "%A" obm
-
+        
         let typ=TypeDefn(ci.FromRcd,obm.FromRcd,[mbr],range0)
         SynModuleDecl.Types([typ],range0)
         
@@ -341,7 +181,7 @@ module internal Magic0Module =
             )
         let un=SynTypeDefnSimpleReprUnionRcd.Create kindcases
         let lid=LongIdentWithDots.CreateFromLongIdent(recordId).AsString + "Kind"
-        printfn "%A" lid
+        
         let ci=SynComponentInfoRcd.Create(Ident.CreateLong lid)
         SynModuleDecl.CreateSimpleType(ci,SynTypeDefnSimpleReprRcd.Union un) 
 
