@@ -117,8 +117,6 @@ module internal DUKindModule =
                     if case.HasFields then
                         match case.Type with
                         | UnionCaseFields(cs) ->
-                                    printfn "==================================================="
-                                    printfn "%A=%A" cs.Length cs
                                     if 1=cs.Length then
                                        let field= cs.[0].ToRcd
                                        let field={field with Id=Some case.Id}
