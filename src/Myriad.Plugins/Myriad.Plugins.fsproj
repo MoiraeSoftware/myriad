@@ -15,6 +15,7 @@
     <Compile Include="LensesGenerator.fs" />
     <Compile Include="FieldsGenerator.fs" />
     <Compile Include="DUCasesGenerator.fs" />
+    <Compile Include="DUKindGenerator.fs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build\Myriad.Plugins.props">

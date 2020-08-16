@@ -372,6 +372,7 @@ MigrationBackup/
 /test/Myriad.IntegrationTests/Generated.fs
 /test/Myriad.IntegrationPluginTests/Generated.fs
 /test/Myriad.IntegrationPluginTests/Generated2.fs
+/test/Myriad.IntegrationPluginTests/Generated3.fs
 .ionide/
 /src/ExampleWithPlugin/Generated.fs
 TestOutput.xml

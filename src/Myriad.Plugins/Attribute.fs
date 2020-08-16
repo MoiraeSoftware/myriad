@@ -17,3 +17,6 @@ module Generator =
         member this.WrapperName = _wrapperName
         new () = LensesAttribute(null : string)
         new (``type``: Type) = LensesAttribute(``type``.Name)
+
+    type DUKindAttribute() =
+        inherit Attribute()
