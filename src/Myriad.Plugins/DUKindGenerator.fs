@@ -157,7 +157,7 @@ module internal DUKindModule =
 
         let bind=SynBindingRcd.Null
         let bind={bind with Expr=mexp}
-        let bind={bind with Pattern=SynPatRcd.CreateLongIdent(LongIdentWithDots.Create ["this";"kind"],[])}
+        let bind={bind with Pattern=SynPatRcd.CreateLongIdent(LongIdentWithDots.Create ["this";"Kind"],[])}
 
 
         let ci=SynComponentInfoRcd.Create(recordId)
