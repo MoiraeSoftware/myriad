@@ -19,7 +19,7 @@ let menu (ctx : SiteContents) (page: string) =
 
   let group = content |> Seq.tryFind (fun n -> n.title = page) |> Option.map (fun n -> n.category)
 
-  let explenations =
+  let explanations =
     content
     |> Seq.filter (fun n -> n.category = Contentloader.Explanation && not n.hide_menu )
     |> Seq.sortBy (fun n -> n.menu_order)
@@ -35,12 +35,12 @@ let menu (ctx : SiteContents) (page: string) =
     |> Seq.sortBy (fun n -> n.menu_order)
 
   let hasTutorials = not (Seq.isEmpty tutorials)
-  let hasExplenations = not (Seq.isEmpty explenations)
+  let hasExplanations = not (Seq.isEmpty explanations)
   let hasHowTos = not (Seq.isEmpty howtos)
 
   let menuHeader =
     [
-      if hasExplenations then
+      if hasExplanations then
         li [Id "menu-explanations"; if group = Some Contentloader.Explanation then Class "dd-item menu-group-link menu-group-link-active" else  Class "dd-item menu-group-link"; ] [
           a [] [!! "Explanation"]
         ]
@@ -59,7 +59,7 @@ let menu (ctx : SiteContents) (page: string) =
 
   let renderExpls =
     ul [Id "submenu-explanations"; if group = Some Contentloader.Explanation then Class "submenu submenu-active" else Class "submenu"; ] [
-      for r in explenations ->
+      for r in explanations ->
         li [] [
           a [Href (rootUrl + "/" +  r.link); if r.title = page then Class "active-link padding" else Class "padding"] [
             !! r.title
@@ -97,9 +97,9 @@ let menu (ctx : SiteContents) (page: string) =
         ]
     ]
 
-  let renderShortucuts =
+  let renderShortcuts =
     section [Id "shortcuts"] [
-        h3 [] [!! "Shortucts"]
+        h3 [] [!! "Shortcuts"]
         ul [] [
           for s in shortcuts do
             yield
@@ -135,11 +135,11 @@ let menu (ctx : SiteContents) (page: string) =
     ]
     div [Class "highlightable"] [
       ul [Class "topics"] menuHeader
-      if hasExplenations then renderExpls
+      if hasExplanations then renderExpls
       if hasTutorials then renderTuts
       if hasHowTos then renderHowTos
       renderRefs
-      renderShortucuts
+      renderShortcuts
       renderFooter
     ]
   ]
