@@ -46,11 +46,14 @@ module internal Create =
             LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
 
+        let camelCaseIdent (ident: Ident) =
+            Ident.Create(ident.idText.Substring(0, 1).ToLowerInvariant() + ident.idText.Substring(1))
+
         let pattern =
             let arguments =
                 fields
                 |> List.map (fun f -> let field = f.ToRcd
-                                      let name = SynPatRcd.CreateNamed(field.Id.Value, SynPatRcd.CreateWild)
+                                      let name = SynPatRcd.CreateNamed(camelCaseIdent field.Id.Value, SynPatRcd.CreateWild)
                                       SynPatRcd.CreateTyped(name, field.Type) |> SynPatRcd.CreateParen)
 
             SynPatRcd.CreateLongIdent(varIdent, arguments)
@@ -58,11 +61,11 @@ module internal Create =
         let expr =
             let fields =
                 fields
-                |> List.map (fun f ->   let field = f.ToRcd
-                                        let fieldIdent = match field.Id with None -> failwith "no field name" | Some f -> f
-                                        let name = LongIdentWithDots.Create([fieldIdent.idText])
-                                        let ident = SynExpr.CreateIdent fieldIdent
-                                        RecordFieldName(name, true), Some ident, None)
+                |> List.map (fun f -> let field = f.ToRcd
+                                      let fieldIdent = match field.Id with None -> failwith "no field name" | Some f -> f
+                                      let name = LongIdentWithDots.Create([fieldIdent.idText])
+                                      let ident = SynExpr.CreateIdent(camelCaseIdent fieldIdent)
+                                      RecordFieldName(name, true), Some ident, None)
 
             let newRecord = SynExpr.Record(None, None, fields, range.Zero )
             SynExpr.CreateTyped(newRecord, recordType)
