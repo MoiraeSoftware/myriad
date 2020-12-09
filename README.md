@@ -64,7 +64,7 @@ module Test1 =
     let three (x : Test1) = x.three
     let four (x : Test1) = x.four
 
-    let create (one : Test1) (two : string) (three : float) (four : float32) : Test1 =
+    let create (one : int) (two : string) (three : float) (four : float32) : Test1 =
         { one = one
           two = two
           three = three
