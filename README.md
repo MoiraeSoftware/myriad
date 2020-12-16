@@ -19,8 +19,8 @@ Myriad is an evolution of the ideas I developed while working with F#'s type pro
 To use Myriad via its MSBuild support you add the `Myriad.Core` and `Myriad.Sdk` package references:
 ```xml
     <ItemGroup>
-      <PackageReference Include="Myriad.Core" Version="0.2.4" />
-      <PackageReference Include="Myriad.Sdk" Version="0.2.4" />
+      <PackageReference Include="Myriad.Core" Version="0.4.1" />
+      <PackageReference Include="Myriad.Sdk" Version="0.4.1" />
     </ItemGroup>
 ```
 
@@ -141,8 +141,8 @@ The full fsproj is detail below:
         </Compile>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Myriad.Core" Version="0.2.4" />
-      <PackageReference Include="Myriad.Sdk" Version="0.2.4" />
+      <PackageReference Include="Myriad.Core" Version="0.4.1" />
+      <PackageReference Include="Myriad.Sdk" Version="0.4.1" />
     </ItemGroup>
 </Project>
 ```
