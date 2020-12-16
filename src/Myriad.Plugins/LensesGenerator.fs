@@ -215,6 +215,7 @@ module internal CreateLenses =
 type LensesGenerator() =
 
     interface IMyriadGenerator with
+        member __.ValidInputExtensions = seq {".fs"}
         member __.Generate(namespace', inputFile: string) =
             let ast =
                 Ast.fromFilename inputFile
