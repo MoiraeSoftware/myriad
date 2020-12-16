@@ -9,4 +9,5 @@ type MyriadGeneratorAttribute(name: string) =
     member __.Name = name
 
 type IMyriadGenerator =
-    abstract member Generate: namespace': string * ast: ParsedInput -> FsAst.AstRcd.SynModuleOrNamespaceRcd
+    abstract member ValidInputExtensions: string seq
+    abstract member Generate: namespace': string * inputFilename: string -> FsAst.AstRcd.SynModuleOrNamespaceRcd

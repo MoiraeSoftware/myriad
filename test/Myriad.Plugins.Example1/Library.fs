@@ -1,6 +1,7 @@
 ﻿namespace Myriad.Plugins.Example1
 
 open System
+open System.IO
 open Myriad.Core
 open FSharp.Compiler.SyntaxTree
 open FsAst
@@ -8,7 +9,8 @@ open FsAst
 [<MyriadGenerator("example1")>]
 type Example1Gen() =
     interface IMyriadGenerator with
-        member __.Generate(namespace', _ast) =
+        member __.ValidInputExtensions = seq {".txt"}
+        member __.Generate(namespace', inputFilename) =
 
             let let42 =
                 SynModuleDecl.CreateLet
@@ -16,11 +18,18 @@ type Example1Gen() =
                             Pattern = SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateString "fourtyTwo", [])
                             Expr = SynExpr.CreateConst(SynConst.Int32 42) } ]
 
-            let componentInfo = SynComponentInfoRcd.Create [ Ident.Create "example1" ]
-            let nestedModule = SynModuleDecl.CreateNestedModule(componentInfo, [ let42 ])
+
+            let allModules = 
+                File.ReadAllLines inputFilename
+                |> Seq.map (fun moduleName -> 
+                                    let componentInfo = SynComponentInfoRcd.Create [ Ident.Create (moduleName) ]
+                                    let module' = SynModuleDecl.CreateNestedModule(componentInfo, [ let42 ])
+                                    module')
+                |> Seq.toList
+            
 
             let namespaceOrModule =
                 { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                    with Declarations = [ nestedModule ] }
+                    with Declarations = allModules }
 
             namespaceOrModule

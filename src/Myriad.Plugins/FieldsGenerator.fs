@@ -160,7 +160,7 @@ module internal Create =
 
             let declarations = [
                 yield openParent
-                yield!fieldMaps
+                yield! fieldMaps
                 yield create
                 yield map ]
 
@@ -172,7 +172,14 @@ module internal Create =
 type FieldsGenerator() =
 
     interface IMyriadGenerator with
-        member __.Generate(namespace', ast: ParsedInput) =
+        member __.ValidInputExtensions = seq {".fs"}
+        member __.Generate(namespace', inputFile: string) =
+            let ast =
+                Ast.fromFilename inputFile
+                |> Async.RunSynchronously
+                |> Array.head
+                |> fst
+
             let namespaceAndRecords = Ast.extractRecords ast
             let modules =
                 namespaceAndRecords

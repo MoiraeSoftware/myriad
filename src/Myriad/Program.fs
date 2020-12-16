@@ -71,7 +71,7 @@ module Main =
                 printfn "Generators:"
                 generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
 
-            let execGen namespace' parsedInput (genType: Type) =
+            let execGen (namespace': string) (inputFile: string) (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
                 if verbose then
@@ -79,7 +79,9 @@ module Main =
 
                 let result =
                     try
-                        instance.Generate(namespace', parsedInput)
+                        if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile)) then
+                            Some (instance.Generate(namespace', inputFile))
+                        else None
                     with
                     | exc ->
                         // emit the module with exception text
@@ -94,7 +96,7 @@ module Main =
                                   Expr = SynExpr.CreateConstString exc.Message }
                         let module' = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
                         let namespace' = SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                        { namespace' with IsRecursive = true; Declarations = [module'] }
+                        Some { namespace' with IsRecursive = true; Declarations = [module'] }
 
 
                 if verbose then
@@ -105,18 +107,13 @@ module Main =
             if verbose then
                 printfn "Exec generators:"
 
-            let ast =
-                Myriad.Core.Ast.fromFilename inputFile
-                |> Async.RunSynchronously
-                |> Array.head
-                |> fst
-
             if verbose then
-                printfn "Input AST:\n:%A" ast
+                printfn "Input Filename:\n:%A" inputFile
 
             let generated =
                 generators
-                |> List.map (execGen namespace' ast)
+                |> List.map (execGen namespace' inputFile)
+                |> List.choose id
 
             let parseTree =
                 ParsedInput.CreateImplFile(

@@ -215,7 +215,14 @@ module internal CreateLenses =
 type LensesGenerator() =
 
     interface IMyriadGenerator with
-        member __.Generate(namespace', ast: ParsedInput) =
+        member __.ValidInputExtensions = seq {".fs"}
+        member __.Generate(namespace', inputFile: string) =
+            let ast =
+                Ast.fromFilename inputFile
+                |> Async.RunSynchronously
+                |> Array.head
+                |> fst
+                
             let namespaceAndRecords = Ast.extractRecords ast
             let recordsModules =
                 namespaceAndRecords
