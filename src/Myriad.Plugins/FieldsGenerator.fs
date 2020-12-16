@@ -160,7 +160,7 @@ module internal Create =
 
             let declarations = [
                 yield openParent
-                yield!fieldMaps
+                yield! fieldMaps
                 yield create
                 yield map ]
 
