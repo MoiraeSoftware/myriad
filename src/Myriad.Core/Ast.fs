@@ -23,7 +23,7 @@ module Ast =
                 |> String.concat(".")
                 |> function s -> if s.EndsWith "Attribute" then s else s + "Attribute"
             //Support both full name and opened namespace - this is not 100% accurate, and it can't be without full type information, but it should be good enough in practice
-            //Replace `+` with `.` - `+` is naming convention for embeded types - in out case it may be attribute type defined inside module.
+            //Replace `+` with `.` - `+` is naming convention for embeded types - in our case it may be an attribute type defined inside module.
             if ident.Contains "." then
                 attributeType.FullName.Replace("+", ".").EndsWith(ident)
             else
