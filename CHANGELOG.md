@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Allow arbitrary inputs to be used
 
 ## [0.4.1]
 - Update to use netstandard 2.0 for maximum compatibility

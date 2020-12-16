@@ -105,18 +105,12 @@ module Main =
             if verbose then
                 printfn "Exec generators:"
 
-            let ast =
-                Myriad.Core.Ast.fromFilename inputFile
-                |> Async.RunSynchronously
-                |> Array.head
-                |> fst
-
             if verbose then
-                printfn "Input AST:\n:%A" ast
+                printfn "Input Filename:\n:%A" inputFile
 
             let generated =
                 generators
-                |> List.map (execGen namespace' ast)
+                |> List.map (execGen namespace' inputFile)
 
             let parseTree =
                 ParsedInput.CreateImplFile(
