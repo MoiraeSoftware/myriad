@@ -112,8 +112,7 @@ module Main =
 
             let generated =
                 generators
-                |> List.map (execGen namespace' inputFile)
-                |> List.choose id
+                |> List.choose (execGen namespace' inputFile)
 
             let parseTree =
                 ParsedInput.CreateImplFile(
