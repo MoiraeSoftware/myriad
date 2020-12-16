@@ -71,7 +71,7 @@ module Main =
                 printfn "Generators:"
                 generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
 
-            let execGen (namespace': string) (inputFile: string) (genType: Type) =
+            let runGenerator (namespace': string) (inputFile: string) (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
                 if verbose then
@@ -112,7 +112,7 @@ module Main =
 
             let generated =
                 generators
-                |> List.choose (execGen namespace' inputFile)
+                |> List.choose (runGenerator namespace' inputFile)
 
             let parseTree =
                 ParsedInput.CreateImplFile(
