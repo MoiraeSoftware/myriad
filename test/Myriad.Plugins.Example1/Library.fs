@@ -6,7 +6,7 @@ open Myriad.Core
 open FSharp.Compiler.SyntaxTree
 open FsAst
 
-[<MyriadGenerator>]
+[<MyriadGenerator("example1")>]
 type Example1Gen() =
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".txt"}
