@@ -189,7 +189,10 @@ type FieldsGenerator() =
                 |> Array.head
                 |> fst
 
-            let namespaceAndrecords = Ast.extractRecords ast
+            let namespaceAndrecords =
+                Ast.extractRecords ast
+                |> List.map (fun (ns, types) -> ns, types |> List.filter (Ast.hasAttribute<Generator.FieldsAttribute>) )
+
             let modules =
                 namespaceAndrecords
                 |> List.collect (fun (ns, records) ->
