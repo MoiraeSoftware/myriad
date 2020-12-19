@@ -177,7 +177,7 @@ module internal Create =
                     Declarations = [mdl] }
         | _ -> failwithf "Not a record type"
 
-[<MyriadGenerator>]
+[<MyriadGenerator("fields")>]
 type FieldsGenerator() =
 
     interface IMyriadGenerator with

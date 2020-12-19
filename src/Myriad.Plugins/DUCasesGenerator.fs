@@ -198,7 +198,7 @@ module internal CreateDUModule =
 
 
 
-[<MyriadGenerator>]
+[<MyriadGenerator("dus")>]
 type DUCasesGenerator() =
 
     interface IMyriadGenerator with
