@@ -54,6 +54,20 @@ module Ast =
         |> List.collect (fun n -> n.Attributes)
         |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName)
 
+    let hasAttributeWithName<'a> (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+        attributes
+        |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<'a> attributeName))
+
+    let hasAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+        attributes
+        |> List.collect (fun n -> n.Attributes)
+        |> List.exists (typeNameMatches typeof<'a>)
+
+    let getAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+        attributes
+        |> List.collect (fun n -> n.Attributes)
+        |> List.tryFind (typeNameMatches typeof<'a>)
+
     let extractTypeDefn (ast: ParsedInput) =
         let rec extractTypes (moduleDecls: SynModuleDecl list) (ns: LongIdent) =
             [   for moduleDecl in moduleDecls do
@@ -82,15 +96,12 @@ module Ast =
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union _, _) -> true
         | _ -> false
 
-
     let extractRecords (ast: ParsedInput) =
         let types = extractTypeDefn ast
         let onlyRecords =
             types
             |> List.map (fun (ns, types) -> ns, types |> List.filter isRecord )
         onlyRecords
-
-
 
     let extractDU (ast: ParsedInput) =
         let types = extractTypeDefn ast
@@ -99,16 +110,3 @@ module Ast =
             |> List.map (fun (ns, types) -> ns, types |> List.filter isDu )
         onlyDus
 
-    let hasAttributeWithName<'a> (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
-        attributes
-        |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<'a> attributeName))
-
-    let hasAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
-        attributes
-        |> List.collect (fun n -> n.Attributes)
-        |> List.exists (typeNameMatches typeof<'a>)
-
-    let getAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
-        attributes
-        |> List.collect (fun n -> n.Attributes)
-        |> List.tryFind (typeNameMatches typeof<'a>)
