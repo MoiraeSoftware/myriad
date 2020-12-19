@@ -9,10 +9,10 @@ let tests =
     testList "basic tests" [
 
         test "Test txt based module generator generated" {
-            Expect.equal Test3.First.fourtyTwo 42 "generated value should be 42"
-            Expect.equal Test3.Second.fourtyTwo 42 "generated value should be 42"
-            Expect.equal Test3.Third.fourtyTwo 42 "generated value should be 42"
-            Expect.equal Test3.Fourth.fourtyTwo 42 "generated value should be 42"
+            Expect.equal Example.First.fourtyTwo 42 "generated value should be 42"
+            Expect.equal Example.Second.fourtyTwo 42 "generated value should be 42"
+            Expect.equal Example.Third.fourtyTwo 42 "generated value should be 42"
+            Expect.equal Example.Fourth.fourtyTwo 42 "generated value should be 42"
         }
 
         test "Test1 create Test" {
