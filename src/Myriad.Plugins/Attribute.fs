@@ -12,12 +12,14 @@ module Generator =
         inherit Attribute()
 
     /// Instructs to generate lenses for each property of the record
-    type LensesAttribute(configGroup: string, wrapperName : string option) =
-        inherit Attribute()
-        let mutable _wrapperName = wrapperName
-        member this.WrapperName = _wrapperName
-        new (config: string, wrapperType: Type) = LensesAttribute(config, Some wrapperType.Name)
-        new (config: string, wrapperName: string) = LensesAttribute(config, Some wrapperName)
+    type LensesAttribute =
+        inherit Attribute
+        val config: string
+        val wrapperName : string option
+
+        new (config: string, wrapperType: Type) = { config = config; wrapperName = Some wrapperType.Name }
+        new (config: string, wrapperName: string) = { config = config; wrapperName = Some wrapperName }
+        new (config: string) = { config = config; wrapperName = None }
 
 
     let getConfigFromAttribute<'a> (configGetter: string -> seq<string * obj>) typeDef =
