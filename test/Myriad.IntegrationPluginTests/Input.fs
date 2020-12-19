@@ -5,13 +5,13 @@ open Example
 
 [<Generator.Lenses("lens", "Lens")>]
 type RecordWithWrappedLens =
-    { one: int }
+    { one: int } 
 
 [<Generator.Lenses ("lens")>] 
 type RecordWithEmptyWrapperName =
-    { one_empty_wrapper_name: int }
+    { one_empty_wrapper_name: int } 
 
-[<Generator.Lenses("lens", typedefof<Lens<_, _>>)>]
+[<Generator.Lenses("lens", typedefof<Example.Lens<_, _>>)>]
 type RecordWithWrappedLensViaTypedefof =
     { one_typedefof: Option<int> }
 

@@ -182,8 +182,9 @@ module internal CreateLenses =
             | SynExpr.Paren(SynExpr.Const _,_,_,_) -> None
             | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig; SynExpr.Const((SynConst.String(s, _)), _)],_,_),_,_,_) -> Some s
             | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig
-                                             SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent (LongIdentLid (wrapperIdent :: _)))], _, _, _, _)],_,_),_,_,_)
-                                             when ident.idText = "typedefof" || ident.idText = "typeof" -> Some wrapperIdent.idText
+                                             SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent (longIdent))], _, _, _, _)],_,_),_,_,_)
+                                             when ident.idText = "typedefof" || ident.idText = "typeof" ->
+                                             Some longIdent.AsString
             | expr-> failwithf "Unsupported syntax of specifying the wrapper name for type %A.\nExpr: %A" recordId expr
 
         let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText)))
