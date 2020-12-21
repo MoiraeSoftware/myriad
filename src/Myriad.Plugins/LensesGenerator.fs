@@ -56,7 +56,7 @@ module internal CreateLenses =
             // fun (x : Record) (value : PropertyType) -> { x with Property = value }
             let set = SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r)
 
-            let tuple = SynExpr.CreateTuple [ get; set ]
+            let tuple = SynExpr.CreateTuple [ SynExpr.CreateParen get; SynExpr.CreateParen set ]
 
             wrap tuple wrapperName
 

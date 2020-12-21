@@ -6,7 +6,6 @@ namespace rec TestLens
 
 module Test1Lenses =
     open Input
-
     let one =
         (fun (x: Test1) -> x.one), (fun (x: Test1) (value: int) -> { x with one = value })
 
@@ -22,16 +21,15 @@ namespace rec TestLens
 
 module RecordWithWrappedLensLenses =
     open Input
-
     let one =
-        Example.Lens
-            ((fun (x: RecordWithWrappedLens) -> x.one),
-             (fun (x: RecordWithWrappedLens) (value: int) -> { x with one = value }))
+        Example.Lens(
+            (fun (x: RecordWithWrappedLens) -> x.one),
+            (fun (x: RecordWithWrappedLens) (value: int) -> { x with one = value })
+        )
 namespace rec TestLens
 
 module RecordWithEmptyWrapperNameLenses =
     open Input
-
     let one_empty_wrapper_name =
         (fun (x: RecordWithEmptyWrapperName) -> x.one_empty_wrapper_name),
         (fun (x: RecordWithEmptyWrapperName) (value: int) ->
@@ -41,36 +39,36 @@ namespace rec TestLens
 
 module RecordWithWrappedLensViaTypedefofLenses =
     open Input
-
     let one_typedefof =
-        Example.Lens
-            ((fun (x: RecordWithWrappedLensViaTypedefof) -> x.one_typedefof),
-             (fun (x: RecordWithWrappedLensViaTypedefof) (value: Option<int>) -> { x with one_typedefof = value }))
+        Example.Lens(
+            (fun (x: RecordWithWrappedLensViaTypedefof) -> x.one_typedefof),
+            (fun (x: RecordWithWrappedLensViaTypedefof) (value: Option<int>) -> { x with one_typedefof = value })
+        )
 namespace rec TestLens
 
 module RecordWithWrappedLensViaTypeofLenses =
     open Input
-
     let one_typeof =
-        Example.Lens
-            ((fun (x: RecordWithWrappedLensViaTypeof) -> x.one_typeof),
-             (fun (x: RecordWithWrappedLensViaTypeof) (value: Option<int>) -> { x with one_typeof = value }))
+        Example.Lens(
+            (fun (x: RecordWithWrappedLensViaTypeof) -> x.one_typeof),
+            (fun (x: RecordWithWrappedLensViaTypeof) (value: Option<int>) -> { x with one_typeof = value })
+        )
 namespace rec TestLens
 
 module AddressLenses =
     open Input
-
     let Street =
         Example.Lens((fun (x: Address) -> x.Street), (fun (x: Address) (value: string) -> { x with Street = value }))
 
     let HouseNumber =
-        Example.Lens
-            ((fun (x: Address) -> x.HouseNumber), (fun (x: Address) (value: int) -> { x with HouseNumber = value }))
+        Example.Lens(
+            (fun (x: Address) -> x.HouseNumber),
+            (fun (x: Address) (value: int) -> { x with HouseNumber = value })
+        )
 namespace rec TestLens
 
 module PersonLenses =
     open Input
-
     let Name =
         Example.Lens((fun (x: Person) -> x.Name), (fun (x: Person) (value: string) -> { x with Name = value }))
 
@@ -80,7 +78,6 @@ namespace rec TestLens
 
 module SingleCaseDULenses =
     open Input
-
     let Lens' =
         let getter (x: SingleCaseDU) =
             match x with
@@ -91,20 +88,18 @@ namespace rec TestLens
 
 module WrappedSingleCaseDULenses =
     open Input
-
     let Lens' =
-        Example.Lens
-            (
-             let getter (x: WrappedSingleCaseDU) =
-                 match x with
-                 | SingleWrapped x -> x
+        Example.Lens(
+            let getter (x: WrappedSingleCaseDU) =
+                match x with
+                | SingleWrapped x -> x
 
-             getter, (fun (_: WrappedSingleCaseDU) (value: int) -> SingleWrapped value))
+            getter, (fun (_: WrappedSingleCaseDU) (value: int) -> SingleWrapped value)
+        )
 namespace rec TestLens
 
 module FullyQualifiedDULenses =
     open Input
-
     let Lens' =
         let getter (x: FullyQualifiedDU) =
             match x with
@@ -115,7 +110,6 @@ namespace rec TestLens
 
 module Module_SingleCaseDULenses =
     open Input.ModuleWithDUs
-
     let Lens' =
         let getter (x: Module_SingleCaseDU) =
             match x with
@@ -126,20 +120,18 @@ namespace rec TestLens
 
 module Module_WrappedSingleCaseDULenses =
     open Input.ModuleWithDUs
-
     let Lens' =
-        Example.Lens
-            (
-             let getter (x: Module_WrappedSingleCaseDU) =
-                 match x with
-                 | SingleWrapped x -> x
+        Example.Lens(
+            let getter (x: Module_WrappedSingleCaseDU) =
+                match x with
+                | SingleWrapped x -> x
 
-             getter, (fun (_: Module_WrappedSingleCaseDU) (value: int) -> SingleWrapped value))
+            getter, (fun (_: Module_WrappedSingleCaseDU) (value: int) -> SingleWrapped value)
+        )
 namespace rec TestLens
 
 module Module_FullyQualifiedDULenses =
     open Input.ModuleWithDUs
-
     let Lens' =
         let getter (x: Module_FullyQualifiedDU) =
             match x with
@@ -150,12 +142,10 @@ namespace rec TestFields
 
 module Test1 =
     open Input
-
     let one (x: Test1) = x.one
     let two (x: Test1) = x.two
     let three (x: Test1) = x.three
     let four (x: Test1) = x.four
-
     let create (one: int) (two: string) (three: float) (four: float32): Test1 =
         { one = one
           two = two
@@ -177,7 +167,6 @@ namespace rec TestDus
 
 module Currency =
     open Input
-
     let toString (x: Currency) =
         match x with
         | CAD -> "CAD"
