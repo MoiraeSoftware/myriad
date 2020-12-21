@@ -159,7 +159,7 @@ module internal CreateLenses =
         | SynType.App (name, _, _, _, _, _, _) -> Some name
         | _ -> None
 
-    let createLensModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn, attr: SynAttribute) =
+    let createLensModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (attr: SynAttribute) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
 
@@ -190,7 +190,7 @@ module internal CreateLenses =
             let lens = createLensForDU requiresQualifiedAccess recordId wrapperName singleCase
             let declarations = [ openParent; lens ]
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
-            
+
         | _ -> failwithf "%A is not a record type." recordId
 
 [<MyriadGenerator("lenses")>]
@@ -214,7 +214,16 @@ type LensesGenerator() =
                     |> List.choose (fun r ->
                         let attr = Ast.getAttribute<Generator.LensesAttribute> r
                         Option.map (fun a -> r, a) attr)
-                    |> List.map (CreateLenses.createLensModule ns))
+                    |> List.map (fun (record, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> configGetter record
+                                                         let recordsNamespace =
+                                                              config
+                                                              |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                                                              |> Option.defaultValue "UnknownNamespace"
+                                                         let synModule = CreateLenses.createLensModule ns record attrib
+                                                         { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong recordsNamespace)
+                                                                with
+                                                                    IsRecursive = true
+                                                                    Declarations = [synModule]}))
 
             let namespaceAndDUs = Ast.extractDU ast
             let duModules =
@@ -225,12 +234,16 @@ type LensesGenerator() =
                     |> List.choose (fun du ->
                         let attr = Ast.getAttribute<Generator.LensesAttribute> du
                         Option.map (fun a -> du, a) attr)
-                    |> List.map (CreateLenses.createLensModule ns))
+                    |> List.map (fun (du, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> configGetter du
+                                                     let dusNamespace =
+                                                         config
+                                                         |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                                                         |> Option.defaultValue "UnknownNamespace"
+                                                     let synModule = CreateLenses.createLensModule ns du attrib
+                                                     { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong dusNamespace)
+                                                                with
+                                                                    IsRecursive = true
+                                                                    Declarations = [synModule]}))
 
-            let namespaceOrModule =
-                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong "getFromConfig")
-                    with
-                        IsRecursive = true
-                        Declarations = recordsModules @ duModules }
-
-            [namespaceOrModule]
+            [yield! recordsModules
+             yield! duModules]
