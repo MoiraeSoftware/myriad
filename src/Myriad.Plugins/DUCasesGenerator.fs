@@ -175,22 +175,22 @@ module internal CreateDUModule =
             let toString = createToString recordId cases
             let fromString = createFromString recordId cases
             let toTag = createToTag recordId cases
-            let iss = createIsCase recordId cases
+            let isCase = createIsCase recordId cases
 
             let declarations = [
                 openParent
                 toString
                 fromString
                 toTag
-                yield! iss ]
+                yield! isCase ]
 
             let info = SynComponentInfoRcd.Create recordId
             let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
-            let namespace' =
+            let lensNamespace =
                 config
                 |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
                 |> Option.defaultValue "UnknownNamespace"
-            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong lensNamespace)
                 with
                     IsRecursive = true
                     Declarations = [mdl] }
