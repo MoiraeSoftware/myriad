@@ -5,8 +5,6 @@
         <ItemGroup>
             <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' ">
                 <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
-                <Namespace Condition=" '%(Compile.MyriadNamespace)' != '' " >%(Compile.MyriadNamespace)</Namespace>
-                <Namespace Condition=" '%(Compile.MyriadNamespace)' == '' " >$(RootNamespace)</Namespace>
             </MyriadSource>
         </ItemGroup>
 
@@ -14,7 +12,6 @@
             <MyriadCodegen Include="%(MyriadSource.FullPath)">
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadSource.OutputPath)'))</OutputPath>
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' == '' ">%(MyriadSource.FullPath).fs</OutputPath>
-                <Namespace>%(MyriadSource.Namespace)</Namespace>
             </MyriadCodegen>
         </ItemGroup>
 
@@ -54,7 +51,6 @@
         <PropertyGroup>
             <_MyriadSdk_InputFileName>%(MyriadCodegen.Identity)</_MyriadSdk_InputFileName>
             <_MyriadSdk_OutputFileName>%(MyriadCodegen.OutputPath)</_MyriadSdk_OutputFileName>
-            <_MyriadSdk_Namespace>%(MyriadCodegen.Namespace)</_MyriadSdk_Namespace>
         </PropertyGroup>
 
         <ItemGroup>
