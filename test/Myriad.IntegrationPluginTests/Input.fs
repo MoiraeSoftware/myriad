@@ -5,7 +5,7 @@ open Myriad.Plugins
 [<Generator.Lenses("lens")>]
 [<Generator.Fields "fields">]
 type Test1 = { one: int; two: string; three: float; four: float32 }
-type Test2 = { one: Test1; two: string }
+type Test2 = { oney: Test1; two: string }
 
 [<Generator.Lenses("lens", "Example.Lens")>]
 type RecordWithWrappedLens =

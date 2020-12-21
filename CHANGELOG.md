@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.50]
 ###Added
 - Allow toml config to be used in plugins
 - Allow arbitrary inputs to be used
+- Added a config key that can be added per MyriadFile iteration or as a CLI parameter
 ### Changed
 - Depreciated usage of MyriadNamespace in MSBuild
 

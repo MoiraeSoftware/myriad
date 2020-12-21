@@ -198,7 +198,8 @@ type LensesGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(configGetter, inputFile: string) =
+        member __.Generate(_myriadConfigKey, configGetter, inputFile: string) =
+            //_myriadConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
             let ast =
                 Ast.fromFilename inputFile
                 |> Async.RunSynchronously

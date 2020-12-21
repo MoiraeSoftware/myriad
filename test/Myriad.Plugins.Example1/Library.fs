@@ -10,7 +10,13 @@ open FsAst
 type Example1Gen() =
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".txt"}
-        member __.Generate(configGetter, inputFilename) =
+        member __.Generate(myriadConfigKey, configGetter, inputFilename) =
+
+            let example1Namespace =
+                myriadConfigKey
+                |> Option.map configGetter
+                |> Option.bind (Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None ))
+                |> Option.defaultValue "UnknownNamespace"
 
             let let42 =
                 SynModuleDecl.CreateLet
@@ -27,10 +33,8 @@ type Example1Gen() =
                                     module')
                 |> Seq.toList
             
-
-            let namespace' = "Example"
             let namespaceOrModule =
-                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong example1Namespace)
                     with Declarations = allModules }
 
             [namespaceOrModule]

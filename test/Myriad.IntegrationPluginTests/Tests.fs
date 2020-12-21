@@ -8,11 +8,18 @@ open Input
 let tests =
     testList "basic tests" [
 
-        test "Test txt based module generator generated" {
-            Expect.equal Example.First.fourtyTwo 42 "generated value should be 42"
-            Expect.equal Example.Second.fourtyTwo 42 "generated value should be 42"
-            Expect.equal Example.Third.fourtyTwo 42 "generated value should be 42"
-            Expect.equal Example.Fourth.fourtyTwo 42 "generated value should be 42"
+        test "Test txt based module generator generated with config" {
+            Expect.equal TestExample1.First.fourtyTwo 42 "generated value should be 42"
+            Expect.equal TestExample1.Second.fourtyTwo 42 "generated value should be 42"
+            Expect.equal TestExample1.Third.fourtyTwo 42 "generated value should be 42"
+            Expect.equal TestExample1.Fourth.fourtyTwo 42 "generated value should be 42"
+        }
+
+        test "Test txt based module generator generated no config" {
+            Expect.equal UnknownNamespace.First.fourtyTwo 42 "generated value should be 42"
+            Expect.equal UnknownNamespace.Second.fourtyTwo 42 "generated value should be 42"
+            Expect.equal UnknownNamespace.Third.fourtyTwo 42 "generated value should be 42"
+            Expect.equal UnknownNamespace.Fourth.fourtyTwo 42 "generated value should be 42"
         }
 
         test "Test1 create Test" {

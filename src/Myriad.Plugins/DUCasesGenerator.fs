@@ -164,7 +164,6 @@ module internal CreateDUModule =
 
 
     let createDuModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (config: (string * obj) seq) =
-        printfn "CONFIG: %A" config
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
         match synTypeDefnRepr with
@@ -203,7 +202,8 @@ type DUCasesGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(configGetter, inputFile: string) =
+        member __.Generate(_myriadConfigKey, configGetter, inputFile: string) =
+            //_myriadConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
             let ast =
                 Ast.fromFilename inputFile
                 |> Async.RunSynchronously

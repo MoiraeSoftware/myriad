@@ -18,6 +18,12 @@
 
     <Compile Include="ArbitaryFile.fs">
       <MyriadFile>Test.txt</MyriadFile>
+      <MyriadConfigKey>example1</MyriadConfigKey>
+    </Compile>
+
+    <Compile Include="ArbitaryFile2.fs">
+      <MyriadFile>Test.txt</MyriadFile>
+      <!-- <MyriadConfigKey>example1</MyriadConfigKey> -->
     </Compile>
 
     <Compile Include="Tests.fs" />

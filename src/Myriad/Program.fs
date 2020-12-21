@@ -14,6 +14,7 @@ module Main =
         | [<Mandatory>] InputFile of string
         | [<Mandatory>] OutputFile of string
         | ConfigFile of string
+        | ConfigKey of string
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
@@ -24,6 +25,7 @@ module Main =
                 | InputFile _ -> "specify a file to use as input."
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
                 | ConfigFile _ -> "Specify a TOML file to use as config."
+                | ConfigKey _ -> "Specify a key in config that will be passed to the generators."
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
                 | Verbose -> "Log verbose processing details."
@@ -34,7 +36,6 @@ module Main =
 
         try
             let results = parser.Parse argv
-
             let verbose = results.Contains Verbose
 
             match results.TryGetResult WaitForDebugger with
@@ -49,6 +50,8 @@ module Main =
             let configFile =
                 results.TryGetResult ConfigFile
                 |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
+
+            let configKey = results.TryGetResult ConfigKey
 
             let configFileCnt = File.ReadAllText configFile
             let config = Tomlyn.Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
@@ -81,8 +84,9 @@ module Main =
 
                 let configHandler =
                     fun name ->
-                        printfn "CONFIG %A" config
-                        printfn "LOOKING FOR: %s" name
+                        if verbose then
+                            printfn "CONFIG %A" config
+                            printfn "LOOKING FOR: %s" name
                         match config.TryGetToml name with
                         | true, x when x.Kind = Model.ObjectKind.Table ->
                             try
@@ -103,7 +107,7 @@ module Main =
                 let result =
                     try
                         if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile))
-                        then Some (instance.Generate(configHandler, inputFile))
+                        then Some (instance.Generate(configKey, configHandler, inputFile))
                         else None
                     with
                     | exc ->
@@ -157,9 +161,8 @@ module Main =
 
             File.WriteAllText(outputFile, code)
 
-            printfn "%A" code
-
             if verbose then
+                printfn "Generated Code:\n%A" code
                 printfn "AST-----------------------------------------------"
                 printfn "%A" parseTree
             0 // return an integer exit code
