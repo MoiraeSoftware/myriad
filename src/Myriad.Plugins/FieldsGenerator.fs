@@ -184,10 +184,10 @@ type FieldsGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(_myriadConfigKey, configGetter: string -> seq<string * obj>, inputFile: string) =
+        member __.Generate(context: GeneratorContext) =
             //_myriadConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
             let ast =
-                Ast.fromFilename inputFile
+                Ast.fromFilename context.InputFileName
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
@@ -203,7 +203,7 @@ type FieldsGenerator() =
                 namespaceAndrecords
                 |> List.collect (fun (ns, records) ->
                                     records
-                                    |> List.map (fun record -> let config = Generator.getConfigFromAttribute<Generator.FieldsAttribute> configGetter record
+                                    |> List.map (fun record -> let config = Generator.getConfigFromAttribute<Generator.FieldsAttribute> context.ConfigGetter record
                                                                let recordModule = Create.createRecordModule ns record config
                                                                recordModule))
 

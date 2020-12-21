@@ -200,10 +200,10 @@ type LensesGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(_myriadConfigKey, configGetter, inputFile: string) =
-            //_myriadConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
+        member __.Generate(context: GeneratorContext) =
+            //context.ConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
             let ast =
-                Ast.fromFilename inputFile
+                Ast.fromFilename context.InputFileName
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
@@ -217,7 +217,7 @@ type LensesGenerator() =
                     |> List.choose (fun r ->
                         let attr = Ast.getAttribute<Generator.LensesAttribute> r
                         Option.map (fun a -> r, a) attr)
-                    |> List.map (fun (record, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> configGetter record
+                    |> List.map (fun (record, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> context.ConfigGetter record
                                                          let recordsNamespace =
                                                               config
                                                               |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
@@ -237,7 +237,7 @@ type LensesGenerator() =
                     |> List.choose (fun du ->
                         let attr = Ast.getAttribute<Generator.LensesAttribute> du
                         Option.map (fun a -> du, a) attr)
-                    |> List.map (fun (du, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> configGetter du
+                    |> List.map (fun (du, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> context.ConfigGetter du
                                                      let dusNamespace =
                                                          config
                                                          |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
