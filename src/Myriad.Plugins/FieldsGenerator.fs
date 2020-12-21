@@ -144,7 +144,7 @@ module internal Create =
                     ReturnInfo = Some returnTypeInfo }
             ]
 
-    let createRecordModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) =
+    let createRecordModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (config: (string * obj) seq) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
         match synTypeDefnRepr with
@@ -165,7 +165,16 @@ module internal Create =
                 yield map ]
 
             let info = SynComponentInfoRcd.Create recordId
-            SynModuleDecl.CreateNestedModule(info, declarations)
+            let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
+            let fieldsNamespace =
+                config
+                |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                |> Option.defaultValue "UnknownNamespace"
+
+            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong fieldsNamespace)
+                with
+                    IsRecursive = true
+                    Declarations = [mdl] }
         | _ -> failwithf "Not a record type"
 
 [<MyriadGenerator("fields")>]
@@ -173,25 +182,26 @@ type FieldsGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(namespace', inputFile: string) =
+        member __.Generate(configGetter: string -> seq<string * obj>, inputFile: string) =
             let ast =
                 Ast.fromFilename inputFile
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
 
-            let namespaceAndRecords = Ast.extractRecords ast
+            let namespaceAndrecords =
+                Ast.extractRecords ast
+                |> List.choose (fun (ns, types) -> 
+                    match types |> List.filter (Ast.hasAttribute<Generator.FieldsAttribute>) with
+                    | [] -> None
+                    | types -> Some (ns, types))
+
             let modules =
-                namespaceAndRecords
+                namespaceAndrecords
                 |> List.collect (fun (ns, records) ->
                                     records
-                                    |> List.filter (Ast.hasAttribute<Generator.FieldsAttribute>)
-                                    |> List.map (Create.createRecordModule ns))
+                                    |> List.map (fun record -> let config = Generator.getConfigFromAttribute<Generator.FieldsAttribute> configGetter record
+                                                               let recordModule = Create.createRecordModule ns record config
+                                                               recordModule))
 
-            let namespaceOrModule =
-                {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                    with
-                        IsRecursive = true
-                        Declarations = modules }
-
-            namespaceOrModule
+            modules

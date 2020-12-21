@@ -5,13 +5,15 @@ open System.IO
 open FSharp.Compiler.SyntaxTree
 open FsAst
 open Argu
+open Tomlyn
+open System.Collections.Generic
 
 module Main =
 
     type Arguments =
         | [<Mandatory>] InputFile of string
-        | [<Mandatory>] Namespace of string
         | [<Mandatory>] OutputFile of string
+        | ConfigFile of string
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
@@ -20,11 +22,11 @@ module Main =
             member s.Usage =
                 match s with
                 | InputFile _ -> "specify a file to use as input."
-                | Namespace _ -> "specify a namespace to use."
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
+                | ConfigFile _ -> "Specify a TOML file to use as config."
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
-                | Verbose -> "Log verbose processing details"
+                | Verbose -> "Log verbose processing details."
 
     [<EntryPoint>]
     let main argv =
@@ -38,16 +40,19 @@ module Main =
             match results.TryGetResult WaitForDebugger with
             | None -> ()
             | Some _ ->
-                while not(System.Diagnostics.Debugger.IsAttached) do
+                while not(Diagnostics.Debugger.IsAttached) do
                   System.Threading.Thread.Sleep(100)
                 System.Diagnostics.Debugger.Break()
 
             let inputFile = results.GetResult InputFile
             let outputFile = results.GetResult OutputFile
-            let namespace' =
-                match results.TryGetResult Namespace with
-                | Some ns -> ns
-                | None -> Path.GetFileNameWithoutExtension(inputFile)
+            let configFile =
+                results.TryGetResult ConfigFile
+                |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
+
+            let configFileCnt = File.ReadAllText configFile
+            let config = Tomlyn.Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
+
             let plugins = results.GetResults Plugin
 
             if verbose then
@@ -59,8 +64,8 @@ module Main =
 
                 let gens =
                     [ for t in assembly.GetTypes() do
-                        if t.GetCustomAttributes(typeof<Myriad.Core.MyriadGeneratorAttribute>, true).Length > 0 then
-                            yield t ]
+                        if t.GetCustomAttributes(typeof<Myriad.Core.MyriadGeneratorAttribute>, true).Length > 0
+                        then yield t ]
                 gens
 
             let generators =
@@ -71,16 +76,34 @@ module Main =
                 printfn "Generators:"
                 generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
 
-            let runGenerator (namespace': string) (inputFile: string) (genType: Type) =
+            let runGenerator (inputFile: string) (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
+
+                let configHandler =
+                    fun name ->
+                        printfn "CONFIG %A" config
+                        printfn "LOOKING FOR: %s" name
+                        match config.TryGetToml name with
+                        | true, x when x.Kind = Model.ObjectKind.Table ->
+                            try
+                                let x = (x :?> Model.TomlTable)
+                                let x = (x :> IDictionary<string,obj>)
+                                x |> Seq.map (|KeyValue|)
+                            with
+                            | _ ->
+                                printfn "FAIL !"
+                                Seq.empty
+                        | _ ->
+                            printfn "FAIL @"
+                            Seq.empty
 
                 if verbose then
                     printfn "Executing: %s..." genType.FullName
 
                 let result =
                     try
-                        if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile)) then
-                            Some (instance.Generate(namespace', inputFile))
+                        if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile))
+                        then Some (instance.Generate(configHandler, inputFile))
                         else None
                     with
                     | exc ->
@@ -94,10 +117,10 @@ module Main =
                             { SynBindingRcd.Let with
                                   Pattern = pattern
                                   Expr = SynExpr.CreateConstString exc.Message }
-                        let module' = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
-                        let namespace' = SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                        Some { namespace' with IsRecursive = true; Declarations = [module'] }
-
+                        let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
+                        let ns = Ident.CreateLong "" //TODO
+                        let moduleOrNamespace = SynModuleOrNamespaceRcd.CreateNamespace(ns)
+                        Some [ { moduleOrNamespace with IsRecursive = true; Declarations = [modulDecl] } ]
 
                 if verbose then
                     printfn "Result: '%A'" result
@@ -110,9 +133,11 @@ module Main =
             if verbose then
                 printfn "Input Filename:\n:%A" inputFile
 
+
             let generated =
                 generators
-                |> List.choose (runGenerator namespace' inputFile)
+                |> List.choose (runGenerator inputFile)
+                |> List.concat
 
             let parseTree =
                 ParsedInput.CreateImplFile(

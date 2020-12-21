@@ -5,8 +5,6 @@
         <ItemGroup>
             <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' ">
                 <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
-                <Namespace Condition=" '%(Compile.MyriadNamespace)' != '' " >%(Compile.MyriadNamespace)</Namespace>
-                <Namespace Condition=" '%(Compile.MyriadNamespace)' == '' " >$(RootNamespace)</Namespace>
             </MyriadSource>
         </ItemGroup>
 
@@ -14,7 +12,6 @@
             <MyriadCodegen Include="%(MyriadSource.FullPath)">
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadSource.OutputPath)'))</OutputPath>
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' == '' ">%(MyriadSource.FullPath).fs</OutputPath>
-                <Namespace>%(MyriadSource.Namespace)</Namespace>
             </MyriadCodegen>
         </ItemGroup>
 
@@ -45,7 +42,7 @@
     </PropertyGroup>
 
     <Target Name="MyriadSdkGenerateCode"
-            DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)" 
+            DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)"
             BeforeTargets="CoreCompile"
             Condition=" '$(DesignTimeBuild)' != 'true' "
             Inputs="@(MyriadCodegen);$(_MyriadSdkCodeGenInputCache);$(MyriadSdk_Generator_Exe)"
@@ -54,13 +51,11 @@
         <PropertyGroup>
             <_MyriadSdk_InputFileName>%(MyriadCodegen.Identity)</_MyriadSdk_InputFileName>
             <_MyriadSdk_OutputFileName>%(MyriadCodegen.OutputPath)</_MyriadSdk_OutputFileName>
-            <_MyriadSdk_Namespace>%(MyriadCodegen.Namespace)</_MyriadSdk_Namespace>
         </PropertyGroup>
 
         <ItemGroup>
             <MyriadSdk_Args Include='--inputfile "$(_MyriadSdk_InputFileName)"' />
             <MyriadSdk_Args Include='--outputfile "$(_MyriadSdk_OutputFileName)"' />
-            <MyriadSdk_Args Include='--namespace "$(_MyriadSdk_Namespace)"' />
             <MyriadSdk_Args Include='--wait-for-debugger' Condition=" '$(MyriadSdkWaitForDebugger)' == 'true' " />
             <MyriadSdk_Args Include='--verbose' Condition=" '$(MyriadSdkVerboseOutput)' == 'true' " />
             <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' "/>

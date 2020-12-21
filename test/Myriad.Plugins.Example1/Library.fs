@@ -10,7 +10,7 @@ open FsAst
 type Example1Gen() =
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".txt"}
-        member __.Generate(namespace', inputFilename) =
+        member __.Generate(configGetter, inputFilename) =
 
             let let42 =
                 SynModuleDecl.CreateLet
@@ -28,8 +28,9 @@ type Example1Gen() =
                 |> Seq.toList
             
 
+            let namespace' = "Example"
             let namespaceOrModule =
                 { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
                     with Declarations = allModules }
 
-            namespaceOrModule
+            [namespaceOrModule]

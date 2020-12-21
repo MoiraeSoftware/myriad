@@ -1,0 +1,11 @@
+[fields]
+namespace = "TestFields"
+
+[dus]
+namespace = "TestDus"
+
+[lens]
+namespace = "TestLens"
+
+[example1]
+namespace = "TestExample1"

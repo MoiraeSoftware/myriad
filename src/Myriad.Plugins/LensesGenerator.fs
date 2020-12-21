@@ -48,22 +48,15 @@ module internal CreateLenses =
             let copySrc = SynExpr.CreateLongIdent(false, LongIdentWithDots.Create [srcVarName], None)
             let recordToUpdateName : RecordFieldName = (LongIdentWithDots.CreateString fieldName.idText, true)
             // { x with Property = value }
-            let recordUpdate =
-                SynExpr.CreateRecordUpdate (copySrc, [(recordToUpdateName, SynExpr.Ident valueIdent |> Some, None)])
+            let recordUpdate = SynExpr.CreateRecordUpdate (copySrc, [(recordToUpdateName, SynExpr.Ident valueIdent |> Some, None)])
 
             // (value : PropertyType) -> { x with Property = value }
-            let innerLambdaWithValue =
-                SynExpr.Lambda (false, true, valueArgPatterns, recordUpdate, r)
+            let innerLambdaWithValue = SynExpr.Lambda (false, true, valueArgPatterns, recordUpdate, r)
 
             // fun (x : Record) (value : PropertyType) -> { x with Property = value }
-            let set =
-                SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, r)
+            let set = SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, r)
 
-            let tuple =
-                SynExpr.CreateTuple [
-                    get
-                    set
-                ]
+            let tuple = SynExpr.CreateTuple [ get; set ]
 
             wrap tuple wrapperName
 
@@ -131,11 +124,7 @@ module internal CreateLenses =
 
                 SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, r)
 
-            let tuple =
-                SynExpr.CreateTuple [
-                    SynExpr.Ident getterName
-                    setter
-                ]
+            let tuple = SynExpr.CreateTuple [ SynExpr.Ident getterName; setter ]
 
             let getterLet =
                 let valData = SynValData.SynValData(None, SynValInfo.Empty, None)
@@ -151,9 +140,9 @@ module internal CreateLenses =
 
             wrap lens wrapperName
 
-        SynModuleDecl.CreateLet [{ SynBindingRcd.Let with
+        SynModuleDecl.CreateLet [ { SynBindingRcd.Let with
                                       Pattern = pattern
-                                      Expr = lensExpression }]
+                                      Expr = lensExpression } ]
     let private updateLastItem list updater =
         let folder item state =
             match state with
@@ -170,7 +159,7 @@ module internal CreateLenses =
         | SynType.App (name, _, _, _, _, _, _) -> Some name
         | _ -> None
 
-    let createLensModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn, attr: SynAttribute) =
+    let createLensModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (attr: SynAttribute) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
 
@@ -179,12 +168,13 @@ module internal CreateLenses =
 
         let wrapperName =
             match attr.ArgExpr with
-            | SynExpr.Const (SynConst.Unit, _) -> None
-            | SynExpr.Paren(SynExpr.Const ((SynConst.String(s, _)), _), _leftParenRange, _rightParenRange, _range) -> Some s
-            | SynExpr.Paren(SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent (LongIdentLid (wrapperIdent :: _)))], _, _, _, _), _, _, _)
-                when ident.idText = "typedefof" || ident.idText = "typeof" ->
-                Some wrapperIdent.idText
-            | _ -> failwithf "Unsupported syntax of specifying the wrapper name for type %A." recordId
+            | SynExpr.Paren(SynExpr.Const _,_,_,_) -> None
+            | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig; SynExpr.Const((SynConst.String(s, _)), _)],_,_),_,_,_) -> Some s
+            | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig
+                                             SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent (longIdent))], _, _, _, _)],_,_),_,_,_)
+                                             when ident.idText = "typedefof" || ident.idText = "typeof" ->
+                                             Some longIdent.AsString
+            | expr-> failwithf "Unsupported syntax of specifying the wrapper name for type %A.\nExpr: %A" recordId expr
 
         let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText)))
         let moduleInfo = SynComponentInfoRcd.Create moduleIdent
@@ -192,23 +182,15 @@ module internal CreateLenses =
         match synTypeDefnRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_accessibility, recordFields, _recordRange), _range) ->
             let fieldLenses = recordFields |> List.map (createLensForRecordField recordId wrapperName)
-
-            let declarations = [
-                yield openParent
-                yield! fieldLenses
-            ]
-
+            let declarations = [yield openParent; yield! fieldLenses ]
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
+
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(_accessibility, [singleCase], _recordRange), _range) ->
             let requiresQualifiedAccess = Ast.getAttribute<RequireQualifiedAccessAttribute> typeDefn |> Option.isSome
             let lens = createLensForDU requiresQualifiedAccess recordId wrapperName singleCase
-
-            let declarations = [
-                openParent
-                lens
-            ]
-
+            let declarations = [ openParent; lens ]
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
+
         | _ -> failwithf "%A is not a record type." recordId
 
 [<MyriadGenerator("lenses")>]
@@ -216,7 +198,7 @@ type LensesGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(namespace', inputFile: string) =
+        member __.Generate(configGetter, inputFile: string) =
             let ast =
                 Ast.fromFilename inputFile
                 |> Async.RunSynchronously
@@ -232,7 +214,16 @@ type LensesGenerator() =
                     |> List.choose (fun r ->
                         let attr = Ast.getAttribute<Generator.LensesAttribute> r
                         Option.map (fun a -> r, a) attr)
-                    |> List.map (CreateLenses.createLensModule ns))
+                    |> List.map (fun (record, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> configGetter record
+                                                         let recordsNamespace =
+                                                              config
+                                                              |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                                                              |> Option.defaultValue "UnknownNamespace"
+                                                         let synModule = CreateLenses.createLensModule ns record attrib
+                                                         { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong recordsNamespace)
+                                                                with
+                                                                    IsRecursive = true
+                                                                    Declarations = [synModule]}))
 
             let namespaceAndDUs = Ast.extractDU ast
             let duModules =
@@ -243,12 +234,16 @@ type LensesGenerator() =
                     |> List.choose (fun du ->
                         let attr = Ast.getAttribute<Generator.LensesAttribute> du
                         Option.map (fun a -> du, a) attr)
-                    |> List.map (CreateLenses.createLensModule ns))
+                    |> List.map (fun (du, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> configGetter du
+                                                     let dusNamespace =
+                                                         config
+                                                         |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                                                         |> Option.defaultValue "UnknownNamespace"
+                                                     let synModule = CreateLenses.createLensModule ns du attrib
+                                                     { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong dusNamespace)
+                                                                with
+                                                                    IsRecursive = true
+                                                                    Declarations = [synModule]}))
 
-            let namespaceOrModule =
-                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
-                    with
-                        IsRecursive = true
-                        Declarations = recordsModules @ duModules }
-
-            namespaceOrModule
+            [yield! recordsModules
+             yield! duModules]
