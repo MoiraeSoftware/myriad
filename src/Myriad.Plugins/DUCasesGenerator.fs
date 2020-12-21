@@ -186,11 +186,11 @@ module internal CreateDUModule =
 
             let info = SynComponentInfoRcd.Create recordId
             let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
-            let lensNamespace =
+            let dusNamespace =
                 config
                 |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
                 |> Option.defaultValue "UnknownNamespace"
-            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong lensNamespace)
+            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong dusNamespace)
                 with
                     IsRecursive = true
                     Declarations = [mdl] }

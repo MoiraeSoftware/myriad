@@ -166,12 +166,12 @@ module internal Create =
 
             let info = SynComponentInfoRcd.Create recordId
             let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
-            let namespace' =
+            let fieldsNamespace =
                 config
                 |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
                 |> Option.defaultValue "UnknownNamespace"
 
-            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong namespace')
+            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong fieldsNamespace)
                 with
                     IsRecursive = true
                     Declarations = [mdl] }
