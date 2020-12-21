@@ -170,7 +170,9 @@ module internal CreateDUModule =
         match synTypeDefnRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(_accessibility, cases, _recordRange), _range) ->
 
-            let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText)))
+            let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
+            let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
+            let openParent = SynModuleDecl.CreateOpen (openTarget)
 
             let toString = createToString recordId cases
             let fromString = createFromString recordId cases
@@ -209,10 +211,10 @@ type DUCasesGenerator() =
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
-                
+
             let namespaceAndrecords =
                 Ast.extractDU ast
-                |> List.choose (fun (ns, types) -> 
+                |> List.choose (fun (ns, types) ->
                     match types |> List.filter (Ast.hasAttribute<Generator.DuCasesAttribute>) with
                     | [] -> None
                     | types -> Some (ns, types))

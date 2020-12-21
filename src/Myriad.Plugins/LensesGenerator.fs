@@ -39,7 +39,7 @@ module internal CreateLenses =
             // (x : Record)
             let getArgs = SynSimplePats.SimplePats ([recordArg], r)
             // fun (x : Record) -> x.Property
-            let get = SynExpr.Lambda (false, false, getArgs, SynExpr.CreateLongIdent(false, getBody, None), r)
+            let get = SynExpr.Lambda (false, false, getArgs, SynExpr.CreateLongIdent(false, getBody, None), None, r)
 
             let valueIdent = Ident.Create "value"
             let valuePattern = SynSimplePat.Typed(SynSimplePat.Id (valueIdent, None, false, false, false, r), field.Type, r)
@@ -51,10 +51,10 @@ module internal CreateLenses =
             let recordUpdate = SynExpr.CreateRecordUpdate (copySrc, [(recordToUpdateName, SynExpr.Ident valueIdent |> Some, None)])
 
             // (value : PropertyType) -> { x with Property = value }
-            let innerLambdaWithValue = SynExpr.Lambda (false, true, valueArgPatterns, recordUpdate, r)
+            let innerLambdaWithValue = SynExpr.Lambda (false, true, valueArgPatterns, recordUpdate, None, r)
 
             // fun (x : Record) (value : PropertyType) -> { x with Property = value }
-            let set = SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, r)
+            let set = SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r)
 
             let tuple = SynExpr.CreateTuple [ get; set ]
 
@@ -118,11 +118,11 @@ module internal CreateLenses =
                 let createCase =
                     SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.LongIdent (false, fullCaseName, None, r), SynExpr.Ident valueIdent, r)
                 let innerLambdaWithValue =
-                    SynExpr.Lambda (false, true, valueArgPatterns, createCase, r)
+                    SynExpr.Lambda (false, true, valueArgPatterns, createCase, None, r)
                 let recordArg = SynSimplePat.Typed(SynSimplePat.Id (Ident.Create "_", None, false, false, false, r), duType, r)
                 let getArgs = SynSimplePats.SimplePats ([recordArg], r)
 
-                SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, r)
+                SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r)
 
             let tuple = SynExpr.CreateTuple [ SynExpr.Ident getterName; setter ]
 
@@ -176,7 +176,9 @@ module internal CreateLenses =
                                              Some longIdent.AsString
             | expr-> failwithf "Unsupported syntax of specifying the wrapper name for type %A.\nExpr: %A" recordId expr
 
-        let openParent = SynModuleDecl.CreateOpen (LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText)))
+        let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
+        let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, r)
+        let openParent = SynModuleDecl.CreateOpen (openTarget)
         let moduleInfo = SynComponentInfoRcd.Create moduleIdent
 
         match synTypeDefnRepr with
@@ -204,7 +206,7 @@ type LensesGenerator() =
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
-                
+
             let namespaceAndRecords = Ast.extractRecords ast
             let recordsModules =
                 namespaceAndRecords
