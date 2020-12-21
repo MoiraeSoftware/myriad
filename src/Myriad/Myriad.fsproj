@@ -6,6 +6,7 @@
     <ToolCommandName>myriad</ToolCommandName>
     <Description>Myriad CLI tool</Description>
     <DebugType>embedded</DebugType>
+    <RollForward>major</RollForward>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.fs" />
