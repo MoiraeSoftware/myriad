@@ -209,7 +209,14 @@ type DUCasesGenerator() =
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
-            let namespaceAndrecords = Ast.extractDU ast
+                
+            let namespaceAndrecords =
+                Ast.extractDU ast
+                |> List.choose (fun (ns, types) -> 
+                    match types |> List.filter (Ast.hasAttribute<Generator.DuCasesAttribute>) with
+                    | [] -> None
+                    | types -> Some (ns, types))
+
             let modules =
                 namespaceAndrecords
                 |> List.collect (fun (ns, dus) ->
