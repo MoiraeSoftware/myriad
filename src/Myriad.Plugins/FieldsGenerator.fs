@@ -191,7 +191,10 @@ type FieldsGenerator() =
 
             let namespaceAndrecords =
                 Ast.extractRecords ast
-                |> List.map (fun (ns, types) -> ns, types |> List.filter (Ast.hasAttribute<Generator.FieldsAttribute>) )
+                |> List.choose (fun (ns, types) -> 
+                    match types |> List.filter (Ast.hasAttribute<Generator.FieldsAttribute>) with
+                    | [] -> None
+                    | types -> Some (ns, types))
 
             let modules =
                 namespaceAndrecords
