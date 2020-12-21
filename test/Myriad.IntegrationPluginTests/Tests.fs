@@ -31,12 +31,12 @@ let tests =
                 let t = TestFields.Test1.create 1 "2" 3. (float32 4)
 
                 test "Getter" {
-                    let getter = fst Test.Test1Lenses.one
+                    let getter = fst TestLens.Test1Lenses.one
                     Expect.equal 1 (getter t) "getter returns the value"
                 }
 
                 test "Setter" {
-                    let setter = snd Test.Test1Lenses.one
+                    let setter = snd TestLens.Test1Lenses.one
                     let updated = setter t 2
                     Expect.equal 2 updated.one "setter updates the value"
                 }
