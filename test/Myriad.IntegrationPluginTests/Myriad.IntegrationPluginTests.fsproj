@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
+    <RollForward>major</RollForward>
   </PropertyGroup>
   <PropertyGroup>
 <!--     <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
@@ -13,7 +14,7 @@
     <Compile Include="Input.fs" />
 
     <Compile Include="FieldsLensDus.fs">
-      <MyriadFile>Input.fs</MyriadFile> 
+      <MyriadFile>Input.fs</MyriadFile>
     </Compile>
 
     <Compile Include="ArbitaryFile.fs">
