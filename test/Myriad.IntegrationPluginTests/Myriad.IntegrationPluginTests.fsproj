@@ -12,15 +12,11 @@
     <Compile Include="Lenses.fs" />
     <Compile Include="Input.fs" />
 
-    <Compile Include="Generated.fs">
+    <Compile Include="FieldsLensDus.fs">
       <MyriadFile>Input.fs</MyriadFile> 
     </Compile>
 
-    <Compile Include="Generated2.fs">
-      <MyriadFile>Input.fs</MyriadFile>
-    </Compile>
-
-    <Compile Include="Generated3.fs">
+    <Compile Include="ArbitaryFile.fs">
       <MyriadFile>Test.txt</MyriadFile>
     </Compile>
 
