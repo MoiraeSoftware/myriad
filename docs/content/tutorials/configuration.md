@@ -6,9 +6,9 @@ menu_order: 5
 
 # Configuration
 
-Myriad uses a configuration file called `myriad.toml`.  It uses the [toml format](https://toml.io/en/).  
+Myriad uses a configuration file called `myriad.toml` which uses the [toml format](https://toml.io/en/).  
 
-The configuration as it stands for the built in plugins is very simple, the configuration name or key is passed in by either the plugins generator attribute, in the case of the fields plugin:
+The configuration section for the built in plugins is very simple, the configuration name or key is passed in by either the plugins generator attribute, in the case of the fields plugin:
 
 ```
 [<Generator.Fields "fields">]
@@ -16,7 +16,7 @@ type Test1 = { one: int; two: string; three: float; four: float32 }
 
 ```
 
-The configuration key is "fields", if we now look at the `myriad.toml` file:
+The configuration key is "fields", if we now look at the `myriad.toml` file it looks like this:
 
 ```toml
 [fields]
@@ -34,7 +34,11 @@ There is another mechanism of specifying what configuration a plugin will use an
 </Compile>
 ```
 
-The configuration key `example1` would be passed to the plugin so that it could be consumed.  This is used in the example plugin `Myriad.Plugin.Example1` and use used again to specify the `namespace` used by the `example1` plugin.  The plugin interface receives this key via: `GeneratorContext` . `ConfigKey`:
+The configuration key `example1` would be passed to the plugin so that it could be consumed.  This is used in the `Myriad.Plugin.Example1` plugin and use uses configuration to specify the `namespace` used.  
+
+# Writing plugins to consume configuration
+
+The plugin interface receives this key via: `GeneratorContext` . `ConfigKey`:
 
 ```fsharp
 type GeneratorContext = {
@@ -56,6 +60,6 @@ ValidInputExtensions is used so a plugin is tied to certain file types as input,
         //...
 ```
 
-While we are dicussing rhe IMyriadGenerator interface lets dicuss the `Generate` member:
+While we are discussing the `IMyriadGenerator` interface lets discuss the `Generate` member:
 
 Generate takes a `GeneratorContext` which contains the `ConfigKey` as mentioned above, the `ConfigGetter` : `string -> (string * obj) seq` which is a mean to allow access to the `myriad.toml` file, you give the function the configuration ket you wish to receive and it returns the configuration.  Finally a `InputFileName` is also passed in so you can load or parse your input files ready to generate an AST.  If you look at the included plugins you can see the mechanism for extracting and building AST fragments for reference.  
