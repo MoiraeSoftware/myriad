@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.50]
+## [0.5.0]
 ###Added
 - Allow toml config to be used in plugins
 - Allow arbitrary inputs to be used
