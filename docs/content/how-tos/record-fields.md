@@ -10,12 +10,12 @@ The input file in this example `Library.fs` looks like this:
 namespace Example
 open Myriad.Plugins
 
-[<Generator.Fields>]
+[<Generator.Fields "fields">]
 type Test1 = { one: int; two: string; three: float; four: float32 }
 type Test2 = { one: Test1; two: string }
 ```
 
-An attribute is used by the plugin so that the code generator plugin knows which parts of the input AST are to be used by the plugin.  If you had several records and you only want the fields plugin to operate on `Test1` then the attribute would be used like in the example about to only apply `Generator.Fields` to `Test1`.  Note, if you wanted a plugin that just needs the whole input AST then there is no need to provide an input.  Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code.
+An attribute is used by the fields plugin so that the code generator knows which parts of the input AST should be consumed by the plugin.  If you had several records and you only wanted the fields plugin to operate on `Test1` then the attribute would be used like in the example about to only apply `Generator.Fields` to the `Test1` record.  Note, if you wanted a plugin that just processes the whole input then there is no need to provide such an attribute, in fact if you are using an arbitrary file then using an attribute will not be an option anyway.  Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code, its up to you how you generate the code, Myriad just aims to help to make this as painless and flexible as possible.
 
 The fields plugin in this example will generate the following code at prebuild time and compile the code into your assembly:
 ```fsharp
