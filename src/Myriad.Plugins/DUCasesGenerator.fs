@@ -204,10 +204,10 @@ type DUCasesGenerator() =
 
     interface IMyriadGenerator with
         member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(_myriadConfigKey, configGetter, inputFile: string) =
-            //_myriadConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
+        member __.Generate(context: GeneratorContext) =
+            //context.ConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
             let ast =
-                Ast.fromFilename inputFile
+                Ast.fromFilename context.InputFileName
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
@@ -223,7 +223,7 @@ type DUCasesGenerator() =
                 namespaceAndrecords
                 |> List.collect (fun (ns, dus) ->
                                     dus
-                                    |> List.map (fun du -> let config = Generator.getConfigFromAttribute<Generator.DuCasesAttribute> configGetter du
+                                    |> List.map (fun du -> let config = Generator.getConfigFromAttribute<Generator.DuCasesAttribute> context.ConfigGetter du
                                                            CreateDUModule.createDuModule ns du config))
 
             modules
