@@ -108,9 +108,9 @@ module Main =
                     try
                         if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile))
                         then
-                            let context = {Core.GeneratorContext.ConfigKey = configKey;
-                                           Core.GeneratorContext.ConfigGetter = configHandler
-                                           Core.GeneratorContext.InputFileName = inputFile  }
+                            let context = { Core.GeneratorContext.ConfigKey = configKey
+                                            Core.GeneratorContext.ConfigGetter = configHandler
+                                            Core.GeneratorContext.InputFileName = inputFile  }
                             Some (instance.Generate(context))
                         else None
                     with
