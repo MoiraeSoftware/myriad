@@ -131,7 +131,7 @@ The full fsproj is detail below:
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Library.fs" />
