@@ -1,6 +1,6 @@
 # Myriad
 
-Myriad is a code generator, put plainly it takes an abstract syntax tree from a source and uses that to produce F# code.
+Myriad is a code generator, it takes an arbitary file and the library provides different mechanisms to allow F# code to be produced in response to the file, whether that file be an F# source file or a simple text file.  
 
 Myriad can be used from either an MSBuild extension or from its CLI tool.
 
