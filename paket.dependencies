@@ -3,7 +3,7 @@ framework: net50, netstandard2.0
 storage: none
 
 nuget Argu
-nuget FSAst 0.7
+nuget FSAst
 nuget Fantomas ~> 4
 nuget FSharp.Compiler.Service ~> 38
 nuget FSharp.Core strategy: min
