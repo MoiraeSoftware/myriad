@@ -11,7 +11,7 @@ type Test2 = { oney: Test1; two: string }
 type RecordWithWrappedLens =
     { one: int } 
 
-[<Generator.Lenses ("lens")>] 
+[<Generator.Lenses "lens">] 
 type RecordWithEmptyWrapperName =
     { one_empty_wrapper_name: int } 
 
