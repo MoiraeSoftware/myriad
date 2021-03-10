@@ -168,6 +168,7 @@ module internal CreateLenses =
 
         let wrapperName =
             match attr.ArgExpr with
+            | SynExpr.Const _
             | SynExpr.Paren(SynExpr.Const _,_,_,_) -> None
             | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig; SynExpr.Const((SynConst.String(s, _)), _)],_,_),_,_,_) -> Some s
             | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig
