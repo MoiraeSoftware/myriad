@@ -7,7 +7,7 @@ open Myriad.Core
 module internal CreateDUModule =
     open FSharp.Compiler.Range
 
-    let createToString (parent: LongIdent) (cases: SynUnionCase list) =
+    let createToString (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
         let varIdent = LongIdentWithDots.CreateString "toString"
         let inputIdent = "x"
 
@@ -26,7 +26,12 @@ module internal CreateDUModule =
                 cases
                 |> List.map (fun c ->
                     let case = c.ToRcd
-                    let indent = LongIdentWithDots.CreateString (case.Id.idText)
+                    let matchCaseIdentParts =
+                        if requiresQualifiedAccess then
+                            (parent |> List.map (fun i -> i.idText)) @ [case.Id.idText]
+                        else
+                            [case.Id.idText]
+                    let indent = LongIdentWithDots.Create matchCaseIdentParts
                     let args = if case.HasFields then [SynPatRcd.CreateWild] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
                     let rhs =
@@ -42,7 +47,7 @@ module internal CreateDUModule =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createFromString (parent: LongIdent) (cases: SynUnionCase list) =
+    let createFromString (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
         let varIdent = LongIdentWithDots.CreateString "fromString"
         let inputIdent = "x"
 
@@ -71,7 +76,13 @@ module internal CreateDUModule =
                     let p = SynPatRcd.Const (rcd)
                     let rhs =
                         let f = SynExpr.Ident (Ident("Some", range.Zero))
-                        let x = SynExpr.Ident (Ident(case.Id.idText, range.Zero))
+                        let matchCaseIdentParts =
+                            if requiresQualifiedAccess then
+                                (parent |> List.map (fun i -> i.idText)) @ [case.Id.idText]
+                            else
+                                [case.Id.idText]
+                        let fullCaseName = LongIdentWithDots.Create matchCaseIdentParts
+                        let x = SynExpr.CreateLongIdent fullCaseName
                         SynExpr.App(ExprAtomicFlag.NonAtomic, false, f, x, range.Zero)
                     SynMatchClause.Clause(p.FromRcd, None, rhs, range.Zero, DebugPointForTarget.No )
                 )
@@ -88,7 +99,7 @@ module internal CreateDUModule =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createToTag (parent: LongIdent) (cases: SynUnionCase list) =
+    let createToTag (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
         let varIdent = LongIdentWithDots.CreateString "toTag"
         let inputIdent = "x"
 
@@ -107,7 +118,12 @@ module internal CreateDUModule =
                 cases
                 |> List.mapi (fun i c ->
                     let case = c.ToRcd
-                    let indent = LongIdentWithDots.CreateString (case.Id.idText)
+                    let matchCaseIdentParts =
+                        if requiresQualifiedAccess then
+                            (parent |> List.map (fun i -> i.idText)) @ [case.Id.idText]
+                        else
+                            [case.Id.idText]
+                    let indent = LongIdentWithDots.Create matchCaseIdentParts
                     let args = if case.HasFields then [SynPatRcd.CreateWild] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
                     let rhs =
@@ -123,7 +139,7 @@ module internal CreateDUModule =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createIsCase (parent: LongIdent) (cases: SynUnionCase list) =
+    let createIsCase (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
         [ for c in cases do
             let case = c.ToRcd
             let varIdent = LongIdentWithDots.CreateString (sprintf "is%s" case.Id.idText)
@@ -141,7 +157,12 @@ module internal CreateDUModule =
 
             let expr =
                 let matchCase =
-                    let indent = LongIdentWithDots.CreateString (case.Id.idText)
+                    let matchCaseIdentParts =
+                        if requiresQualifiedAccess then
+                            (parent |> List.map (fun i -> i.idText)) @ [case.Id.idText]
+                        else
+                            [case.Id.idText]
+                    let indent = LongIdentWithDots.Create matchCaseIdentParts
                     let args = if case.HasFields then [SynPatRcd.CreateWild] else []
                     let p = SynPatRcd.CreateLongIdent(indent, args)
 
@@ -172,11 +193,12 @@ module internal CreateDUModule =
             let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
             let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
             let openParent = SynModuleDecl.CreateOpen (openTarget)
-
-            let toString = createToString recordId cases
-            let fromString = createFromString recordId cases
-            let toTag = createToTag recordId cases
-            let isCase = createIsCase recordId cases
+            let requiresQualifiedAccess = Ast.getAttribute<RequireQualifiedAccessAttribute> typeDefn |> Option.isSome
+            
+            let toString = createToString requiresQualifiedAccess recordId cases
+            let fromString = createFromString requiresQualifiedAccess recordId cases
+            let toTag = createToTag requiresQualifiedAccess recordId cases
+            let isCase = createIsCase requiresQualifiedAccess recordId cases
 
             let declarations = [
                 openParent
