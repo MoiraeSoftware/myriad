@@ -193,7 +193,7 @@ module internal CreateDUModule =
             let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
             let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
             let openParent = SynModuleDecl.CreateOpen (openTarget)
-            let requiresQualifiedAccess = Ast.getAttribute<RequireQualifiedAccessAttribute> typeDefn |> Option.isSome
+            let requiresQualifiedAccess = Ast.hasAttribute<RequireQualifiedAccessAttribute> typeDefn
             
             let toString = createToString requiresQualifiedAccess recordId cases
             let fromString = createFromString requiresQualifiedAccess recordId cases
