@@ -170,7 +170,7 @@ module Currency =
     open Input
     let toString (x: Currency) =
         match x with
-        | CAD -> "CAD"
+        | CADss -> "CADss"
         | PLN -> "PLN"
         | EUR -> "EUR"
         | USD -> "USD"
@@ -178,7 +178,7 @@ module Currency =
 
     let fromString (x: string) =
         match x with
-        | "CAD" -> Some CAD
+        | "CADss" -> Some CADss
         | "PLN" -> Some PLN
         | "EUR" -> Some EUR
         | "USD" -> Some USD
@@ -186,15 +186,15 @@ module Currency =
 
     let toTag (x: Currency) =
         match x with
-        | CAD -> 0
+        | CADss -> 0
         | PLN -> 1
         | EUR -> 2
         | USD -> 3
         | Custom _ -> 4
 
-    let isCAD (x: Currency) =
+    let isCADss (x: Currency) =
         match x with
-        | CAD -> true
+        | CADss -> true
         | _ -> false
 
     let isPLN (x: Currency) =
