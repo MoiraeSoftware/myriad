@@ -5,6 +5,7 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <RollForward>major</RollForward>
+    <!-- <MyriadConfigFile>someglobalconfig.toml</MyriadConfigFile> -->
   </PropertyGroup>
   <PropertyGroup>
 <!--     <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
