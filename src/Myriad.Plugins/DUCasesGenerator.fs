@@ -7,7 +7,7 @@ open Myriad.Core
 module internal CreateDUModule =
     open FSharp.Compiler.Range
 
-    let createToString (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
+    let createToString (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
         let varIdent = LongIdentWithDots.CreateString "toString"
         let inputIdent = "x"
 
@@ -47,7 +47,7 @@ module internal CreateDUModule =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createFromString (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
+    let createFromString (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
         let varIdent = LongIdentWithDots.CreateString "fromString"
         let inputIdent = "x"
 
@@ -99,7 +99,7 @@ module internal CreateDUModule =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createToTag (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
+    let createToTag (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
         let varIdent = LongIdentWithDots.CreateString "toTag"
         let inputIdent = "x"
 
@@ -139,7 +139,7 @@ module internal CreateDUModule =
         let returnTypeInfo = SynBindingReturnInfoRcd.Create duType
         SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
 
-    let createIsCase (requiresQualifiedAccess : bool) (parent: LongIdent) (cases: SynUnionCase list) =
+    let createIsCase (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
         [ for c in cases do
             let case = c.ToRcd
             let varIdent = LongIdentWithDots.CreateString (sprintf "is%s" case.Id.idText)
