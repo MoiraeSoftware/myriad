@@ -183,7 +183,6 @@ module internal CreateDUModule =
             SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
         ]
 
-
     let createDuModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (config: (string * obj) seq) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
@@ -218,8 +217,6 @@ module internal CreateDUModule =
                     IsRecursive = true
                     Declarations = [mdl] }
         | _ -> failwithf "Not a record type"
-
-
 
 [<MyriadGenerator("dus")>]
 type DUCasesGenerator() =
