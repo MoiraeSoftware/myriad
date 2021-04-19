@@ -6,7 +6,18 @@ menu_order: 5
 
 # Configuration
 
-Myriad uses a configuration file called `myriad.toml` which uses the [toml format](https://toml.io/en/).  
+Myriad uses a configuration file called `myriad.toml` which uses the [toml format](https://toml.io/en/).  Myriad looks in the current directory fro this file but it can be configured by placing `MyriadConfigFile` in your project file like this:
+
+```msbuild
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <MyriadConfigFile>myConfig.toml</MyriadConfigFile>
+  </PropertyGroup>
+...
+```
 
 The configuration section for the built in plugins is very simple, the configuration name or key is passed in by either the plugins generator attribute, in the case of the fields plugin:
 
