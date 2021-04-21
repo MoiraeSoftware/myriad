@@ -267,7 +267,7 @@ The nuget package for Myriad can be found here:
 * [Applied Metaprogramming with Myriad And Falanx](https://7sharp9.github.io/fsharp/2019-04-24-applied-metaprogramming-with-myriad/)
 * [Myriad Intro](https://7sharp9.github.io/fsharp/2019-11-06-myriad-intro/)
 
-### 3rd external plugins
+### External plugins
 
 Here is a list of external plugins that have been built
 
