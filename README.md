@@ -266,3 +266,12 @@ The nuget package for Myriad can be found here:
 ### Also see
 * [Applied Metaprogramming with Myriad And Falanx](https://7sharp9.github.io/fsharp/2019-04-24-applied-metaprogramming-with-myriad/)
 * [Myriad Intro](https://7sharp9.github.io/fsharp/2019-11-06-myriad-intro/)
+
+### 3rd external plugins
+
+Here is a list of external plugins that have been built
+
+[SqlHyra](https://github.com/JordanMarr/SqlHydra)
+[JsonWrapper](https://github.com/BinaryDefense/JsonWrapper)
+[TypeSafeInternals](https://github.com/TheAngryByrd/TypeSafeInternals)
+
