@@ -4,7 +4,9 @@ category: how-to
 menu_order: 4
 ---
 
-![Generator](/static/images/pexels-spacex-586024.jpg)  
+# Building a Generator from scratch  
+
+![Generator](/myriad/static/images/pexels-spacex-586024.jpg)
 
 Im sorry there is no step by step guide (Yet) you can use the following as reference until I get around to writing it:
 
