@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Example", "Example\Example.fsproj", "{E5577CBE-A116-44B1-9D72-2F7E78A02E3F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ExampleWithPlugin", "ExampleWithPlugin\ExampleWithPlugin.fsproj", "{A63C0870-0BCE-4B21-B8CF-D87EF5408F13}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
