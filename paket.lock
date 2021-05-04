@@ -11,7 +11,7 @@ NUGET
     Fantomas (4.4)
       FSharp.Compiler.Service (>= 38.0.2)
       FSharp.Core (>= 5.0)
-    FsAst (0.7)
+    FsAst (0.8)
       FSharp.Compiler.Service (>= 38.0)
       Microsoft.SourceLink.GitHub (>= 1.0)
     FSharp.Compiler.Service (38.0.2)
