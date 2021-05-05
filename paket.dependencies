@@ -10,6 +10,7 @@ nuget FSharp.Core strategy: min
 nuget Tomlyn
 
 nuget Expecto
+nuget Aether
 
 group Docs
   source https://api.nuget.org/v3/index.json

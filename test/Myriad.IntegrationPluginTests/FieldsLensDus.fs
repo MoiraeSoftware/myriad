@@ -74,6 +74,26 @@ module PersonLenses =
 
     let Address =
         Example.Lens((fun (x: Person) -> x.Address), (fun (x: Person) (value: Address) -> { x with Address = value }))
+namespace rec AetherTestLens
+
+module AetherAddressLenses =
+    open Input
+    let Street =
+        (fun (x: AetherAddress) -> x.Street), (fun (value: string) (x: AetherAddress) -> { x with Street = value })
+
+    let HouseNumber =
+        (fun (x: AetherAddress) -> x.HouseNumber),
+        (fun (value: int) (x: AetherAddress) -> { x with HouseNumber = value })
+namespace rec AetherTestLens
+
+module AetherPersonLenses =
+    open Input
+    let Name =
+        (fun (x: AetherPerson) -> x.Name), (fun (value: string) (x: AetherPerson) -> { x with Name = value })
+
+    let Address =
+        (fun (x: AetherPerson) -> x.Address),
+        (fun (value: AetherAddress) (x: AetherPerson) -> { x with Address = value })
 namespace rec TestLens
 
 module SingleCaseDULenses =

@@ -2,8 +2,9 @@ module Tests
 
 open Expecto
 open Example
-open Test
+open Example.Lens
 open Input
+open UnknownNamespace
 
 let tests =
     testList "basic tests" [
@@ -102,7 +103,7 @@ let tests =
 
             test "Lens composition" {
                 let houseNumberLens = TestLens.PersonLenses.Address << TestLens.AddressLenses.HouseNumber
-                let person = {
+                let person: Person = {
                     Name = "Sherlock"
                     Address = {
                         Street = "Baker st."
@@ -118,6 +119,18 @@ let tests =
                 let updatedHouseNumber = Lens.get houseNumberLens updatedPerson
 
                 Expect.equal updatedHouseNumber 1 "Gets updated value"
+            }
+            
+            test "Aether get" {
+                let person: AetherPerson = {
+                    Name = "Sherlock"
+                    Address = {
+                        Street = "Baker st."
+                        HouseNumber = 221
+                    }
+                }
+                let value =  Aether.Optic.get AetherTestLens.AetherPersonLenses.Address person
+                Expect.equal value person.Address "Gets the address lens via Aether"
             }
         ]
     ]
