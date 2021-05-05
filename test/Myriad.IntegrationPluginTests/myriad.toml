@@ -7,5 +7,9 @@ namespace = "TestDus"
 [lens]
 namespace = "TestLens"
 
+[pipedsetterlens]
+pipedsetter = true
+namespace = "AetherTestLens"
+
 [example1]
 namespace = "TestExample1"
