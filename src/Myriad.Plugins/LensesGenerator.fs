@@ -17,7 +17,7 @@ module internal CreateLenses =
             SynExpr.App (ExprAtomicFlag.NonAtomic, false, wrapperVar, SynExpr.CreateParen lens, r)
         | _ -> lens
 
-    let private createLensForRecordField (parent: LongIdent) (wrapperName : Option<string>) (field: SynField) =
+    let private createLensForRecordField (parent: LongIdent) (wrapperName : Option<string>) (aetherStyle: bool) (field: SynField) =
         let field = field.ToRcd
         let fieldName = match field.Id with None -> failwith "no field name" | Some f -> f
 
@@ -51,10 +51,15 @@ module internal CreateLenses =
             let recordUpdate = SynExpr.CreateRecordUpdate (copySrc, [(recordToUpdateName, SynExpr.Ident valueIdent |> Some, None)])
 
             // (value : PropertyType) -> { x with Property = value }
-            let innerLambdaWithValue = SynExpr.Lambda (false, true, valueArgPatterns, recordUpdate, None, r)
+            let innerLambdaWithValue valueArgs = SynExpr.Lambda (false, true, valueArgs, recordUpdate, None, r)
 
-            // fun (x : Record) (value : PropertyType) -> { x with Property = value }
-            let set = SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r)
+            let set =
+                if aetherStyle then
+                    // fun (value : PropertyType) -> (x : Record) -> { x with Property = value }
+                    SynExpr.Lambda (false, true, valueArgPatterns, innerLambdaWithValue getArgs, None, r)
+                else
+                    // fun (x : Record) (value : PropertyType) -> { x with Property = value }
+                    SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue valueArgPatterns, None, r)
 
             let tuple = SynExpr.CreateTuple [ SynExpr.CreateParen get; SynExpr.CreateParen set ]
 
@@ -159,7 +164,7 @@ module internal CreateLenses =
         | SynType.App (name, _, _, _, _, _, _) -> Some name
         | _ -> None
 
-    let createLensModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (attr: SynAttribute) =
+    let createLensModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (attr: SynAttribute) (usePipedSetter: bool) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
 
@@ -184,7 +189,7 @@ module internal CreateLenses =
 
         match synTypeDefnRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_accessibility, recordFields, _recordRange), _range) ->
-            let fieldLenses = recordFields |> List.map (createLensForRecordField recordId wrapperName)
+            let fieldLenses = recordFields |> List.map (createLensForRecordField recordId wrapperName usePipedSetter)
             let declarations = [yield openParent; yield! fieldLenses ]
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
 
@@ -221,9 +226,13 @@ type LensesGenerator() =
                     |> List.map (fun (record, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> context.ConfigGetter record
                                                          let recordsNamespace =
                                                               config
-                                                              |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                                                              |> Seq.tryPick (fun (n, v) -> if n = "namespace" then Some (v :?> string) else None  )
                                                               |> Option.defaultValue "UnknownNamespace"
-                                                         let synModule = CreateLenses.createLensModule ns record attrib
+                                                         let usePipedSetter = 
+                                                             config
+                                                             |> Seq.tryPick (fun (n, v) -> if n = "pipedsetter" then Some (v :?> bool) else None  )
+                                                             |> Option.defaultValue false
+                                                         let synModule = CreateLenses.createLensModule ns record attrib usePipedSetter
                                                          { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong recordsNamespace)
                                                                 with
                                                                     IsRecursive = true
@@ -241,9 +250,13 @@ type LensesGenerator() =
                     |> List.map (fun (du, attrib) -> let config = Generator.getConfigFromAttribute<Generator.LensesAttribute> context.ConfigGetter du
                                                      let dusNamespace =
                                                          config
-                                                         |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
+                                                         |> Seq.tryPick (fun (n, v) -> if n = "namespace" then Some (v :?> string) else None  )
                                                          |> Option.defaultValue "UnknownNamespace"
-                                                     let synModule = CreateLenses.createLensModule ns du attrib
+                                                     let usePipedSetter = 
+                                                         config
+                                                         |> Seq.tryPick (fun (n, v) -> if n = "pipedsetter" then Some (v :?> bool) else None  )
+                                                         |> Option.defaultValue false
+                                                     let synModule = CreateLenses.createLensModule ns du attrib usePipedSetter
                                                      { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong dusNamespace)
                                                                 with
                                                                     IsRecursive = true
