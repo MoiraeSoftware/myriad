@@ -63,3 +63,16 @@ type Currency =
     | EUR
     | USD
     | Custom of string
+    
+// Aether style
+[<Generator.Lenses("pipedsetterlens")>]
+type AetherAddress = {
+    Street : string
+    HouseNumber : int
+}
+
+[<Generator.Lenses("pipedsetterlens")>]
+type AetherPerson = {
+    Name : string
+    Address : AetherAddress
+}
