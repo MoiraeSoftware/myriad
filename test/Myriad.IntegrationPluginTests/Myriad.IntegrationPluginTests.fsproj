@@ -8,7 +8,11 @@
     <!-- <MyriadConfigFile>someglobalconfig.toml</MyriadConfigFile> -->
   </PropertyGroup>
   <PropertyGroup>
-<!--     <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
+    <!-- uncomment to allow attaching to myriad process for debugging,
+         the build will "hold" until you attach to the myriad process
+         (generally dotnet rather than Myriad.exe)
+    -->
+    <!--<MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Lenses.fs" />
