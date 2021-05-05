@@ -2,6 +2,8 @@ STORAGE: NONE
 RESTRICTION: || (== net50) (== netstandard2.0)
 NUGET
   remote: https://api.nuget.org/v3/index.json
+    Aether (8.3.1)
+      FSharp.Core (>= 4.3.4)
     Argu (6.1.1)
       FSharp.Core (>= 4.3.2)
       System.Configuration.ConfigurationManager (>= 4.4)
