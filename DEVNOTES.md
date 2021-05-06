@@ -1,8 +1,8 @@
 # Notes about MSBuild machinery
 
-## How does it works with "is a rebuild needed"?
+## How is a rebuild determined?
 
-Rebuilding is roughly determined by:
+Rebuilding is determined by:
 * the hash of the version of myriad
 * reference paths
 * `--inputfile`
