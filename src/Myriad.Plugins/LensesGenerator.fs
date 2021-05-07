@@ -209,7 +209,7 @@ type LensesGenerator() =
         member __.Generate(context: GeneratorContext) =
             //context.ConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
             let ast =
-                Ast.fromFilename context.InputFileName
+                Ast.fromFilename context.InputFilename
                 |> Async.RunSynchronously
                 |> Array.head
                 |> fst
