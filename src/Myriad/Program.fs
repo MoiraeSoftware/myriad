@@ -8,8 +8,37 @@ open Argu
 open Tomlyn
 open System.Collections.Generic
 
-module Main =
+module Implementation =
+    let findPlugins (path: string) =
+        let assembly = System.Reflection.Assembly.LoadFrom(path)
 
+        let gens =
+            [ for t in assembly.GetTypes() do
+                if t.GetCustomAttributes(typeof<Myriad.Core.MyriadGeneratorAttribute>, true).Length > 0
+                then yield t ]
+        gens
+        
+    let getConfigHandler verbose config =
+        fun name ->
+            if verbose then
+                printfn $"CONFIG %A{config}"
+                printfn $"LOOKING FOR: %s{name}"
+            match config.TryGetToml name with
+            | true, x when x.Kind = Model.ObjectKind.Table ->
+                try
+                    let x = (x :?> Model.TomlTable)
+                    let x = (x :> IDictionary<string,obj>)
+                    x |> Seq.map (|KeyValue|)
+                with
+                | _ ->
+                    printfn "FAIL !"
+                    Seq.empty
+            | _ ->
+                printfn "FAIL @"
+                Seq.empty
+
+module Main =
+    open Implementation
     type Arguments =
         | [<Mandatory>] InputFile of string
         | [<Mandatory>] OutputFile of string
@@ -18,6 +47,7 @@ module Main =
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
+        | [<EqualsAssignment>] AdditionalParams of key:string * value:string
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -29,6 +59,7 @@ module Main =
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
                 | Verbose -> "Log verbose processing details."
+                | AdditionalParams _ -> "Specify additional parameters"
 
     [<EntryPoint>]
     let main argv =
@@ -54,7 +85,9 @@ module Main =
             let configKey = results.TryGetResult ConfigKey
 
             let configFileCnt = File.ReadAllText configFile
-            let config = Tomlyn.Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
+            let config = Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
+            
+            let additionalParams = results.GetResults AdditionalParams |> dict
 
             let plugins = results.GetResults Plugin
 
@@ -62,47 +95,21 @@ module Main =
                 printfn "Plugins:"
                 plugins |> List.iter (printfn "- '%s'")
 
-            let findPlugins (path: string) =
-                let assembly = System.Reflection.Assembly.LoadFrom(path)
-
-                let gens =
-                    [ for t in assembly.GetTypes() do
-                        if t.GetCustomAttributes(typeof<Myriad.Core.MyriadGeneratorAttribute>, true).Length > 0
-                        then yield t ]
-                gens
-
             let generators =
                 plugins
                 |> List.collect findPlugins
 
             if verbose then
                 printfn "Generators:"
-                generators |> List.iter (fun t -> printfn "- '%s'" t.FullName)
+                generators |> List.iter (fun t -> printfn $"- '%s{t.FullName}'")
 
             let runGenerator (inputFile: string) (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
 
-                let configHandler =
-                    fun name ->
-                        if verbose then
-                            printfn "CONFIG %A" config
-                            printfn "LOOKING FOR: %s" name
-                        match config.TryGetToml name with
-                        | true, x when x.Kind = Model.ObjectKind.Table ->
-                            try
-                                let x = (x :?> Model.TomlTable)
-                                let x = (x :> IDictionary<string,obj>)
-                                x |> Seq.map (|KeyValue|)
-                            with
-                            | _ ->
-                                printfn "FAIL !"
-                                Seq.empty
-                        | _ ->
-                            printfn "FAIL @"
-                            Seq.empty
+                let configHandler = getConfigHandler verbose config
 
                 if verbose then
-                    printfn "Executing: %s..." genType.FullName
+                    printfn $"Executing: %s{genType.FullName}..."
 
                 let result =
                     try
@@ -110,13 +117,14 @@ module Main =
                         then
                             let context = { Core.GeneratorContext.ConfigKey = configKey
                                             Core.GeneratorContext.ConfigGetter = configHandler
-                                            Core.GeneratorContext.InputFileName = inputFile  }
+                                            Core.GeneratorContext.InputFilename = inputFile
+                                            Core.GeneratorContext.AdditionalParameters = additionalParams }
                             Some (instance.Generate(context))
                         else None
                     with
                     | exc ->
                         // emit the module with exception text
-                        let info = SynComponentInfoRcd.Create (Ident.CreateLong (sprintf "%sFailure" genType.Name))
+                        let info = SynComponentInfoRcd.Create (Ident.CreateLong $"%s{genType.Name}Failure")
                         let pattern =
                             // intentionally generating invalid identifier name to fail the compilation
                             let name = LongIdentWithDots.CreateString "!CompilationError"
@@ -131,7 +139,7 @@ module Main =
                         Some [ { moduleOrNamespace with IsRecursive = true; Declarations = [modulDecl] } ]
 
                 if verbose then
-                    printfn "Result: '%A'" result
+                    printfn $"Result: '%A{result}'"
 
                 result
 
@@ -139,7 +147,7 @@ module Main =
                 printfn "Exec generators:"
 
             if verbose then
-                printfn "Input Filename:\n:%A" inputFile
+                printfn $"Input Filename:\n:%A{inputFile}"
 
 
             let generated =
