@@ -1,7 +1,6 @@
 namespace Myriad.Core
 
 open System
-open FSharp.Compiler.SyntaxTree
 
 type MyriadGeneratorAttribute(name: string) =
     inherit Attribute()
