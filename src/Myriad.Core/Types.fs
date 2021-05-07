@@ -1,15 +1,17 @@
 namespace Myriad.Core
 
 open System
+open System.Collections.Generic
 
 type MyriadGeneratorAttribute(name: string) =
     inherit Attribute()
-    member __.Name = name
+    member _.Name = name
 
 type GeneratorContext = {
     ConfigKey: string option
     ConfigGetter: string -> (string * obj) seq
-    InputFileName: string
+    InputFilename: string
+    AdditionalParameters: IDictionary<string, string>
 }
 
 type IMyriadGenerator =
