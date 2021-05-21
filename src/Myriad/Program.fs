@@ -18,7 +18,7 @@ module Implementation =
                 then yield t ]
         gens
         
-    let getConfigHandler verbose config =
+    let getConfigHandler verbose (config: Model.TomlTable) =
         fun name ->
             if verbose then
                 printfn $"CONFIG: %A{config}"
