@@ -21,7 +21,7 @@ module Implementation =
     let getConfigHandler verbose config =
         fun name ->
             if verbose then
-                printfn $"CONFIG %A{config}"
+                printfn $"CONFIG: %A{config}"
                 printfn $"LOOKING FOR: %s{name}"
             match config.TryGetToml name with
             | true, x when x.Kind = Model.ObjectKind.Table ->
