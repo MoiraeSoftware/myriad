@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.2]
+## [0.5.3]
 - Update FSAst to 0.8.0 - Thanks! @theangrybyrd
 - Add support for Aether via pipedsetters=true in myriad config for lens
 
