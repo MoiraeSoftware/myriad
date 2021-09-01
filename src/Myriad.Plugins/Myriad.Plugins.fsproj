@@ -6,22 +6,17 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Myriad.Core\Myriad.Core.fsproj">
-      <Name>Myriad.Core.fsproj</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Attribute.fs" />
     <Compile Include="LensesGenerator.fs" />
     <Compile Include="FieldsGenerator.fs" />
     <Compile Include="DUCasesGenerator.fs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="build\Myriad.Plugins.props">
       <Pack>true</Pack>
       <PackagePath>%(Identity)</PackagePath>
       <Visible>true</Visible>
     </Content>
+    <ProjectReference Include="..\Myriad.Core\Myriad.Core.fsproj">
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
