@@ -152,8 +152,10 @@
             <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' " />
         </ItemGroup>
 
+        <!-- Uncomment to debug command line generation -->
+        <!-- <Message Text="%0A$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')%0A" Importance="high"/> -->
         <!-- Use dotnet to execute the process. -->
-        <Message Text="%0A$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')%0A" Importance="high"/>
+        <Exec Command="$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')" />
     </Target>
 
     <Target Name="MyriadSdkIncludeCodegenOutputDuringDesignTimeBuild" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' == 'true' "></Target>
