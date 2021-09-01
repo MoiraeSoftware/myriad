@@ -21,13 +21,19 @@
 
     <Compile Include="FieldsLensDus.fs">
       <MyriadFile>Input.fs</MyriadFile>
-      <MyriadParams>one=1;two=3</MyriadParams>
+      <MyriadParams>
+        <MyriadParam1>1</MyriadParam1>
+        <MyriadParam2>2</MyriadParam2>
+      </MyriadParams>
     </Compile>
 
     <Compile Include="ArbitaryFile.fs">
       <MyriadFile>Test.txt</MyriadFile>
       <MyriadConfigKey>example1</MyriadConfigKey>
-      <MyriadParams>two=2;three=4</MyriadParams>
+      <MyriadParams>
+        <MyriadParam1>3</MyriadParam1>
+        <MyriadParam2>4</MyriadParam2>
+      </MyriadParams>
     </Compile>
 
     <Compile Include="ArbitaryFile2.fs">
