@@ -20,7 +20,7 @@ let project = "myriad"
 let summary = ""
 let authors = "7sharp9"
 let copyright = "Dave Thomas"
-let tags = "fsharp;codegen;generation"
+let tags = "fsharp;codegen;generation;metaprogramming"
 let gitOwner = "MoiraeSoftware"
 let gitName = "myriad"
 let gitHome = "https://github.com/" + gitOwner
@@ -106,7 +106,7 @@ Target.create "Pack" (fun _ ->
         ("PackageTags", tags)
         ("RepositoryType", "git")
         ("RepositoryUrl", gitUrl)
-        ("PackageLicenseUrl", gitUrl + "/LICENSE")
+        ("PackageLicenseExpression", "Apache-2.0")
         ("Copyright", copyright)
         ("PackageReleaseNotes", sprintf "%s/blob/v%s/CHANGELOG.md" gitUrl latestEntry.NuGetVersion)
         ("EnableSourceLink", "true")
@@ -119,7 +119,7 @@ Target.create "Pack" (fun _ ->
             OutputPath = Some nugetDir
             MSBuildParams = { p.MSBuildParams with Properties = properties }
         }
-    ) "src/Myriad.Sdk/Myriad.Sdk.proj"
+    ) "src/Myriad.Sdk/Myriad.Sdk.csproj"
 
     //Pack whole solution
     DotNet.pack (fun p ->
