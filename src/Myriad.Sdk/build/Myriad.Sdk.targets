@@ -153,7 +153,6 @@
         </ItemGroup>
 
         <!-- Use dotnet to execute the process. -->
-        <Message Text="Flatten: $(_MyriadSdk_MyriadParamsFlattened)" Importance="high" />
         <Message Text="%0A$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')%0A" Importance="high"/>
 
         <!-- <Message Text="%0A$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')%0A" Importance="high" /> -->
