@@ -14,17 +14,26 @@
     -->
     <!--<MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="Lenses.fs" />
     <Compile Include="Input.fs" />
 
     <Compile Include="FieldsLensDus.fs">
       <MyriadFile>Input.fs</MyriadFile>
+      <MyriadParams>
+        <MyriadParam1>1</MyriadParam1>
+        <MyriadParam2>2</MyriadParam2>
+      </MyriadParams>
     </Compile>
 
     <Compile Include="ArbitaryFile.fs">
       <MyriadFile>Test.txt</MyriadFile>
       <MyriadConfigKey>example1</MyriadConfigKey>
+      <MyriadParams>
+        <MyriadParam1>3</MyriadParam1>
+        <MyriadParam2>4</MyriadParam2>
+      </MyriadParams>
     </Compile>
 
     <Compile Include="ArbitaryFile2.fs">
@@ -40,7 +49,7 @@
     <ProjectReference Include="../Myriad.Plugins.Example1/Myriad.Plugins.Example1.fsproj" PrivateAssets="All" />
   </ItemGroup>
 
-    <!-- use the dll directly rather than using a nuget -->
+  <!-- use the dll directly rather than using a nuget -->
   <PropertyGroup>
     <MyriadSdk_Generator_ExeHost>dotnet </MyriadSdk_Generator_ExeHost>
     <MyriadSdk_Generator_Exe>..\..\src\Myriad\bin\$(Configuration)\net5.0\Myriad.dll</MyriadSdk_Generator_Exe>

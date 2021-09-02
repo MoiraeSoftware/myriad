@@ -6,9 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.3]
-- Update FSAst to 0.8.0 - Thanks! @theangrybyrd
+## [0.5.4]
+- Add support from config arguments to be specified in the msbuild config via the sub elements using: <MyriadParams><Param>test</Param></MyriadParams>
+- Add support for custom arguments via the --additionalparam myparam=test;myotherparam=test2
+- Update FSAst to 0.9.0
 - Add support for Aether via pipedsetters=true in myriad config for lens
+
+## [0.5.2]
+- Update FSAst to 0.8.0 - Thanks! @theangrybyrd
 
 ## [0.5.1]
 ### Added

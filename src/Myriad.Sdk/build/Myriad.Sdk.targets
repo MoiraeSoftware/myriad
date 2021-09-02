@@ -1,11 +1,94 @@
 <Project>
 
+    <UsingTask TaskName="Flatten" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildBinPath)\Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <Metadata ParameterType="System.String[]" Required="false" />
+            <Result ParameterType="System.String" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Code Type="Class" Language="cs">
+                <![CDATA[
+                using System;
+                using System.Collections.Generic;
+                using System.Linq;
+                using System.Resources;
+                using System.Text;
+                using System.Xml.Linq;
+                using Microsoft.Build.Framework;
+                using Microsoft.Build.Utilities;
+                
+                    public class Flatten : Task
+                    {
+                        [Output] public string Result { get; set; }
+                        [Required] public ITaskItem[] Items { get; set; }
+                        public string[] Metadata { get; private set; }
+                
+                        private readonly HashSet<string> _reserved = new HashSet<string>
+                        {
+                            "AccessedTime",
+                            "CreatedTime",
+                            "DefiningProjectDirectory",
+                            "DefiningProjectExtension",
+                            "DefiningProjectFullPath",
+                            "DefiningProjectName",
+                            "Directory",
+                            "Extension",
+                            "Filename",
+                            "FullPath",
+                            "Identity",
+                            "ModifiedTime",
+                            "RecursiveDir",
+                            "RelativeDir",
+                            "RootDir",
+                        };
+                
+                        public Flatten(){}
+                        public Flatten(ResourceManager taskResources) : base(taskResources){}
+                        public Flatten(ResourceManager taskResources, string helpKeywordPrefix) : base(taskResources, helpKeywordPrefix){}
+                        public override bool Execute()
+                        {
+                            Result = "";
+                            Metadata ??= new string[0];
+                            var requestedNames = new HashSet<string>(Metadata.Where(x => !string.IsNullOrEmpty(x)));
+                            Result = "";
+                            var command = new StringBuilder();
+                            foreach (var item in Items)
+                            {
+                                var names = item.MetadataNames.Cast<string>().Where(x => !_reserved.Contains(x) && (!requestedNames.Any() || requestedNames.Contains(x)));
+                                foreach (var name in names)
+                                {
+                                    var values = item.GetMetadata(name);
+                                    var doc = XDocument.Parse($"<root>{values}</root>");
+                                    if (doc.Root != null)
+                                    {
+                                        var mapping = doc.Root.Elements().ToDictionary(a => a.Name.LocalName, a => a.Value);
+                                        foreach (var kvp in mapping)
+                                        {
+                                            command.Append($"{kvp.Key}={kvp.Value};");
+                                        }
+                                    }
+                                }
+                            }
+                            if (command.Length > 0)
+                            {
+                                Result = command.ToString(0, command.Length - 1);
+                            }
+                            return true;
+                        }
+                    }
+            ]]>
+            </Code>
+        </Task>
+    </UsingTask>
+
     <!-- Input to the code generator should not include its output. -->
     <Target Name="_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateInputCache">
         <ItemGroup>
             <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' ">
                 <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
+                <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
             </MyriadSource>
         </ItemGroup>
 
@@ -14,6 +97,7 @@
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadSource.OutputPath)'))</OutputPath>
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' == '' ">%(MyriadSource.FullPath).fs</OutputPath>
                 <ConfigKey>%(MyriadSource.ConfigKey)</ConfigKey>
+                <MyriadParams>%(MyriadSource.MyriadParams)</MyriadParams>
             </MyriadCodegen>
         </ItemGroup>
 
@@ -43,35 +127,37 @@
         <MyriadSdkGenerateCodeDependsOn>$(MyriadSdkGenerateCodeDependsOn);ResolveReferences;MyriadSdkGenerateInputCache</MyriadSdkGenerateCodeDependsOn>
     </PropertyGroup>
 
-    <Target Name="MyriadSdkGenerateCode"
-            DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)"
-            BeforeTargets="CoreCompile"
-            Condition=" '$(DesignTimeBuild)' != 'true' "
-            Inputs="@(MyriadCodegen);$(_MyriadSdkCodeGenInputCache);$(MyriadSdk_Generator_Exe)"
-            Outputs="%(MyriadCodegen.OutputPath)">
+    <Target Name="MyriadSdkGenerateCode" DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' != 'true' " Inputs="@(MyriadCodegen);$(_MyriadSdkCodeGenInputCache);$(MyriadSdk_Generator_Exe)" Outputs="%(MyriadCodegen.OutputPath)">
 
         <PropertyGroup>
             <_MyriadSdk_InputFileName>%(MyriadCodegen.Identity)</_MyriadSdk_InputFileName>
             <_MyriadSdk_OutputFileName>%(MyriadCodegen.OutputPath)</_MyriadSdk_OutputFileName>
             <_MyriadSdk_ConfigKey>%(MyriadCodegen.ConfigKey)</_MyriadSdk_ConfigKey>
             <_MyriadSdk_ConfigFile>$(MyriadConfigFile)</_MyriadSdk_ConfigFile>
+            <_MyriadSdk_MyriadParams>%(MyriadCodegen.MyriadParams)</_MyriadSdk_MyriadParams>
         </PropertyGroup>
+
+        <Flatten Items="@(MyriadCodegen)" Metadata="MyriadParams">
+            <Output TaskParameter="Result" PropertyName="_MyriadSdk_MyriadParams2" />
+        </Flatten> 
 
         <ItemGroup>
             <MyriadSdk_Args Include='--inputfile "$(_MyriadSdk_InputFileName)"' />
             <MyriadSdk_Args Include='--outputfile "$(_MyriadSdk_OutputFileName)"' />
             <MyriadSdk_Args Include='--configkey "$(_MyriadSdk_ConfigKey)"' Condition=" '$(_MyriadSdk_ConfigKey)' != '' " />
             <MyriadSdk_Args Include='--configfile "$(_MyriadSdk_ConfigFile)"' Condition=" '$(_MyriadSdk_ConfigFile)' != '' " />
+            <MyriadSdk_Args Include='--additionalparams "$(_MyriadSdk_MyriadParams2)"' Condition=" '$(_MyriadSdk_MyriadParams2)' != '' " />
             <MyriadSdk_Args Include='--wait-for-debugger' Condition=" '$(MyriadSdkWaitForDebugger)' == 'true' " />
             <MyriadSdk_Args Include='--verbose' Condition=" '$(MyriadSdkVerboseOutput)' == 'true' " />
-            <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' "/>
+            <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' " />
         </ItemGroup>
 
+        <!-- Uncomment to debug command line generation -->
+        <!-- <Message Text="%0A$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')%0A" Importance="high"/> -->
         <!-- Use dotnet to execute the process. -->
         <Exec Command="$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')" />
     </Target>
 
-    <Target Name="MyriadSdkIncludeCodegenOutputDuringDesignTimeBuild" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' == 'true' ">
-    </Target>
+    <Target Name="MyriadSdkIncludeCodegenOutputDuringDesignTimeBuild" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' == 'true' "></Target>
 
 </Project>
