@@ -4,7 +4,7 @@ Myriad is a code generator, it takes an arbitary file and the library provides d
 
 Myriad can be used from either an MSBuild extension or from its CLI tool.
 
-The idea behind Myriad is to un-complicate, as far as possible, the ability to generate and do meta-programming in F#. By meta-programming in F# I mean generating actual, readable F# code like discriminated unions and records, not just IL output.
+The idea behind Myriad is to un-complicate, as far as possible, the ability to do meta-programming in F#. By meta-programming in F# I mean generating idiomatic F# code using F# native types like discriminated unions and records, this is something that is not possible with F# Type Providers etc which just outputs.
 
 Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins. Myriad provides an approach to compiler extension that isn't modifying or adjusting Type Providers or waiting a long time for other F# language improvements. You write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project. This lets the compiler optimise generated output in addition to allowing tooling to operate effectively.
 
