@@ -47,7 +47,7 @@ module Main =
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
-        | [<EqualsAssignment>] AdditionalParams of key:string * value:string
+        | [<EqualsAssignment;CustomCommandLine("--additionalparams")>] AdditionalParams of key:string * value:string
     with
         interface IArgParserTemplate with
             member s.Usage =
