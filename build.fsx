@@ -119,7 +119,7 @@ Target.create "Pack" (fun _ ->
             OutputPath = Some nugetDir
             MSBuildParams = { p.MSBuildParams with Properties = properties }
         }
-    ) "src/Myriad.Sdk/Myriad.Sdk.csproj"
+    ) "src/Myriad.Sdk/Myriad.Sdk.proj"
 
     //Pack whole solution
     DotNet.pack (fun p ->
