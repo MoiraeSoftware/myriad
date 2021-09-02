@@ -146,7 +146,7 @@
             <MyriadSdk_Args Include='--outputfile "$(_MyriadSdk_OutputFileName)"' />
             <MyriadSdk_Args Include='--configkey "$(_MyriadSdk_ConfigKey)"' Condition=" '$(_MyriadSdk_ConfigKey)' != '' " />
             <MyriadSdk_Args Include='--configfile "$(_MyriadSdk_ConfigFile)"' Condition=" '$(_MyriadSdk_ConfigFile)' != '' " />
-            <MyriadSdk_Args Include='--additionalParams "$(_MyriadSdk_MyriadParams2)"' Condition=" '$(_MyriadSdk_MyriadParams2)' != '' " />
+            <MyriadSdk_Args Include='--additionalparams "$(_MyriadSdk_MyriadParams2)"' Condition=" '$(_MyriadSdk_MyriadParams2)' != '' " />
             <MyriadSdk_Args Include='--wait-for-debugger' Condition=" '$(MyriadSdkWaitForDebugger)' == 'true' " />
             <MyriadSdk_Args Include='--verbose' Condition=" '$(MyriadSdkVerboseOutput)' == 'true' " />
             <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' " />
