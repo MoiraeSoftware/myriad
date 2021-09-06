@@ -71,8 +71,8 @@ module Main =
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
                 | Verbose -> "Log verbose processing details."
-                | AdditionalParams _ -> "Specify additional parameters"
-                | SelfGeneration -> "Generate code for the input file in the input file"
+                | AdditionalParams _ -> "Specify additional parameters."
+                | SelfGeneration -> "Generate code for the input file at the end of the input file."
 
     [<EntryPoint>]
     let main argv =
