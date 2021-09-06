@@ -138,8 +138,7 @@ module Main =
                                   Pattern = pattern
                                   Expr = SynExpr.CreateConstString exc.Message }
                         let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
-                        let ns = Ident.CreateLong "" //TODO
-                        let moduleOrNamespace = SynModuleOrNamespaceRcd.CreateNamespace(ns)
+                        let moduleOrNamespace = SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong "")
                         Some [ { moduleOrNamespace with IsRecursive = true; Declarations = [modulDecl] } ]
 
                 if verbose then
@@ -149,10 +148,7 @@ module Main =
 
             if verbose then
                 printfn "Exec generators:"
-
-            if verbose then
                 printfn $"Input Filename:\n:%A{inputFile}"
-
 
             let generated =
                 generators
