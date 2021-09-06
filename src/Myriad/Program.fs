@@ -38,6 +38,16 @@ module Implementation =
                 printfn "FAIL @"
                 Seq.empty
 
+    let getConfig (configFile) =
+
+        let configFile =
+                configFile
+                |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
+
+        let configFileCnt = File.ReadAllText configFile
+        let config = Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
+        config
+
 module Main =
     open Implementation
     type Arguments =
@@ -79,19 +89,10 @@ module Main =
 
             let inputFile = results.GetResult InputFile
             let outputFile = results.TryGetResult OutputFile
-            let configFile =
-                results.TryGetResult ConfigFile
-                |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
-
             let configKey = results.TryGetResult ConfigKey
-
-            let configFileCnt = File.ReadAllText configFile
-            let config = Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
-            
+            let config = getConfig(results.TryGetResult ConfigFile)
             let additionalParams = results.GetResults AdditionalParams |> dict
-
             let selfGeneration = results.Contains SelfGeneration
-
             let plugins = results.GetResults Plugin
 
             if verbose then
