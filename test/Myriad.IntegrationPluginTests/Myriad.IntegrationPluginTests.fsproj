@@ -19,6 +19,14 @@
     <Compile Include="Lenses.fs" />
     <Compile Include="Input.fs" />
 
+    <Compile Include="InputSelfGenerate.fs">
+      <MyriadSelfGenerate/>
+      <MyriadParams>
+        <MyriadParam1>1</MyriadParam1>
+        <MyriadParam2>2</MyriadParam2>
+      </MyriadParams>
+    </Compile>
+
     <Compile Include="FieldsLensDus.fs">
       <MyriadFile>Input.fs</MyriadFile>
       <MyriadParams>
