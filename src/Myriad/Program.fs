@@ -159,14 +159,14 @@ module Main =
                 |> List.concat
 
             let parseTree =
-                let fileName =
+                let filename =
                     if selfGeneration then
                         inputFile
                     else if outputFile.IsSome then
                         outputFile.Value
                     else failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
                 ParsedInput.CreateImplFile(
-                    ParsedImplFileInputRcd.CreateFs(fileName)
+                    ParsedImplFileInputRcd.CreateFs(filename)
                         .AddModules generated)
 
             let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
@@ -199,10 +199,7 @@ module Main =
 
                 if verbose then
                     printfn $"Writing to temp file: '%A{tempFile}'"
-                File.WriteAllLines(tempFile, linesToKeep)
-                if verbose then
-                    printfn $"Writing generated code to temp file: '%A{tempFile}'"
-                File.AppendAllLines(tempFile, code)
+                File.WriteAllLines(tempFile, seq{ yield! linesToKeep; yield! code} )
                 if verbose then
                     printfn $"Removing input file: '%A{tempFile}'"
                 File.Delete(inputFile)
@@ -211,8 +208,8 @@ module Main =
                 File.Move(tempFile, inputFile)
             else
                 match outputFile with
-                | Some fileName ->
-                    File.WriteAllLines(fileName, code)
+                | Some filename ->
+                    File.WriteAllLines(filename, code)
                 | None -> failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
 
             if verbose then
