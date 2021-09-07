@@ -5,12 +5,13 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <RollForward>major</RollForward>
+    <!-- This allows you to specify a different config file -->
     <!-- <MyriadConfigFile>someglobalconfig.toml</MyriadConfigFile> -->
   </PropertyGroup>
   <PropertyGroup>
     <!-- uncomment to allow attaching to myriad process for debugging,
-         the build will "hold" until you attach to the myriad process
-         (generally dotnet rather than Myriad.exe)
+       the build will "pause" until you attach to the myriad process
+      (look for a dotnet process rather than Myriad.exe)
     -->
     <!--<MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger>-->
   </PropertyGroup>
@@ -20,6 +21,7 @@
     <Compile Include="Input.fs" />
 
     <Compile Include="InputSelfGenerate.fs">
+      <!-- An example of inline generation, notice no MyriadFile should be specified -->
       <MyriadInlineGeneration>true</MyriadInlineGeneration>
       <MyriadParams>
         <MyriadParam1>1</MyriadParam1>
