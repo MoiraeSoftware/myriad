@@ -20,7 +20,7 @@
     <Compile Include="Input.fs" />
 
     <Compile Include="InputSelfGenerate.fs">
-      <MyriadSelfGenerate/>
+      <MyriadInlineGeneration>true</MyriadInlineGeneration>
       <MyriadParams>
         <MyriadParam1>1</MyriadParam1>
         <MyriadParam2>2</MyriadParam2>
@@ -30,8 +30,8 @@
     <Compile Include="FieldsLensDus.fs">
       <MyriadFile>Input.fs</MyriadFile>
       <MyriadParams>
-        <MyriadParam1>1</MyriadParam1>
-        <MyriadParam2>2</MyriadParam2>
+        <MyriadParam1>3</MyriadParam1>
+        <MyriadParam2>4</MyriadParam2>
       </MyriadParams>
     </Compile>
 
@@ -39,8 +39,8 @@
       <MyriadFile>Test.txt</MyriadFile>
       <MyriadConfigKey>example1</MyriadConfigKey>
       <MyriadParams>
-        <MyriadParam1>3</MyriadParam1>
-        <MyriadParam2>4</MyriadParam2>
+        <MyriadParam1>5</MyriadParam1>
+        <MyriadParam2>6</MyriadParam2>
       </MyriadParams>
     </Compile>
 
