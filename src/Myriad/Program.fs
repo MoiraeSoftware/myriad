@@ -59,7 +59,7 @@ module Main =
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
         | [<EqualsAssignment;CustomCommandLine("--additionalparams")>] AdditionalParams of key:string * value:string
-        | SelfGeneration
+        | InlineGeneration
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -72,7 +72,7 @@ module Main =
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
                 | Verbose -> "Log verbose processing details."
                 | AdditionalParams _ -> "Specify additional parameters."
-                | SelfGeneration -> "Generate code for the input file at the end of the input file."
+                | InlineGeneration -> "Generate code for the input file at the end of the input file."
 
     [<EntryPoint>]
     let main argv =
@@ -92,7 +92,7 @@ module Main =
             let configKey = results.TryGetResult ConfigKey
             let config = getConfig(results.TryGetResult ConfigFile)
             let additionalParams = results.GetResults AdditionalParams |> dict
-            let selfGeneration = results.Contains SelfGeneration
+            let inlineGeneration = results.Contains InlineGeneration
             let plugins = results.GetResults Plugin
 
             if verbose then
@@ -157,7 +157,7 @@ module Main =
 
             let parseTree =
                 let filename =
-                    if selfGeneration then
+                    if inlineGeneration then
                         inputFile
                     else if outputFile.IsSome then
                         outputFile.Value
@@ -179,11 +179,11 @@ module Main =
                 [   yield! header
                     formattedCode ]
 
-            if selfGeneration then
+            if inlineGeneration then
                 let headerStartingLine =
                     seq { yield! System.IO.File.ReadLines inputFile }
                     |> Seq.tryFindIndex (fun line -> line = header.[1])
-                    |> Option.map (fun index -> index - 2)
+                    |> Option.map (fun index -> index - 1)
 
                 let tempFile = Path.GetTempFileName()
                 let linesToKeep =
@@ -195,19 +195,21 @@ module Main =
                     | None -> inputCode
 
                 if verbose then
-                    printfn $"Writing to temp file: '%A{tempFile}'"
+                    printfn $"Inline generation: Writing to temp file: '%A{tempFile}'"
                 File.WriteAllLines(tempFile, seq{ yield! linesToKeep; yield! code} )
                 if verbose then
-                    printfn $"Removing input file: '%A{tempFile}'"
+                    printfn $"Inline generation: Removing input file: '%A{tempFile}'"
                 File.Delete(inputFile)
                 if verbose then
-                    printfn $"Renaming temp file to input file: '%A{tempFile}' -> '%A{inputFile}'"
+                    printfn $"Inline generation: Renaming temp file to input file: '%A{tempFile}' -> '%A{inputFile}'"
                 File.Move(tempFile, inputFile)
             else
                 match outputFile with
                 | Some filename ->
+                    if verbose then
+                        printfn $"Code generation: Writing output file: '%A{filename}'"
                     File.WriteAllLines(filename, code)
-                | None -> failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
+                | None -> failwith "Error: No OutputFile was included, and --inlinegeneration was not specified."
 
             if verbose then
                 printfn "Generated Code:\n%A" code

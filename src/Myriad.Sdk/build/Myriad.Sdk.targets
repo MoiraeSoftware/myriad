@@ -84,11 +84,24 @@
 
     <!-- Input to the code generator should not include its output. -->
     <Target Name="_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateInputCache">
+
+        <Error Condition=" ( '%(Compile.MyriadInlineGeneration)' == 'true' And '%(Compile.MyriadFile)' != '' ) "
+                Text="Both %3CMyriadInlineGeneration%3E true and %3CMyriadFile%3E have been specified for %(Compile.Identity), these properties are mutually exclusive, please only include one or the other." />
+
         <ItemGroup>
-            <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' ">
+            <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' And ('%(Compile.MyriadInlineGeneration)' == 'false' Or '%(Compile.MyriadInlineGeneration)' == '') ">
                 <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
                 <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
+            </MyriadSource>
+        </ItemGroup>
+
+        <ItemGroup>
+            <MyriadSource Include="%(Compile.Identity)" Condition=" ('%(Compile.MyriadFile)' == '' And '%(Compile.MyriadInlineGeneration)' == 'true') ">
+                <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
+                <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
+                <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
+                <MyriadInlineGeneration>%(Compile.MyriadInlineGeneration)</MyriadInlineGeneration>
             </MyriadSource>
         </ItemGroup>
 
@@ -98,6 +111,7 @@
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' == '' ">%(MyriadSource.FullPath).fs</OutputPath>
                 <ConfigKey>%(MyriadSource.ConfigKey)</ConfigKey>
                 <MyriadParams>%(MyriadSource.MyriadParams)</MyriadParams>
+                <MyriadInlineGeneration>%(MyriadSource.MyriadInlineGeneration)</MyriadInlineGeneration>
             </MyriadCodegen>
         </ItemGroup>
 
@@ -135,6 +149,7 @@
             <_MyriadSdk_ConfigKey>%(MyriadCodegen.ConfigKey)</_MyriadSdk_ConfigKey>
             <_MyriadSdk_ConfigFile>$(MyriadConfigFile)</_MyriadSdk_ConfigFile>
             <_MyriadSdk_MyriadParams>%(MyriadCodegen.MyriadParams)</_MyriadSdk_MyriadParams>
+            <_MyriadSdk_InlineGeneration>%(MyriadCodegen.MyriadInlineGeneration)</_MyriadSdk_InlineGeneration>
         </PropertyGroup>
 
         <Flatten Items="@(MyriadCodegen)" Metadata="MyriadParams">
@@ -150,6 +165,7 @@
             <MyriadSdk_Args Include='--wait-for-debugger' Condition=" '$(MyriadSdkWaitForDebugger)' == 'true' " />
             <MyriadSdk_Args Include='--verbose' Condition=" '$(MyriadSdkVerboseOutput)' == 'true' " />
             <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' " />
+            <MyriadSdk_Args Include='--inlinegeneration' Condition=" '$(_MyriadSdk_InlineGeneration)' == 'true' " />
         </ItemGroup>
 
         <!-- Uncomment to debug command line generation -->
