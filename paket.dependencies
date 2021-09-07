@@ -30,16 +30,11 @@ group Build
   storage: none
 
   nuget Fake.Core.Target
-  nuget Fake.Core.Process
-  nuget Fake.DotNet.Cli
   nuget Fake.Core.ReleaseNotes
   nuget Fake.DotNet.AssemblyInfoFile
   nuget Fake.DotNet.Paket
   nuget Fake.Tools.Git
-  nuget Fake.Core.Environment
   nuget Fake.Core.UserInput
-  nuget Fake.IO.FileSystem
-  nuget Fake.DotNet.MsBuild
   nuget Fake.Api.GitHub
   nuget MSBuild.StructuredLogger ~> 2.1.545
   nuget Microsoft.Build.Utilities.Core  ~> 16.11.0
