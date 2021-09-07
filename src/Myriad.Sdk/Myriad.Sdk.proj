@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -9,7 +9,6 @@
     <PackageId>Myriad.Sdk</PackageId>
     <Description>MSBuild integration between Myriad and .NET Sdk projects</Description>
   </PropertyGroup>
-  
   <ItemGroup>
     <Content Include="build\Myriad.Sdk.props">
       <Pack>true</Pack>
@@ -27,5 +26,5 @@
       <Visible>true</Visible>
     </Content>
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

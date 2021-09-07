@@ -1,6 +1,6 @@
 version 6.0.13
 source https://api.nuget.org/v3/index.json
-framework: net50, netstandard2.0
+framework: net50
 storage: none
 
 nuget Argu
@@ -15,7 +15,7 @@ nuget Aether
 group Docs
   source https://api.nuget.org/v3/index.json
 
-  framework: netstandard2.0
+  framework: net50
   storage: packages
 
   nuget FSharp.Compiler.Service ~> 35.0
@@ -26,15 +26,20 @@ group Docs
 group Build
   source https://api.nuget.org/v3/index.json
 
-  framework: netstandard2.0
+  framework: net50
   storage: none
 
   nuget Fake.Core.Target
+  nuget Fake.Core.Process
+  nuget Fake.DotNet.Cli
   nuget Fake.Core.ReleaseNotes
   nuget Fake.DotNet.AssemblyInfoFile
   nuget Fake.DotNet.Paket
   nuget Fake.Tools.Git
+  nuget Fake.Core.Environment
   nuget Fake.Core.UserInput
+  nuget Fake.IO.FileSystem
+  nuget Fake.DotNet.MsBuild
   nuget Fake.Api.GitHub
   nuget MSBuild.StructuredLogger ~> 2.1.545
   nuget Microsoft.Build.Utilities.Core  ~> 16.11.0
