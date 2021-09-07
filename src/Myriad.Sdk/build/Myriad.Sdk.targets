@@ -85,8 +85,7 @@
     <!-- Input to the code generator should not include its output. -->
     <Target Name="_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateInputCache">
 
-        <Error Condition=" ( '%(Compile.MyriadInlineGeneration)' == 'true' And '%(Compile.MyriadFile)' != '' ) "
-                Text="Both %3CMyriadInlineGeneration%3E true and %3CMyriadFile%3E have been specified for %(Compile.Identity), these properties are mutually exclusive, please only include one or the other." />
+        <Error Condition=" ( '%(Compile.MyriadInlineGeneration)' == 'true' And '%(Compile.MyriadFile)' != '' ) " Text="Both %3CMyriadInlineGeneration%3E true and %3CMyriadFile%3E have been specified for %(Compile.Identity), these properties are mutually exclusive, please only include one or the other." />
 
         <ItemGroup>
             <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' And ('%(Compile.MyriadInlineGeneration)' == 'false' Or '%(Compile.MyriadInlineGeneration)' == '') ">
@@ -154,7 +153,7 @@
 
         <Flatten Items="@(MyriadCodegen)" Metadata="MyriadParams">
             <Output TaskParameter="Result" PropertyName="_MyriadSdk_MyriadParams2" />
-        </Flatten> 
+        </Flatten>
 
         <ItemGroup>
             <MyriadSdk_Args Include='--inputfile "$(_MyriadSdk_InputFileName)"' />
