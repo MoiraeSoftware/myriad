@@ -1,26 +1,5 @@
 <Project>
-
-  <PropertyGroup>
-    <GitOwner>MoiraeSoftware</GitOwner>
-    <GitName>myriad</GitName>
-    <GitHome>https://github.com/$(gitOwner)</GitHome>
-    <GitUrl>$(gitHome)/$(gitName)</GitUrl>
-    <NupkgsDir>$([System.IO.Path]::GetFullPath("$(MSBuildThisFileDirectory)/bin/nupkg"))</NupkgsDir>
-    <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">0.6.0</VersionPrefix>
-    <Version Condition=" '$(Version)' == '' ">$(VersionPrefix)$(VersionSuffix)</Version>
-    <!-- pack stuff -->
-    <TargetFramework>net5.0</TargetFramework>
-    <Authors>7sharp9</Authors>
-    <PackageProjectUrl>$(GitUrl)</PackageProjectUrl>
-    <PackageTags>fsharp;codegen;generation;metaprogramming</PackageTags>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>$(GitUrl)</RepositoryUrl>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Copyright>Dave Thomas</Copyright>
-    <PackageReleaseNotes>$(Giturl)/blob/v$(NugetVersion)/CHANGELOG.md</PackageReleaseNotes>
-    <EnableSourceLink Condition=" 'Configuration' == 'Release' ">true</EnableSourceLink>
-    <NoWarn>$(NoWarn);FS2003;NU5128</NoWarn>
-  </PropertyGroup>
+  <Import Project="Directory.Build.props" />
 
   <Target Name="Clean">
     <RemoveDir Directories="$(NupkgsDir)" />
