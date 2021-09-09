@@ -7,6 +7,7 @@ open FsAst
 open Argu
 open Tomlyn
 open System.Collections.Generic
+open System.Diagnostics
 
 module Implementation =
     let findPlugins (path: string) =
@@ -37,17 +38,28 @@ module Implementation =
                 printfn "FAIL @"
                 Seq.empty
 
+    let getConfig (configFile) =
+
+        let configFile =
+                configFile
+                |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
+
+        let configFileCnt = File.ReadAllText configFile
+        let config = Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
+        config
+
 module Main =
     open Implementation
     type Arguments =
         | [<Mandatory>] InputFile of string
-        | [<Mandatory>] OutputFile of string
+        | OutputFile of string
         | ConfigFile of string
         | ConfigKey of string
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
         | [<EqualsAssignment;CustomCommandLine("--additionalparams")>] AdditionalParams of key:string * value:string
+        | InlineGeneration
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -59,7 +71,8 @@ module Main =
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
                 | Verbose -> "Log verbose processing details."
-                | AdditionalParams _ -> "Specify additional parameters"
+                | AdditionalParams _ -> "Specify additional parameters."
+                | InlineGeneration -> "Generate code for the input file at the end of the input file."
 
     [<EntryPoint>]
     let main argv =
@@ -69,26 +82,17 @@ module Main =
             let results = parser.Parse argv
             let verbose = results.Contains Verbose
 
-            match results.TryGetResult WaitForDebugger with
-            | None -> ()
-            | Some _ ->
-                while not(Diagnostics.Debugger.IsAttached) do
-                  System.Threading.Thread.Sleep(100)
-                System.Diagnostics.Debugger.Break()
+            if results.Contains WaitForDebugger then
+                while not(Debugger.IsAttached) do
+                  Threading.Thread.Sleep(100)
+                Debugger.Break()
 
             let inputFile = results.GetResult InputFile
-            let outputFile = results.GetResult OutputFile
-            let configFile =
-                results.TryGetResult ConfigFile
-                |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
-
+            let outputFile = results.TryGetResult OutputFile
             let configKey = results.TryGetResult ConfigKey
-
-            let configFileCnt = File.ReadAllText configFile
-            let config = Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
-            
+            let config = getConfig(results.TryGetResult ConfigFile)
             let additionalParams = results.GetResults AdditionalParams |> dict
-
+            let inlineGeneration = results.Contains InlineGeneration
             let plugins = results.GetResults Plugin
 
             if verbose then
@@ -134,8 +138,7 @@ module Main =
                                   Pattern = pattern
                                   Expr = SynExpr.CreateConstString exc.Message }
                         let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
-                        let ns = Ident.CreateLong "" //TODO
-                        let moduleOrNamespace = SynModuleOrNamespaceRcd.CreateNamespace(ns)
+                        let moduleOrNamespace = SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong "")
                         Some [ { moduleOrNamespace with IsRecursive = true; Declarations = [modulDecl] } ]
 
                 if verbose then
@@ -145,10 +148,7 @@ module Main =
 
             if verbose then
                 printfn "Exec generators:"
-
-            if verbose then
                 printfn $"Input Filename:\n:%A{inputFile}"
-
 
             let generated =
                 generators
@@ -156,22 +156,60 @@ module Main =
                 |> List.concat
 
             let parseTree =
+                let filename =
+                    if inlineGeneration then
+                        inputFile
+                    else if outputFile.IsSome then
+                        outputFile.Value
+                    else failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
                 ParsedInput.CreateImplFile(
-                    ParsedImplFileInputRcd.CreateFs(outputFile)
+                    ParsedImplFileInputRcd.CreateFs(filename)
                         .AddModules generated)
 
             let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
             let formattedCode = CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
 
-            let code =
-                [   "//------------------------------------------------------------------------------"
-                    "//        This code was generated by myriad."
-                    "//        Changes to this file will be lost when the code is regenerated."
-                    "//------------------------------------------------------------------------------"
-                    formattedCode ]
-                |> String.concat Environment.NewLine
+            let header =
+               [   "//------------------------------------------------------------------------------"
+                   "//        This code was generated by myriad."
+                   "//        Changes to this file will be lost when the code is regenerated."
+                   "//------------------------------------------------------------------------------"]
 
-            File.WriteAllText(outputFile, code)
+            let code =
+                [   yield! header
+                    formattedCode ]
+
+            if inlineGeneration then
+                let headerStartingLine =
+                    seq { yield! System.IO.File.ReadLines inputFile }
+                    |> Seq.tryFindIndex (fun line -> line = header.[1])
+                    |> Option.map (fun index -> index - 1)
+
+                let tempFile = Path.GetTempFileName()
+                let linesToKeep =
+                    let inputCode = File.ReadLines(inputFile)
+                    match headerStartingLine with
+                    | Some headerStartingLine -> 
+                        inputCode
+                        |> Seq.take headerStartingLine
+                    | None -> inputCode
+
+                if verbose then
+                    printfn $"Inline generation: Writing to temp file: '%A{tempFile}'"
+                File.WriteAllLines(tempFile, seq{ yield! linesToKeep; yield! code} )
+                if verbose then
+                    printfn $"Inline generation: Removing input file: '%A{tempFile}'"
+                File.Delete(inputFile)
+                if verbose then
+                    printfn $"Inline generation: Renaming temp file to input file: '%A{tempFile}' -> '%A{inputFile}'"
+                File.Move(tempFile, inputFile)
+            else
+                match outputFile with
+                | Some filename ->
+                    if verbose then
+                        printfn $"Code generation: Writing output file: '%A{filename}'"
+                    File.WriteAllLines(filename, code)
+                | None -> failwith "Error: No OutputFile was included, and --inlinegeneration was not specified."
 
             if verbose then
                 printfn "Generated Code:\n%A" code

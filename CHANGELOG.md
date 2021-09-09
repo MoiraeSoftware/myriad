@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0]
+- Add Support for inline code generation, generated code appears at the end of the input file.
+
 ## [0.5.4]
 - Add support from config arguments to be specified in the msbuild config via the sub elements using: <MyriadParams><Param>test</Param></MyriadParams>
 - Add support for custom arguments via the --additionalparam myparam=test;myotherparam=test2

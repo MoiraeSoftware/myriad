@@ -11,5 +11,18 @@ namespace = "TestLens"
 pipedsetter = true
 namespace = "AetherTestLens"
 
+[selffields]
+namespace = "SelfTestFields"
+
+[selfdus]
+namespace = "SelfTestDus"
+
+[selflens]
+namespace = "SelfTestLens"
+
+[selfpipedsetterlens]
+pipedsetter = true
+namespace = "SelfAetherTestLens"
+
 [example1]
 namespace = "TestExample1"

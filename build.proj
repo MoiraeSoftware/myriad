@@ -1,0 +1,50 @@
+<Project>
+
+  <PropertyGroup>
+    <GitOwner>MoiraeSoftware</GitOwner>
+    <GitName>myriad</GitName>
+    <GitHome>https://github.com/$(gitOwner)</GitHome>
+    <GitUrl>$(gitHome)/$(gitName)</GitUrl>
+    <NupkgsDir>$([System.IO.Path]::GetFullPath("$(MSBuildThisFileDirectory)/bin/nupkg"))</NupkgsDir>
+    <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">0.6.0</VersionPrefix>
+    <Version Condition=" '$(Version)' == '' ">$(VersionPrefix)$(VersionSuffix)</Version>
+    <!-- pack stuff -->
+    <TargetFramework>net5.0</TargetFramework>
+    <Authors>7sharp9</Authors>
+    <PackageProjectUrl>$(GitUrl)</PackageProjectUrl>
+    <PackageTags>fsharp;codegen;generation;metaprogramming</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>$(GitUrl)</RepositoryUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Copyright>Dave Thomas</Copyright>
+    <PackageReleaseNotes>$(Giturl)/blob/v$(NugetVersion)/CHANGELOG.md</PackageReleaseNotes>
+    <EnableSourceLink Condition=" 'Configuration' == 'Release' ">true</EnableSourceLink>
+    <NoWarn>$(NoWarn);FS2003;NU5128</NoWarn>
+  </PropertyGroup>
+
+  <Target Name="Clean">
+    <RemoveDir Directories="$(NupkgsDir)" />
+  </Target>
+
+  <Target Name="Restore">
+    <Exec Command="dotnet paket restore" ConsoleToMSBuild="true" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="Restore">
+    <Exec Command='dotnet build src/Myriad/Myriad.fsproj -c $(Configuration)' />
+    <Exec Command='dotnet build src/Myriad.sln -c $(Configuration)' />
+  </Target>
+
+  <Target Name="Test">
+    <Exec Command='dotnet build src/Myriad/Myriad.fsproj -c $(Configuration)' />
+    <Exec Command='dotnet run --fail-on-focused-tests --summary --project ./test/Myriad.IntegrationPluginTests/Myriad.IntegrationPluginTests.fsproj -c $(Configuration)' IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+  <Target Name="Pack" DependsOnTargets="Clean;Restore;Test">
+    <!-- pack sdk then whole sln -->
+    <Exec Command='dotnet pack src/Myriad.Sdk/Myriad.Sdk.proj -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />
+    <Exec Command='dotnet pack src/Myriad.sln -c Release -o "$(NupkgsDir)" /p:Version=$(Version)' />           
+    <Exec Command='dotnet mergenupkg --source "$(NupkgsDir)/Myriad.Sdk.$(Version).nupkg" --other "$(NupkgsDir)/Myriad.$(Version).nupkg" --tools --only-files' />
+  </Target>
+
+</Project>

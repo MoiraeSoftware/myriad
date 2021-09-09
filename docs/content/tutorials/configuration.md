@@ -55,7 +55,7 @@ The plugin interface receives this key via: `GeneratorContext` . `ConfigKey`:
 type GeneratorContext = {
     ConfigKey: string option
     ConfigGetter: string -> (string * obj) seq
-    InputFileName: string
+    InputFilename: string
 }
 
 type IMyriadGenerator =
@@ -73,4 +73,4 @@ ValidInputExtensions is used so a plugin is tied to certain file types as input,
 
 While we are discussing the `IMyriadGenerator` interface lets discuss the `Generate` member:
 
-Generate takes a `GeneratorContext` which contains the `ConfigKey` as mentioned above, the `ConfigGetter` : `string -> (string * obj) seq` which is a mean to allow access to the `myriad.toml` file, you give the function the configuration ket you wish to receive and it returns the configuration.  Finally a `InputFileName` is also passed in so you can load or parse your input files ready to generate an AST.  If you look at the included plugins you can see the mechanism for extracting and building AST fragments for reference.  
+Generate takes a `GeneratorContext` which contains the `ConfigKey` as mentioned above, the `ConfigGetter` : `string -> (string * obj) seq` which is a mean to allow access to the `myriad.toml` file, you give the function the configuration ket you wish to receive and it returns the configuration.  Finally a `InputFilename` is also passed in so you can load or parse your input files ready to generate an AST.  If you look at the included plugins you can see the mechanism for extracting and building AST fragments for reference.  
