@@ -62,7 +62,7 @@
   <!-- use the dll directly rather than using a nuget -->
   <PropertyGroup>
     <MyriadSdk_Generator_ExeHost>dotnet </MyriadSdk_Generator_ExeHost>
-    <MyriadSdk_Generator_Exe>..\..\src\Myriad\bin\$(Configuration)\net5.0\Myriad.dll</MyriadSdk_Generator_Exe>
+    <MyriadSdk_Generator_Exe>../../src/Myriad/bin/$(Configuration)/net5.0/Myriad.dll</MyriadSdk_Generator_Exe>
   </PropertyGroup>
   <!-- include to enable the generation of myriad output -->
   <Import Project="..\..\src\Myriad.Sdk\build\Myriad.Sdk.targets" />
