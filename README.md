@@ -234,34 +234,16 @@ The nuget package for Myriad can be found here:
 
 1. Make sure you have .Net Core SDK installed - check required version in [global.json](global.json)
 2. Run `dotnet tool restore`
-3. Run `dotnet fake build`
-
-## Documentation
-
-### How to generate docs
-
-1. Make sure you have .Net Core SDK installed - check required version in [global.json](global.json)
-2. Run `dotnet tool restore`
-3. Run `dotnet fake build -t Generate docs`
-
-### Working with docs in Watch Mode
-
-1. Make sure you've generated docs as described above
-2. `cd docs`
-3. `dotnet fornax watch` - this will start local web server hosting documentation regenerating changes on any file edit.
-
-### Publishing docs
-
-1. Docs will be published automatically by GitHub Action into `gh-pages` branch on any pushed git tag
-
+3. Run `dotnet build -t:Build`
 
 ## How to release new version
 
 1. Update [CHANGELOG.md](./CHANGELOG.md) by adding new entry (`## [0.X.X]`) and commit it.
 2. Create version tag (`git tag v0.X.X`)
-3. Run `dotnet fake build -t Pack` to create the nuget package and test/examine it locally.
-4. Push the tag to the repo `git push origin v0.X.X` - this will start CI process that will create GitHub release and put generated NuGet packages in it
-5. Upload generated packages into NuGet.org
+3. Update the `VersionPrefix` in `build.proj` to match the tag above.
+4. Run `dotnet build -t:Pack` to create the nuget package and test/examine it locally.
+5. Push the tag to the repo `git push origin v0.X.X` - this will start CI process that will create GitHub release and put generated NuGet packages in it
+6. Upload generated packages into NuGet.org
 
 ### Also see
 * [Applied Metaprogramming with Myriad And Falanx](https://7sharp9.github.io/fsharp/2019-04-24-applied-metaprogramming-with-myriad/)
