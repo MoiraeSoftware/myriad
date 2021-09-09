@@ -13,18 +13,6 @@
       "commands": [
         "dotnet-mergenupkg"
       ]
-    },
-    "fake-cli": {
-      "version": "5.20.4",
-      "commands": [
-        "fake"
-      ]
-    },
-    "fornax": {
-      "version": "0.13.1",
-      "commands": [
-        "fornax"
-      ]
     }
   }
 }
