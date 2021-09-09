@@ -11,35 +11,3 @@ nuget FSharp.Core strategy: min
 nuget Tomlyn
 nuget Expecto
 nuget Aether
-
-group Docs
-  source https://api.nuget.org/v3/index.json
-
-  framework: net50
-  storage: packages
-
-  nuget FSharp.Compiler.Service ~> 35.0
-  nuget FSharp.Formatting ~> 4.1
-  nuget Newtonsoft.Json
-
-// [ FAKE GROUP ]
-group Build
-  source https://api.nuget.org/v3/index.json
-
-  framework: net50
-  storage: none
-
-  nuget Fake.Core.Target
-  nuget Fake.Core.Process
-  nuget Fake.DotNet.Cli
-  nuget Fake.Core.ReleaseNotes
-  nuget Fake.DotNet.AssemblyInfoFile
-  nuget Fake.DotNet.Paket
-  nuget Fake.Tools.Git
-  nuget Fake.Core.Environment
-  nuget Fake.Core.UserInput
-  nuget Fake.IO.FileSystem
-  nuget Fake.DotNet.MsBuild
-  nuget Fake.Api.GitHub
-  nuget MSBuild.StructuredLogger ~> 2.1.545
-  nuget Microsoft.Build.Utilities.Core  ~> 16.11.0
