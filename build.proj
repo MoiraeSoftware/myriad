@@ -36,6 +36,7 @@
   </Target>
 
   <Target Name="Test">
+    <Exec Command='dotnet build src/Myriad/Myriad.fsproj -c $(Configuration)' />
     <Exec Command='dotnet run --fail-on-focused-tests --summary --project ./test/Myriad.IntegrationPluginTests/Myriad.IntegrationPluginTests.fsproj -c $(Configuration)' IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
