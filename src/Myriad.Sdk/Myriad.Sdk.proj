@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <PackProjectInputFile>$(MSBuildProjectFullPath)</PackProjectInputFile>
     <NoBuild>true</NoBuild>
     <PackageId>Myriad.Sdk</PackageId>
