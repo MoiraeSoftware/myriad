@@ -23,9 +23,9 @@ jobs:
     - name: Restore tools
       run: dotnet tool restore
     - name: Run Test
-      run: dotnet build -t:Test
+      run: dotnet build -c Release -t:Test
     - name: Run build
-      run: dotnet build -t:Pack
+      run: dotnet build -c Release -t:Pack
     - name: Get Changelog Entry
       id: changelog_reader
       uses: mindsers/changelog-reader-action@v1.1.0

@@ -21,4 +21,4 @@ jobs:
     - name: Restore tools
       run: dotnet tool restore
     - name: Run Test
-      run: dotnet build -t:Test
+      run: dotnet -c Release build -t:Test
