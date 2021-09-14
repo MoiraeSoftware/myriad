@@ -230,6 +230,16 @@ These can be triggered from MSBuild by the `<MyriadSdkVerboseOutput>true</Myriad
 The nuget package for Myriad can be found here:
 [Nuget package](https://www.nuget.org/packages/myriad/).
 
+## Dotnet template
+A dotnet template for a Myriad plugin/generator is available here:
+```
+#install dotnet template
+dotnet new -i Myriad.Templates
+
+#create myriad generator from the template
+dotnet new myriadgenerator -n myMyriadPlugin
+```
+
 ## How to build and test
 
 1. Make sure you have .Net Core SDK installed - check required version in [global.json](global.json)
