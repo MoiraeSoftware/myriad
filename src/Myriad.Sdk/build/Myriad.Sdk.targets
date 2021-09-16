@@ -1,12 +1,18 @@
 <Project>
 
     <UsingTask TaskName="Flatten" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildBinPath)\Microsoft.Build.Tasks.Core.dll">
+        
         <ParameterGroup>
             <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
             <Metadata ParameterType="System.String[]" Required="false" />
             <Result ParameterType="System.String" Output="true" />
         </ParameterGroup>
         <Task>
+            <Reference Include="System.dll" />
+            <Reference Include="System.Xml.Linq.dll" />
+            <Reference Include="System.Core.dll" />
+            <Reference Include="Microsoft.Build.Tasks.Core.dll" />
+            <Reference Include="Microsoft.Build.Framework.dll" />            
             <Code Type="Class" Language="cs">
                 <![CDATA[
                 using System;
@@ -141,7 +147,6 @@
     </PropertyGroup>
 
     <Target Name="MyriadSdkGenerateCode" DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' != 'true' " Inputs="@(MyriadCodegen);$(_MyriadSdkCodeGenInputCache);$(MyriadSdk_Generator_Exe)" Outputs="%(MyriadCodegen.OutputPath)">
-
         <PropertyGroup>
             <_MyriadSdk_InputFileName>%(MyriadCodegen.Identity)</_MyriadSdk_InputFileName>
             <_MyriadSdk_OutputFileName>%(MyriadCodegen.OutputPath)</_MyriadSdk_OutputFileName>
