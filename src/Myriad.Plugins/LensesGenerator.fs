@@ -235,7 +235,7 @@ type LensesGenerator() =
                                                          { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong recordsNamespace)
                                                                 with
                                                                     IsRecursive = true
-                                                                    Declarations = [synModule]}))
+                                                                    Declarations = [synModule] } ))
 
             let namespaceAndDUs = Ast.extractDU ast
             let duModules =
@@ -259,7 +259,7 @@ type LensesGenerator() =
                                                      { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong dusNamespace)
                                                                 with
                                                                     IsRecursive = true
-                                                                    Declarations = [synModule]}))
+                                                                    Declarations = [synModule] } ))
 
-            [yield! recordsModules
-             yield! duModules]
+            [ yield! recordsModules
+              yield! duModules]
