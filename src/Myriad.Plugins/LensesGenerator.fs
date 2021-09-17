@@ -73,7 +73,7 @@ module internal CreateLenses =
         let duRCD = du.ToRcd
         let singleCase =
             match duRCD.Type with
-            | UnionCaseFields ([singleCase]) -> singleCase
+            | UnionCaseFields [singleCase] -> singleCase
             | UnionCaseFields (_ :: _) -> failwith "It is impossible to create a lens for a DU with several cases"
             | _ -> failwithf "Unsupported type"
 
@@ -169,22 +169,22 @@ module internal CreateLenses =
         let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
 
         // Append "Lenses" to the module name
-        let moduleIdent = updateLastItem recordId (fun i -> Ident.Create (sprintf "%sLenses" i.idText))
+        let moduleIdent = updateLastItem recordId (fun i -> Ident.Create $"%s{i.idText}Lenses")
 
         let wrapperName =
             match attr.ArgExpr with
             | SynExpr.Const _
             | SynExpr.Paren(SynExpr.Const _,_,_,_) -> None
-            | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig; SynExpr.Const((SynConst.String(s, _)), _)],_,_),_,_,_) -> Some s
+            | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig; SynExpr.Const(SynConst.String(s, _), _)],_,_),_,_,_) -> Some s
             | SynExpr.Paren(SynExpr.Tuple(_,[_thisIsTheConfig
-                                             SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent (longIdent))], _, _, _, _)],_,_),_,_,_)
+                                             SynExpr.TypeApp (SynExpr.Ident ident, _, [SynTypeAppTypeName(SynType.LongIdent longIdent)], _, _, _, _)],_,_),_,_,_)
                                              when ident.idText = "typedefof" || ident.idText = "typeof" ->
                                              Some longIdent.AsString
-            | expr-> failwithf "Unsupported syntax of specifying the wrapper name for type %A.\nExpr: %A" recordId expr
+            | expr-> failwithf $"Unsupported syntax of specifying the wrapper name for type %A{recordId}.\nExpr: %A{expr}"
 
         let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
         let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, r)
-        let openParent = SynModuleDecl.CreateOpen (openTarget)
+        let openParent = SynModuleDecl.CreateOpen openTarget
         let moduleInfo = SynComponentInfoRcd.Create moduleIdent
 
         match synTypeDefnRepr with
@@ -199,14 +199,14 @@ module internal CreateLenses =
             let declarations = [ openParent; lens ]
             SynModuleDecl.CreateNestedModule(moduleInfo, declarations)
 
-        | _ -> failwithf "%A is not a record type." recordId
+        | _ -> failwithf $"%A{recordId} is not a record type."
 
 [<MyriadGenerator("lenses")>]
 type LensesGenerator() =
 
     interface IMyriadGenerator with
-        member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(context: GeneratorContext) =
+        member _.ValidInputExtensions = seq {".fs"}
+        member _.Generate(context: GeneratorContext) =
             //context.ConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
             let ast =
                 Ast.fromFilename context.InputFilename
