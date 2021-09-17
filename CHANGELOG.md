@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Targets file not using correct Using references
+- Inline generation not using the input file prior to myriad generation being appended.
+
 ## [0.6.0]
 ### Added
 - Add Support for inline code generation, generated code appears at the end of the input file.
