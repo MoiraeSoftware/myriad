@@ -1,7 +1,6 @@
 ---
-title: DU Extensions
-category: how-to
-menu_order: 2
+title: Discriminated Unions
+weight: 2
 ---
 
 The input file in this example `Library.fs` looks like this:

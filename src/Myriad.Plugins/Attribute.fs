@@ -30,4 +30,4 @@ module Generator =
             | [] -> Seq.empty
             | [name] -> configGetter name
             | [name;_] -> configGetter name
-            | others -> failwithf "More than two constants are not yet supported: %A" others
+            | others -> failwithf $"More than two constants are not yet supported: %A{others}"

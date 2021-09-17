@@ -1,10 +1,7 @@
 ---
 title: Lenses
-category: how-to
-menu_order: 3
+weight: 3
 ---
-
-# Lenses
 
 Myriad can also generate [lenses](https://fsprojects.github.io/FSharpPlus/tutorial.html#Lens) for records and single-case discriminated unions.
 Lens is a pair of a getter and a setter for one property of the type and allows, given the object, to get the value of the property or to update it creating a new object. The advantage of lenses is an ability to combine them to read or update nested fields of the object.

@@ -152,7 +152,7 @@ module internal Create =
 
             let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
             let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
-            let openParent = SynModuleDecl.CreateOpen (openTarget)
+            let openParent = SynModuleDecl.CreateOpen openTarget
 
             let fieldMaps = recordFields |> List.map (createFieldMap recordId)
 
@@ -183,19 +183,18 @@ module internal Create =
 type FieldsGenerator() =
 
     interface IMyriadGenerator with
-        member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(context: GeneratorContext) =
+        member _.ValidInputExtensions = seq {".fs"}
+        member _.Generate(context: GeneratorContext) =
             //_myriadConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
-            let ast =
+            let ast, _ =
                 Ast.fromFilename context.InputFilename
                 |> Async.RunSynchronously
                 |> Array.head
-                |> fst
 
             let namespaceAndrecords =
                 Ast.extractRecords ast
                 |> List.choose (fun (ns, types) ->
-                    match types |> List.filter (Ast.hasAttribute<Generator.FieldsAttribute>) with
+                    match types |> List.filter Ast.hasAttribute<Generator.FieldsAttribute> with
                     | [] -> None
                     | types -> Some (ns, types))
 

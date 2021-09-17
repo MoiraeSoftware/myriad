@@ -69,11 +69,11 @@ module internal CreateDUModule =
             let matches =
                 cases
                 //Only provide `fromString` for cases with no fields
-                |> List.filter (fun c -> not (c.ToRcd.HasFields))
+                |> List.filter (fun c -> not c.ToRcd.HasFields)
                 |> List.map (fun c ->
                     let case = c.ToRcd
                     let rcd = {SynPatConstRcd.Const = SynConst.CreateString case.Id.idText; Range = range.Zero }
-                    let p = SynPatRcd.Const (rcd)
+                    let p = SynPatRcd.Const rcd
                     let rhs =
                         let f = SynExpr.Ident (Ident("Some", range.Zero))
                         let matchCaseIdentParts =
@@ -88,7 +88,7 @@ module internal CreateDUModule =
                 )
             let wildCase =
                 let rhs = SynExpr.Ident (Ident("None", range.Zero))
-                SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, DebugPointForTarget.No)
+                SynMatchClause.Clause(SynPat.Wild range.Zero, None, rhs, range.Zero, DebugPointForTarget.No)
 
             let matchOn =
                 let ident = LongIdentWithDots.CreateString inputIdent
@@ -142,7 +142,7 @@ module internal CreateDUModule =
     let createIsCase (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
         [ for c in cases do
             let case = c.ToRcd
-            let varIdent = LongIdentWithDots.CreateString (sprintf "is%s" case.Id.idText)
+            let varIdent = LongIdentWithDots.CreateString $"is%s{case.Id.idText}"
             let inputIdent = "x"
 
             let duType =
@@ -171,7 +171,7 @@ module internal CreateDUModule =
 
                 let wildCase =
                     let rhs = SynExpr.Const (SynConst.Bool false, range.Zero)
-                    SynMatchClause.Clause(SynPat.Wild (range.Zero), None, rhs, range.Zero, DebugPointForTarget.No)
+                    SynMatchClause.Clause(SynPat.Wild range.Zero, None, rhs, range.Zero, DebugPointForTarget.No)
 
                 let matchOn =
                     let ident = LongIdentWithDots.CreateString inputIdent
@@ -191,7 +191,7 @@ module internal CreateDUModule =
 
             let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
             let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
-            let openParent = SynModuleDecl.CreateOpen (openTarget)
+            let openParent = SynModuleDecl.CreateOpen openTarget
             let requiresQualifiedAccess =
                 Ast.hasAttribute<RequireQualifiedAccessAttribute> typeDefn
                 || config |> Seq.exists (fun (n, v) -> n = "alwaysFullyQualify" && v :?> bool = true)
@@ -224,19 +224,18 @@ module internal CreateDUModule =
 type DUCasesGenerator() =
 
     interface IMyriadGenerator with
-        member __.ValidInputExtensions = seq {".fs"}
-        member __.Generate(context: GeneratorContext) =
+        member _.ValidInputExtensions = seq {".fs"}
+        member _.Generate(context: GeneratorContext) =
             //context.ConfigKey is not currently used but could be a failover config section to use when the attribute passes no config section, or used as a root config
-            let ast =
+            let ast, _ =
                 Ast.fromFilename context.InputFilename
                 |> Async.RunSynchronously
                 |> Array.head
-                |> fst
 
             let namespaceAndrecords =
                 Ast.extractDU ast
                 |> List.choose (fun (ns, types) ->
-                    match types |> List.filter (Ast.hasAttribute<Generator.DuCasesAttribute>) with
+                    match types |> List.filter Ast.hasAttribute<Generator.DuCasesAttribute> with
                     | [] -> None
                     | types -> Some (ns, types))
 
