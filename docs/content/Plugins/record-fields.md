@@ -1,7 +1,6 @@
 ---
-title: Record Extensions
-category: how-to
-menu_order: 1
+title: Records
+weight: 1
 ---
 
 The input file in this example `Library.fs` looks like this:
