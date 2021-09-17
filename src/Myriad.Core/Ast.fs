@@ -3,7 +3,6 @@ namespace Myriad.Core
 open System
 open FSharp.Compiler.ErrorLogger
 open Fantomas
-open System.IO
 open FSharp.Compiler.SyntaxTree
 open FSharp.Compiler.SourceCodeServices
 
