@@ -9,8 +9,8 @@ open FsAst
 [<MyriadGenerator("example1")>]
 type Example1Gen() =
     interface IMyriadGenerator with
-        member __.ValidInputExtensions = seq {".txt"}
-        member __.Generate(context: GeneratorContext) =
+        member _.ValidInputExtensions = seq {".txt"}
+        member _.Generate(context: GeneratorContext) =
 
             let example1Namespace =
                 context.ConfigKey
@@ -28,7 +28,7 @@ type Example1Gen() =
             let allModules =
                 File.ReadAllLines context.InputFilename
                 |> Seq.map (fun moduleName ->
-                                    let componentInfo = SynComponentInfoRcd.Create [ Ident.Create (moduleName) ]
+                                    let componentInfo = SynComponentInfoRcd.Create [ Ident.Create moduleName ]
                                     let module' = SynModuleDecl.CreateNestedModule(componentInfo, [ let42 ])
                                     module')
                 |> Seq.toList
