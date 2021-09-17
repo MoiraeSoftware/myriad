@@ -96,7 +96,7 @@ module Main =
             let plugins = results.GetResults Plugin
 
             if verbose then
-                printfn "Plugins:"
+                printfn "Plugins found:"
                 plugins |> List.iter (printfn "- '%s'")
 
             let generators =
@@ -104,7 +104,7 @@ module Main =
                 |> List.collect findPlugins
 
             if verbose then
-                printfn "Generators:"
+                printfn "Generators found:"
                 generators |> List.iter (fun t -> printfn $"- '%s{t.FullName}'")
 
             let runGenerator (inputFile: string) (genType: Type) =
@@ -147,7 +147,7 @@ module Main =
                 result
 
             if verbose then
-                printfn "Exec generators:"
+                printfn "Execute generators:"
                 printfn $"Input Filename:\n:%A{inputFile}"
 
             let generated =
@@ -195,6 +195,7 @@ module Main =
                 printfn $"Generated Code:\n%A{code}"
                 printfn "AST-----------------------------------------------"
                 printfn $"%A{parseTree}"
+                printfn "--------------------------------------------------"
             0 // return an integer exit code
 
         with
