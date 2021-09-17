@@ -1,6 +1,7 @@
 namespace Myriad.Core
 
 open System
+open FSharp.Compiler.ErrorLogger
 open Fantomas
 open System.IO
 open FSharp.Compiler.SyntaxTree
@@ -9,10 +10,12 @@ open FSharp.Compiler.SourceCodeServices
 module Ast =
 
     let fromFilename filename =
-        let s = File.ReadAllText filename
-        let parsingOpts = {FSharpParsingOptions.Default with SourceFiles = [| filename |] }
+        let allLines = Generation.linesToKeep filename |> String.concat Environment.NewLine
+        let parsingOpts = {FSharpParsingOptions.Default with
+                               SourceFiles = [| filename |]
+                               ErrorSeverityOptions = FSharpErrorSeverityOptions.Default }
         let checker = FSharpChecker.Create()
-        CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString s, parsingOpts, checker)
+        CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString allLines, parsingOpts, checker)
 
     let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
         match attrib.TypeName with
