@@ -1,7 +1,7 @@
 <Project>
 
     <UsingTask TaskName="Flatten" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-        
+
         <ParameterGroup>
             <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
             <Metadata ParameterType="System.String[]" Required="false" />
@@ -129,8 +129,16 @@
     This is based on the _GenerateCompileDependencyCache target from the .NET project system. -->
     <Target Name="MyriadSdkGenerateInputCache" DependsOnTargets="ResolveAssemblyReferences;_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateCode">
 
+        <GetFileHash Files="%(MyriadCodegen.Identity)">
+            <Output TaskParameter="Items" ItemName="MyriadCodegenHash" />
+        </GetFileHash>
+
         <ItemGroup>
-            <MyriadSdk_CodeGenInputs Include="@(MyriadCodegen);@(ReferencePath);$(MyriadSdk_Generator_Exe)" />
+            <MyriadSdk_CodeGenInputs Include="@(MyriadCodegen)" />
+            <MyriadSdk_CodeGenInputs Include="@(MyriadCodegenHash->'%(FileHash)')" />
+            <MyriadSdk_CodeGenInputs Include="@(MyriadCodegenHash->'%(ModifiedTime)')" />
+            <MyriadSdk_CodeGenInputs Include="@(ReferencePath)" />
+            <MyriadSdk_CodeGenInputs Include="@(MyriadSdk_Generator_Exe)" />
         </ItemGroup>
 
         <Hash ItemsToHash="@(MyriadSdk_CodeGenInputs)">
@@ -177,6 +185,6 @@
         <Exec Command="$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')" />
     </Target>
 
-    <Target Name="MyriadSdkIncludeCodegenOutputDuringDesignTimeBuild" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' == 'true' "></Target>
+    <Target Name="MyriadSdkIncludeCodegenOutputDuringDesignTimeBuild" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' == 'true' " />
 
 </Project>
