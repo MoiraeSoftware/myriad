@@ -23,7 +23,7 @@ module Generation =
         let headerStartingLine = tryGetHeaderStartingLine inputFile
         let inputCode = File.ReadLines(inputFile)
         match headerStartingLine with
-        | Some headerStartingLine -> 
+        | Some headerStartingLine when headerStartingLine > 0 -> 
             inputCode
             |> Seq.take headerStartingLine
-        | None -> inputCode
+        | _ -> inputCode
