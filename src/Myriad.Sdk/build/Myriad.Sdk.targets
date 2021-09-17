@@ -1,6 +1,6 @@
 <Project>
 
-    <UsingTask TaskName="Flatten" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildBinPath)\Microsoft.Build.Tasks.Core.dll">
+    <UsingTask TaskName="Flatten" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
         
         <ParameterGroup>
             <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
@@ -8,11 +8,10 @@
             <Result ParameterType="System.String" Output="true" />
         </ParameterGroup>
         <Task>
-            <Reference Include="System.dll" />
-            <Reference Include="System.Xml.Linq.dll" />
-            <Reference Include="System.Core.dll" />
-            <Reference Include="Microsoft.Build.Tasks.Core.dll" />
-            <Reference Include="Microsoft.Build.Framework.dll" />            
+            <Using Namespace="System" />
+            <Using Namespace="System.Collections.Generic" />
+            <Using Namespace="System.Xml" />
+            <Using Namespace="System.Xml.Linq" />
             <Code Type="Class" Language="cs">
                 <![CDATA[
                 using System;
