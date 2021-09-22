@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3]
+### Fixed
+- Added stack trace to failing code generation
+
+
 ## [0.6.2]
 ### Added
 - Cache invalidation has been improved for inline generation, both file hash and time stamp of the input file are now considered.
