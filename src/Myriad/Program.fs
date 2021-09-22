@@ -136,7 +136,7 @@ module Main =
                         let letBinding =
                             { SynBindingRcd.Let with
                                   Pattern = pattern
-                                  Expr = SynExpr.CreateConstString exc.Message }
+                                  Expr = SynExpr.CreateConstString (exc.ToString()) }
                         let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
                         let moduleOrNamespace = SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong "")
                         Some [ { moduleOrNamespace with IsRecursive = true; Declarations = [modulDecl] } ]
