@@ -7,7 +7,6 @@ open FSharp.Compiler.SyntaxTree
 open FSharp.Compiler.SourceCodeServices
 
 module Ast =
-
     let fromFilename filename =
         let allLines = Generation.linesToKeep filename |> String.concat Environment.NewLine
         let parsingOpts = {FSharpParsingOptions.Default with
@@ -111,4 +110,67 @@ module Ast =
             types
             |> List.map (fun (ns, types) -> ns, types |> List.filter isDu )
         onlyDus
+        
+        
+    module ModuleOrNamespace =
+        let hasAttribute<'a>
+            (SynModuleOrNamespace (_namespaceId, _isRec, _isModule, _moduleDecls, _preXmlDoc, attributes, _access, _range)) =
+            attributes
+            |> List.collect (fun n -> n.Attributes)
+            |> List.exists (typeNameMatches typeof<'a>)
+            
+        let modulesWithAttribute<'a> (ast: ParsedInput) =
+            [ match ast with
+              | ParsedInput.ImplFile (ParsedImplFileInput (_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g)) ->
+                  for SynModuleOrNamespace (_namespaceId, _isRec, moduleOrNs, _moduleDecls, _preXmlDoc, _attributes, _access, _range) as ns in modules do
+                      if moduleOrNs.IsModule && hasAttribute<'a> ns then
+                          yield ns
+              | _ -> () ]
+            
+        let getTypeDefns (nsOrModule: SynModuleOrNamespace) =
+            let rec extractTypes (moduleDecls: SynModuleDecl list) (ns: LongIdent) =
+                [ for moduleDecl in moduleDecls do
+                      match moduleDecl with
+                      | SynModuleDecl.Types (types, _) -> yield (ns, types)
+                      | SynModuleDecl.NestedModule (ComponentInfo (_attribs, _typeParams, _constraints, longId, _xmlDoc, _preferPostfix, _accessibility, _range), _isRec, decls, _local, _outerRange) ->
+                          let combined = longId |> List.append ns
+                          yield! (extractTypes decls combined)
+                      | _other -> () ]
+
+            let (SynModuleOrNamespace (namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _range)) =
+                nsOrModule
+
+            extractTypes moduleDecls namespaceId
+        
+        let records (nsOrModule: SynModuleOrNamespace) =
+            let types = getTypeDefns nsOrModule
+
+            let onlyRecords =
+                types
+                |> List.map (fun (ns, types) -> ns, types |> List.filter isRecord)
+
+            onlyRecords
+
+        let dus (nsOrModule: SynModuleOrNamespace) =
+            let types = getTypeDefns nsOrModule
+
+            let onlyDus =
+                types
+                |> List.map (fun (ns, types) -> ns, types |> List.filter isDu)
+
+            onlyDus
+        
+        let recordsOrDus (nsOrModule: SynModuleOrNamespace) =
+            let types = getTypeDefns nsOrModule
+
+            let recordsOrDus =
+                types
+                |> List.map (fun (ns, types) -> ns, types |> List.filter (fun t -> t |> isDu || t |> isRecord))
+
+            recordsOrDus
+        
+    open FsAst  
+    module Ident =
+        let asCamelCase (ident: Ident) =
+            Ident.Create(ident.idText.Substring(0, 1).ToLowerInvariant() + ident.idText.Substring(1))
 
