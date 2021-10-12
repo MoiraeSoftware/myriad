@@ -47,20 +47,20 @@ module internal Create =
         let pattern =
             let arguments =
                 fields
-                |> List.map (fun f -> let field = f.ToRcd
-                                      let name = SynPat.CreateNamed(Ast.Ident.asCamelCase field.Id.Value, SynPat.CreateWild)
-                                      SynPat.CreateTyped(name, field.Type) |> SynPat.CreateParen)
+                |> List.map (fun (SynField.Field(_,_,id,typ,_,_,_,_)) ->
+                                 let name = SynPat.CreateNamed(Ast.Ident.asCamelCase id.Value, SynPat.CreateWild)
+                                 SynPat.CreateTyped(name, typ) |> SynPat.CreateParen)
 
             SynPat.CreateLongIdent(varIdent, arguments)
 
         let expr =
             let fields =
                 fields
-                |> List.map (fun f -> let field = f.ToRcd
-                                      let fieldIdent = match field.Id with None -> failwith "no field name" | Some f -> f
-                                      let name = LongIdentWithDots.Create([fieldIdent.idText])
-                                      let ident = SynExpr.CreateIdent(Ast.Ident.asCamelCase fieldIdent)
-                                      RecordFieldName(name, true), Some ident, None)
+                |> List.map (fun (SynField.Field(_,_,id,_,_,_,_,_)) ->
+                                 let fieldIdent = match id with None -> failwith "no field name" | Some f -> f
+                                 let name = LongIdentWithDots.Create([fieldIdent.idText])
+                                 let ident = SynExpr.CreateIdent(Ast.Ident.asCamelCase fieldIdent)
+                                 RecordFieldName(name, true), Some ident, None)
 
             let newRecord = SynExpr.Record(None, None, fields, range.Zero )
             SynExpr.CreateTyped(newRecord, recordType)
@@ -72,19 +72,18 @@ module internal Create =
         let varIdent = LongIdentWithDots.CreateString "map"
         let recordPrimeIdent =  Ident.Create "record'"
 
-        let createFieldMapNameIdent field =
-            Ident.Create ("map" + field.Id.Value.idText)
+        let createFieldMapNameIdent (id: Ident option ) =
+            Ident.Create ("map" + id.Value.idText)
 
         let pattern =
             let arguments =
                 recordFields
-                |> List.map (fun f ->let field = f.ToRcd
-                                     let fieldType = field.Type
-                                     let funType = SynType.Fun(fieldType, fieldType, range0 )
-                                     let ident = createFieldMapNameIdent field
-                                     let name = SynPat.CreateNamed(ident, SynPat.CreateWild)
-                                     SynPat.CreateTyped(name, funType)
-                                     |> SynPat.CreateParen)
+                |> List.map (fun (SynField.Field(_,_,id, fieldType,_,_,_,_)) ->
+                                 let funType = SynType.CreateFun(fieldType, fieldType)
+                                 let ident = createFieldMapNameIdent id
+                                 let name = SynPat.CreateNamed(ident, SynPat.CreateWild)
+                                 SynPat.CreateTyped(name, funType)
+                                 |> SynPat.CreateParen)
 
             let recordParam =
                 let name = SynPat.CreateNamed(recordPrimeIdent, SynPat.CreateWild)
@@ -105,15 +104,14 @@ module internal Create =
                 Some (SynExpr.CreateIdent recordPrimeIdent, blockSep)
 
             let fieldUpdates =
-                let mapField (f: SynField) =
-                    let f = f.ToRcd
-                    let lid = LongIdentWithDots.Create [f.Id.Value.idText]
+                let mapField (SynField.Field(_,_,id,_,_,_,_,_)) =
+                    let lid = LongIdentWithDots.Create [id.Value.idText]
                     let rfn = RecordFieldName(lid, true)
 
                     let update =
-                        let funcExpr = SynExpr.CreateIdent (createFieldMapNameIdent f)
+                        let funcExpr = SynExpr.CreateIdent (createFieldMapNameIdent id)
                         let argExpr =
-                            let longIdentWithDots = LongIdentWithDots.Create [recordPrimeIdent.idText; f.Id.Value.idText]
+                            let longIdentWithDots = LongIdentWithDots.Create [recordPrimeIdent.idText; id.Value.idText]
                             SynExpr.CreateLongIdent(false, longIdentWithDots, None)
                         SynExpr.CreateApp(funcExpr, argExpr)
 
