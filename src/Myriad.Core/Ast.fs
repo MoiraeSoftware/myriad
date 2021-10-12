@@ -1,7 +1,10 @@
 namespace Myriad.Core
 
 open System
+open FSharp.Compiler
 open FSharp.Compiler.ErrorLogger
+open FSharp.Compiler.Range
+open FSharp.Compiler.XmlDoc
 open Fantomas
 open FSharp.Compiler.SyntaxTree
 open FSharp.Compiler.SourceCodeServices
@@ -173,4 +176,26 @@ module Ast =
     module Ident =
         let asCamelCase (ident: Ident) =
             Ident.Create(ident.idText.Substring(0, 1).ToLowerInvariant() + ident.idText.Substring(1))
+            
+    type  ParsedImplFileInput with
+        static member CreateFs(name, ?isScript, ?scopedPragmas, ?hashDirectives, ?modules, ?isLastCompiland, ?isExe) =
+            let file = $"%s{name}.fs"
+            let isScript = defaultArg isScript false
+            let qualName = QualifiedNameOfFile.Create name
+            let scopedPragmas = defaultArg scopedPragmas []
+            let hashDirectives = defaultArg hashDirectives []
+            let modules = defaultArg modules []
+            let isLastCompiland = defaultArg isLastCompiland true
+            let isExe = defaultArg isExe false
+            ParsedImplFileInput(file, isScript, qualName, scopedPragmas, hashDirectives, modules, (isLastCompiland, isExe))
+            
+    type SynModuleOrNamespace with
+        static member CreateNamespace(ident, ?isRecursive, ?decls, ?docs, ?attribs, ?access) =
+            let range = range0
+            let kind = SynModuleOrNamespaceKind.DeclaredNamespace
+            let isRecursive = defaultArg isRecursive false
+            let decls = defaultArg decls []
+            let docs = defaultArg docs  PreXmlDoc.Empty
+            let attribs = defaultArg attribs SynAttributes.Empty
+            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range)
 
