@@ -9,8 +9,8 @@ module internal Create =
     open FSharp.Compiler.Range
 
     let createFieldMap (parent: LongIdent) (field: SynField)  =
-        let field = field.ToRcd
-        let fieldName = match field.Id with None -> failwith "no field name" | Some f -> f
+        let (SynField.Field(_,_,id,_,_,_,_,_)) = field
+        let fieldName = match id with None -> failwith "no field name" | Some f -> f
 
         let recordType =
             LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
@@ -20,11 +20,11 @@ module internal Create =
         let pattern =
             let name = LongIdentWithDots.CreateString fieldName.idText
             let arg =
-                let named = SynPatRcd.CreateNamed(Ident.Create varName, SynPatRcd.CreateWild)
-                SynPatRcd.CreateTyped(named, recordType)
-                |> SynPatRcd.CreateParen
+                let named = SynPat.CreateNamed(Ident.Create varName, SynPat.CreateWild)
+                SynPat.CreateTyped(named, recordType)
+                |> SynPat.CreateParen
 
-            SynPatRcd.CreateLongIdent(name, [arg])
+            SynPat.CreateLongIdent(name, [arg])
 
         let expr =
             let ident = LongIdentWithDots.Create [varName; fieldName.idText]
@@ -35,10 +35,7 @@ module internal Create =
             let valInfo = SynValInfo.SynValInfo([[argInfo]], SynArgInfo.Empty)
             SynValData.SynValData(None, valInfo, None)
 
-        SynModuleDecl.CreateLet [{SynBindingRcd.Let with
-                                    Pattern = pattern
-                                    Expr = expr
-                                    ValData = valData }]
+        SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, valData = valData)]
 
     let createCreate (parent: LongIdent) (fields: SynField list) =
         let varIdent = LongIdentWithDots.CreateString "create"
