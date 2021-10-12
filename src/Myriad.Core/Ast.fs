@@ -217,5 +217,43 @@ module Ast =
               PreferPostfix = preferPostfix
               Access = access
               Range = range }
+                    
+            
+    type SynPat with
+        static member CreateNamed(ident, pat, ?isSelf, ?access) =
+            let isSelf = defaultArg isSelf false
+            SynPat.Named(pat, ident, isSelf, access, range0)
+            
+        static member CreateWild =
+            SynPat.Wild(range0)
+            
+        static member CreateTyped(pat, typ) =
+            SynPat.Typed(pat, typ, range0)
+                         
+        static member CreateParen(exp) =
+            SynPat.Paren(exp, range0)
+            
+        static member CreateLongIdent(id, args, ?typarDecls, ?extraId, ?access) =
+            let args = SynArgPats.Pats(args)
+            SynPat.LongIdent(id, extraId, typarDecls, args, access, range0)
+            
+        static member CreateNull =
+            SynPat.Null(range0)
 
-
+    type SynBinding with
+        static member Let(?access, ?isInline, ?isMutable, ?attributes, ?xmldoc, ?valData, ?pattern, ?returnInfo, ?expr) =
+            let isInline = defaultArg isInline false
+            let isMutable = defaultArg isMutable false
+            let attributes = defaultArg attributes SynAttributes.Empty
+            let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
+            let valData = defaultArg valData (SynValData(None, SynValInfo([], SynArgInfo.Empty), None))
+            let headPat = defaultArg pattern SynPat.CreateNull
+            let expr = SynExpr.CreateTyped(SynExpr.CreateNull, SynType.CreateUnit)
+            let bind = DebugPointForBinding.NoDebugPointAtInvisibleBinding
+            SynBinding.Binding(access, SynBindingKind.NormalBinding, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind )
+            
+            
+    type SynModuleDecl with
+        static member CreateLet(bindings, ?isRecursive) =
+            let isRecursive = defaultArg isRecursive false
+            SynModuleDecl.Let(isRecursive, bindings, range0)
