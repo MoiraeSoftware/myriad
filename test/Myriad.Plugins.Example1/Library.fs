@@ -3,6 +3,7 @@
 open System
 open System.IO
 open Myriad.Core
+open Myriad.Core.Ast
 open FSharp.Compiler.SyntaxTree
 open FsAst
 
@@ -33,8 +34,4 @@ type Example1Gen() =
                                     module')
                 |> Seq.toList
 
-            let namespaceOrModule =
-                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong example1Namespace)
-                    with Declarations = allModules }
-
-            [namespaceOrModule]
+            [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong example1Namespace, decls = allModules)]

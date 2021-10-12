@@ -5,6 +5,7 @@ open FSharp.Compiler.SyntaxTree
 open FSharp.Compiler.XmlDoc
 open FsAst
 open Myriad.Core
+open Myriad.Core.Ast
 open FSharp.Compiler.Range
 
 module internal CreateLenses =
@@ -232,10 +233,7 @@ type LensesGenerator() =
                                                              |> Seq.tryPick (fun (n, v) -> if n = "pipedsetter" then Some (v :?> bool) else None  )
                                                              |> Option.defaultValue false
                                                          let synModule = CreateLenses.createLensModule ns record attrib usePipedSetter
-                                                         { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong recordsNamespace)
-                                                                with
-                                                                    IsRecursive = true
-                                                                    Declarations = [synModule] } ))
+                                                         SynModuleOrNamespace.CreateNamespace(Ident.CreateLong recordsNamespace, isRecursive =true, decls = [synModule])))
 
             let namespaceAndDUs = Ast.extractDU ast
             let duModules =
@@ -256,10 +254,7 @@ type LensesGenerator() =
                                                          |> Seq.tryPick (fun (n, v) -> if n = "pipedsetter" then Some (v :?> bool) else None  )
                                                          |> Option.defaultValue false
                                                      let synModule = CreateLenses.createLensModule ns du attrib usePipedSetter
-                                                     { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong dusNamespace)
-                                                                with
-                                                                    IsRecursive = true
-                                                                    Declarations = [synModule] } ))
+                                                     SynModuleOrNamespace.CreateNamespace(Ident.CreateLong dusNamespace, isRecursive = true, decls = [synModule])))
 
             [ yield! recordsModules
               yield! duModules]

@@ -3,6 +3,7 @@
 open FSharp.Compiler.SyntaxTree
 open FsAst
 open Myriad.Core
+open Myriad.Core.Ast
 
 module internal Create =
     open FSharp.Compiler.Range
@@ -170,10 +171,7 @@ module internal Create =
                 |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
                 |> Option.defaultValue "UnknownNamespace"
 
-            {SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong fieldsNamespace)
-                with
-                    IsRecursive = true
-                    Declarations = [mdl] }
+            SynModuleOrNamespace.CreateNamespace(Ident.CreateLong fieldsNamespace, isRecursive = true, decls = [mdl])
         | _ -> failwithf "Not a record type"
 
 [<MyriadGenerator("fields")>]

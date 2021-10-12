@@ -8,6 +8,7 @@ open Argu
 open Tomlyn
 open System.Collections.Generic
 open System.Diagnostics
+open Myriad.Core.Ast
 
 module Implementation =
     let findPlugins (path: string) =
@@ -138,8 +139,7 @@ module Main =
                                   Pattern = pattern
                                   Expr = SynExpr.CreateConstString (exc.ToString()) }
                         let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
-                        let moduleOrNamespace = SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong "")
-                        Some [ { moduleOrNamespace with IsRecursive = true; Declarations = [modulDecl] } ]
+                        Some [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong "", isRecursive = true, decls = [modulDecl])]
 
                 if verbose then
                     printfn $"Result: '%A{result}'"
@@ -162,9 +162,7 @@ module Main =
                     else if outputFile.IsSome then
                         outputFile.Value
                     else failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
-                ParsedInput.CreateImplFile(
-                    ParsedImplFileInputRcd.CreateFs(filename)
-                        .AddModules generated)
+                ParsedInput.ImplFile(ParsedImplFileInput.CreateFs(filename, modules = generated))
 
             let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
             let formattedCode = CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
