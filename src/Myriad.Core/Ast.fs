@@ -257,3 +257,8 @@ module Ast =
         static member CreateLet(bindings, ?isRecursive) =
             let isRecursive = defaultArg isRecursive false
             SynModuleDecl.Let(isRecursive, bindings, range0)
+            
+    type SynBindingReturnInfo with
+        static member Create(typeName, ?attributes) =
+            let attributes = defaultArg attributes SynAttributes.Empty
+            SynBindingReturnInfo.SynBindingReturnInfo(typeName, range0, attributes)

@@ -48,10 +48,10 @@ module internal Create =
             let arguments =
                 fields
                 |> List.map (fun f -> let field = f.ToRcd
-                                      let name = SynPatRcd.CreateNamed(Ast.Ident.asCamelCase field.Id.Value, SynPatRcd.CreateWild)
-                                      SynPatRcd.CreateTyped(name, field.Type) |> SynPatRcd.CreateParen)
+                                      let name = SynPat.CreateNamed(Ast.Ident.asCamelCase field.Id.Value, SynPat.CreateWild)
+                                      SynPat.CreateTyped(name, field.Type) |> SynPat.CreateParen)
 
-            SynPatRcd.CreateLongIdent(varIdent, arguments)
+            SynPat.CreateLongIdent(varIdent, arguments)
 
         let expr =
             let fields =
@@ -65,8 +65,8 @@ module internal Create =
             let newRecord = SynExpr.Record(None, None, fields, range.Zero )
             SynExpr.CreateTyped(newRecord, recordType)
 
-        let returnTypeInfo = SynBindingReturnInfoRcd.Create recordType
-        SynModuleDecl.CreateLet [{SynBindingRcd.Let with Pattern = pattern; Expr = expr; ReturnInfo = Some returnTypeInfo }]
+        let returnTypeInfo = SynBindingReturnInfo.Create(recordType)
+        SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo)]
 
     let createMap (recordId: LongIdent) (recordFields: SynField list) : SynModuleDecl =
         let varIdent = LongIdentWithDots.CreateString "map"
@@ -82,22 +82,22 @@ module internal Create =
                                      let fieldType = field.Type
                                      let funType = SynType.Fun(fieldType, fieldType, range0 )
                                      let ident = createFieldMapNameIdent field
-                                     let name = SynPatRcd.CreateNamed(ident, SynPatRcd.CreateWild)
-                                     SynPatRcd.CreateTyped(name, funType)
-                                     |> SynPatRcd.CreateParen)
+                                     let name = SynPat.CreateNamed(ident, SynPat.CreateWild)
+                                     SynPat.CreateTyped(name, funType)
+                                     |> SynPat.CreateParen)
 
             let recordParam =
-                let name = SynPatRcd.CreateNamed(recordPrimeIdent, SynPatRcd.CreateWild)
+                let name = SynPat.CreateNamed(recordPrimeIdent, SynPat.CreateWild)
                 let typ =
                     LongIdentWithDots.Create (recordId |> List.map (fun i -> i.idText))
                     |> SynType.CreateLongIdent
 
-                SynPatRcd.CreateTyped(name, typ)
-                |> SynPatRcd.CreateParen
+                SynPat.CreateTyped(name, typ)
+                |> SynPat.CreateParen
 
             let allArgs = [yield! arguments; yield recordParam]
 
-            SynPatRcd.CreateLongIdent(varIdent, allArgs)
+            SynPat.CreateLongIdent(varIdent, allArgs)
 
         let expr =
             let copyInfo =
@@ -130,14 +130,10 @@ module internal Create =
         let returnTypeInfo =
             LongIdentWithDots.Create (recordId |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
-            |> SynBindingReturnInfoRcd.Create
+            |> SynBindingReturnInfo.Create
 
         SynModuleDecl.CreateLet
-            [ { SynBindingRcd.Let with
-                    Pattern = pattern
-                    Expr = expr
-                    ReturnInfo = Some returnTypeInfo }
-            ]
+            [ SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo) ]
 
     let createRecordModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (config: (string * obj) seq) =
         let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
