@@ -244,7 +244,7 @@ dotnet new myriadgenerator -n myMyriadPlugin
 
 1. Make sure you have .Net Core SDK installed - check required version in [global.json](global.json)
 2. Run `dotnet tool restore`
-3. Run `dotnet build -t:Build`
+3. Run `dotnet build -c Release -t:Build`
 
 ## How to release new version
 
