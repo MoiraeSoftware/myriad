@@ -2,6 +2,7 @@ namespace Myriad.Core
 
 open System
 open System.Collections.Generic
+open FSharp.Compiler.SyntaxTree
 
 type MyriadGeneratorAttribute(name: string) =
     inherit Attribute()
@@ -16,4 +17,4 @@ type GeneratorContext = {
 
 type IMyriadGenerator =
     abstract member ValidInputExtensions: string seq
-    abstract member Generate: GeneratorContext -> FsAst.AstRcd.SynModuleOrNamespaceRcd list
+    abstract member Generate: GeneratorContext -> SynModuleOrNamespace list
