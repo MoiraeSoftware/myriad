@@ -29,7 +29,7 @@ type Example1Gen() =
             let allModules =
                 File.ReadAllLines context.InputFilename
                 |> Seq.map (fun moduleName ->
-                                    let componentInfo = SynComponentInfoRcd.Create [ Ident.Create moduleName ]
+                                    let componentInfo = SynComponentInfo.Create [ Ident.Create moduleName ]
                                     let module' = SynModuleDecl.CreateNestedModule(componentInfo, [ let42 ])
                                     module')
                 |> Seq.toList

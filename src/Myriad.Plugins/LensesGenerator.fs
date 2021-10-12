@@ -186,7 +186,7 @@ module internal CreateLenses =
         let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
         let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, r)
         let openParent = SynModuleDecl.CreateOpen openTarget
-        let moduleInfo = SynComponentInfoRcd.Create moduleIdent
+        let moduleInfo = SynComponentInfo.Create moduleIdent
 
         match synTypeDefnRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_accessibility, recordFields, _recordRange), _range) ->

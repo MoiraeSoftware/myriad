@@ -129,7 +129,7 @@ module Main =
                     with
                     | exc ->
                         // emit the module with exception text
-                        let info = SynComponentInfoRcd.Create (Ident.CreateLong $"%s{genType.Name}Failure")
+                        let info = SynComponentInfo.Create (Ident.CreateLong $"%s{genType.Name}Failure")
                         let pattern =
                             // intentionally generating invalid identifier name to fail the compilation
                             let name = LongIdentWithDots.CreateString "!CompilationError"

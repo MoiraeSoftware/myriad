@@ -209,7 +209,7 @@ module internal CreateDUModule =
                 toTag
                 yield! isCase ]
 
-            let info = SynComponentInfoRcd.Create recordId
+            let info = SynComponentInfo.Create recordId
             let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
             let dusNamespace =
                 config

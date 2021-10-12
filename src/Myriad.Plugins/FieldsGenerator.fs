@@ -164,7 +164,7 @@ module internal Create =
                 yield create
                 yield map ]
 
-            let info = SynComponentInfoRcd.Create recordId
+            let info = SynComponentInfo.Create recordId
             let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
             let fieldsNamespace =
                 config
