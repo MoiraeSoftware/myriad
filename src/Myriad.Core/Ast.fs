@@ -1,12 +1,12 @@
 namespace Myriad.Core
 
 open System
-open FSharp.Compiler
+open FSharp.Compiler.Text
+open FSharp.Compiler.SyntaxTree
+open FSharp.Compiler.XmlDoc
 open FSharp.Compiler.ErrorLogger
 open FSharp.Compiler.Range
-open FSharp.Compiler.XmlDoc
 open Fantomas
-open FSharp.Compiler.SyntaxTree
 open FSharp.Compiler.SourceCodeServices
 
 module Ast =
@@ -198,4 +198,24 @@ module Ast =
             let docs = defaultArg docs  PreXmlDoc.Empty
             let attribs = defaultArg attribs SynAttributes.Empty
             SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range)
+            
+    type SynComponentInfo with
+        static member Create(id: LongIdent, ?attributes, ?parameters, ?constraints, ?xmldoc, ?preferPostfix, ?access) =
+            let attributes = defaultArg attributes SynAttributes.Empty
+            let parameters = defaultArg parameters []
+            let constraints = defaultArg constraints []
+            let id = id
+            let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
+            let preferPostfix = defaultArg preferPostfix false
+            let access = defaultArg access None
+            let range = range.Zero
+            { Attributes = attributes
+              Parameters = parameters
+              Constraints = constraints
+              Id = id
+              XmlDoc = xmldoc
+              PreferPostfix = preferPostfix
+              Access = access
+              Range = range }
+
 
