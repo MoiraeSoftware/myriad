@@ -134,10 +134,10 @@ module internal Create =
             [ SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo) ]
 
     let createRecordModule (namespaceId: LongIdent) (typeDefn: SynTypeDefn) (config: (string * obj) seq) =
-        let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _range)) = typeDefn
-        let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
+        let (TypeDefn(synComponentInfo, synTypeDefnRepr, _members, _)) = typeDefn
+        let (ComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _)) = synComponentInfo
         match synTypeDefnRepr with
-        | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_accessibility, recordFields, _recordRange), _range) ->
+        | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_accessibility, recordFields, _recordRange), _) ->
 
             let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
             let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
