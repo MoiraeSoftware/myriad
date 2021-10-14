@@ -252,5 +252,4 @@ type LensesGenerator() =
                                                      let synModule = CreateLenses.createLensModule ns du attrib usePipedSetter
                                                      SynModuleOrNamespace.CreateNamespace(Ident.CreateLong dusNamespace, isRecursive = true, decls = [synModule])))
 
-            [ yield! recordsModules
-              yield! duModules]
+            Output.Ast [yield! recordsModules; yield! duModules]

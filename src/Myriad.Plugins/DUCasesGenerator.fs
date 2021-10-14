@@ -242,4 +242,4 @@ type DUCasesGenerator() =
                                     |> List.map (fun du -> let config = Generator.getConfigFromAttribute<Generator.DuCasesAttribute> context.ConfigGetter du
                                                            CreateDUModule.createDuModule ns du config))
 
-            modules
+            Output.Ast modules

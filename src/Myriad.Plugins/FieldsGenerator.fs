@@ -192,4 +192,4 @@ type FieldsGenerator() =
                                                                let recordModule = Create.createRecordModule ns record config
                                                                recordModule))
 
-            modules
+            Output.Ast modules

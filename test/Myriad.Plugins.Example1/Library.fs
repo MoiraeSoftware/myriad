@@ -31,4 +31,4 @@ type Example1Gen() =
                                     module')
                 |> Seq.toList
 
-            [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong example1Namespace, decls = allModules)]
+            Output.Ast [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong example1Namespace, decls = allModules)]
