@@ -84,6 +84,7 @@ namespace rec SelfTestLens
 
 module Test1Lenses =
     open InputSelfGenerated
+
     let ones =
         (fun (x: Test1) -> x.ones), (fun (x: Test1) (value: int) -> { x with ones = value })
 
@@ -99,6 +100,7 @@ namespace rec SelfTestLens
 
 module RecordWithWrappedLensLenses =
     open InputSelfGenerated
+
     let one =
         Example.Lens(
             (fun (x: RecordWithWrappedLens) -> x.one),
@@ -108,6 +110,7 @@ namespace rec SelfTestLens
 
 module RecordWithEmptyWrapperNameLenses =
     open InputSelfGenerated
+
     let one_empty_wrapper_name =
         (fun (x: RecordWithEmptyWrapperName) -> x.one_empty_wrapper_name),
         (fun (x: RecordWithEmptyWrapperName) (value: int) ->
@@ -117,6 +120,7 @@ namespace rec SelfTestLens
 
 module RecordWithWrappedLensViaTypedefofLenses =
     open InputSelfGenerated
+
     let one_typedefof =
         Example.Lens(
             (fun (x: RecordWithWrappedLensViaTypedefof) -> x.one_typedefof),
@@ -126,6 +130,7 @@ namespace rec SelfTestLens
 
 module RecordWithWrappedLensViaTypeofLenses =
     open InputSelfGenerated
+
     let one_typeof =
         Example.Lens(
             (fun (x: RecordWithWrappedLensViaTypeof) -> x.one_typeof),
@@ -135,6 +140,7 @@ namespace rec SelfTestLens
 
 module AddressLenses =
     open InputSelfGenerated
+
     let Street =
         Example.Lens((fun (x: Address) -> x.Street), (fun (x: Address) (value: string) -> { x with Street = value }))
 
@@ -147,6 +153,7 @@ namespace rec SelfTestLens
 
 module PersonLenses =
     open InputSelfGenerated
+
     let Name =
         Example.Lens((fun (x: Person) -> x.Name), (fun (x: Person) (value: string) -> { x with Name = value }))
 
@@ -156,6 +163,7 @@ namespace rec SelfAetherTestLens
 
 module AetherAddressLenses =
     open InputSelfGenerated
+
     let Street =
         (fun (x: AetherAddress) -> x.Street), (fun (value: string) (x: AetherAddress) -> { x with Street = value })
 
@@ -166,6 +174,7 @@ namespace rec SelfAetherTestLens
 
 module AetherPersonLenses =
     open InputSelfGenerated
+
     let Name =
         (fun (x: AetherPerson) -> x.Name), (fun (value: string) (x: AetherPerson) -> { x with Name = value })
 
@@ -176,6 +185,7 @@ namespace rec SelfTestLens
 
 module SingleCaseDULenses =
     open InputSelfGenerated
+
     let Lens' =
         let getter (x: SingleCaseDU) =
             match x with
@@ -186,6 +196,7 @@ namespace rec SelfTestLens
 
 module WrappedSingleCaseDULenses =
     open InputSelfGenerated
+
     let Lens' =
         Example.Lens(
             let getter (x: WrappedSingleCaseDU) =
@@ -198,6 +209,7 @@ namespace rec SelfTestLens
 
 module FullyQualifiedDULenses =
     open InputSelfGenerated
+
     let Lens' =
         let getter (x: FullyQualifiedDU) =
             match x with
@@ -208,6 +220,7 @@ namespace rec SelfTestLens
 
 module Module_SingleCaseDULenses =
     open InputSelfGenerated.ModuleWithDUs
+
     let Lens' =
         let getter (x: Module_SingleCaseDU) =
             match x with
@@ -218,6 +231,7 @@ namespace rec SelfTestLens
 
 module Module_WrappedSingleCaseDULenses =
     open InputSelfGenerated.ModuleWithDUs
+
     let Lens' =
         Example.Lens(
             let getter (x: Module_WrappedSingleCaseDU) =
@@ -230,6 +244,7 @@ namespace rec SelfTestLens
 
 module Module_FullyQualifiedDULenses =
     open InputSelfGenerated.ModuleWithDUs
+
     let Lens' =
         let getter (x: Module_FullyQualifiedDU) =
             match x with
@@ -244,6 +259,7 @@ module Test1 =
     let two (x: Test1) = x.two
     let three (x: Test1) = x.three
     let four (x: Test1) = x.four
+
     let create (ones: int) (two: string) (three: float) (four: float32) : Test1 =
         { ones = ones
           two = two
@@ -266,6 +282,7 @@ namespace rec SelfTestDus
 
 module Currency =
     open InputSelfGenerated
+
     let toString (x: Currency) =
         match x with
         | CAD -> "CAD"

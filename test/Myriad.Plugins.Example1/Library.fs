@@ -21,10 +21,7 @@ type Example1Gen() =
 
             let let42 =
                 SynModuleDecl.CreateLet
-                    [ { SynBindingRcd.Let with
-                            Pattern = SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateString "fourtyTwo", [])
-                            Expr = SynExpr.CreateConst(SynConst.Int32 42) } ]
-
+                    [ SynBinding.Let(pattern = SynPat.CreateLongIdent(LongIdentWithDots.CreateString "fourtyTwo", []), expr = SynExpr.CreateConst(SynConst.Int32 42)) ]
 
             let allModules =
                 File.ReadAllLines context.InputFilename
