@@ -4,6 +4,7 @@ open Fantomas
 open System.IO
 open FSharp.Compiler.SyntaxTree
 open Argu
+open Myriad.Core
 open Tomlyn
 open System.Collections.Generic
 open System.Diagnostics
@@ -16,7 +17,7 @@ module Implementation =
 
         let gens =
             [ for t in assembly.GetTypes() do
-                if t.GetCustomAttributes(typeof<Myriad.Core.MyriadGeneratorAttribute>, true).Length > 0
+                if t.GetCustomAttributes(typeof<MyriadGeneratorAttribute>, true).Length > 0
                 then yield t ]
         gens
         
@@ -109,7 +110,7 @@ module Main =
                 generators |> List.iter (fun t -> printfn $"- '%s{t.FullName}'")
 
             let runGenerator (inputFile: string) (genType: Type) =
-                let instance = Activator.CreateInstance(genType) :?> Myriad.Core.IMyriadGenerator
+                let instance = Activator.CreateInstance(genType) :?> IMyriadGenerator
 
                 let configHandler = getConfigHandler verbose config
 
@@ -120,10 +121,7 @@ module Main =
                     try
                         if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile))
                         then
-                            let context = { Core.GeneratorContext.ConfigKey = configKey
-                                            Core.GeneratorContext.ConfigGetter = configHandler
-                                            Core.GeneratorContext.InputFilename = inputFile
-                                            Core.GeneratorContext.AdditionalParameters = additionalParams }
+                            let context = GeneratorContext.Create(configKey, configHandler, inputFile, additionalParams)
                             Some (instance.Generate(context))
                         else None
                     with
@@ -136,10 +134,9 @@ module Main =
                             SynPat.CreateLongIdent(name, [])
                         let letBinding = SynBinding.Let(pattern = pattern, expr = SynExpr.CreateConstString (exc.ToString()))
                         let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
-                        Some [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong "", isRecursive = true, decls = [modulDecl])]
+                        Some (Output.Ast [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong "", isRecursive = true, decls = [modulDecl])])
 
-                if verbose then
-                    printfn $"Result: '%A{result}'"
+                if verbose then printfn $"Result: '%A{result}'"
 
                 result
 
@@ -150,30 +147,44 @@ module Main =
             let generated =
                 generators
                 |> List.choose (runGenerator inputFile)
-                |> List.concat
 
-            let parseTree =
-                let filename =
-                    if inlineGeneration then
-                        inputFile
-                    else if outputFile.IsSome then
-                        outputFile.Value
-                    else failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
-                ParsedInput.ImplFile(ParsedImplFileInput.CreateFs(filename, modules = generated))
+            let formattedCode =
+                let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
+                
+                let parseTree =
+                    let filename =
+                        if inlineGeneration then
+                            inputFile
+                        else if outputFile.IsSome then
+                            outputFile.Value
+                        else failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
+                    generated
+                    |> List.map (fun f ->
+                        match f with
+                        | Output.Ast ast ->
+                            let parseTree = ParsedInput.ImplFile(ParsedImplFileInput.CreateFs(filename, modules = ast))
+                            if verbose then    
+                                printfn "Generated Ast:------------------------------------"
+                                printfn $"%A{parseTree}"
+                                printfn "--------------------------------------------------"
+                            CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
+                        | Output.Source source -> source )
+                    
 
-            let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
-            let formattedCode = CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
-            let code =  Core.Generation.getHeaderedCode formattedCode
+
+                parseTree |> String.concat Environment.NewLine
+            
+            let code =  Generation.getHeaderedCode formattedCode
+            if verbose then
+                printfn $"Generated Code:\n%A{code}"
 
             if inlineGeneration then
                 let tempFile = Path.GetTempFileName()
-                let linesToKeep = Core.Generation.linesToKeep inputFile
+                let linesToKeep = Generation.linesToKeep inputFile
 
-                if verbose then
-                    printfn $"Inline generation: Writing to temp file: '%A{tempFile}'"
+                if verbose then printfn $"Inline generation: Writing to temp file: '%A{tempFile}'"
                 File.WriteAllLines(tempFile, seq{ yield! linesToKeep; yield! code} )
-                if verbose then
-                    printfn $"Inline generation: Removing input file: '%A{tempFile}'"
+                if verbose then printfn $"Inline generation: Removing input file: '%A{tempFile}'"
                 File.Delete(inputFile)
                 if verbose then
                     printfn $"Inline generation: Renaming temp file to input file: '%A{tempFile}' -> '%A{inputFile}'"
@@ -181,16 +192,10 @@ module Main =
             else
                 match outputFile with
                 | Some filename ->
-                    if verbose then
-                        printfn $"Code generation: Writing output file: '%A{filename}'"
+                    if verbose then printfn $"Code generation: Writing output file: '%A{filename}'"
                     File.WriteAllLines(filename, code)
                 | None -> failwith "Error: No OutputFile was included, and --inlinegeneration was not specified."
 
-            if verbose then
-                printfn $"Generated Code:\n%A{code}"
-                printfn "AST-----------------------------------------------"
-                printfn $"%A{parseTree}"
-                printfn "--------------------------------------------------"
             0 // return an integer exit code
 
         with
