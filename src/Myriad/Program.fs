@@ -3,12 +3,12 @@ open System
 open Fantomas
 open System.IO
 open FSharp.Compiler.SyntaxTree
-open FsAst
 open Argu
 open Tomlyn
 open System.Collections.Generic
 open System.Diagnostics
 open Myriad.Core.Ast
+open FsAst
 
 module Implementation =
     let findPlugins (path: string) =
@@ -133,11 +133,8 @@ module Main =
                         let pattern =
                             // intentionally generating invalid identifier name to fail the compilation
                             let name = LongIdentWithDots.CreateString "!CompilationError"
-                            SynPatRcd.CreateLongIdent(name, [])
-                        let letBinding =
-                            { SynBindingRcd.Let with
-                                  Pattern = pattern
-                                  Expr = SynExpr.CreateConstString (exc.ToString()) }
+                            SynPat.CreateLongIdent(name, [])
+                        let letBinding = SynBinding.Let(pattern = pattern, expr = SynExpr.CreateConstString (exc.ToString()))
                         let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
                         Some [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong "", isRecursive = true, decls = [modulDecl])]
 
