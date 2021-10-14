@@ -239,6 +239,9 @@ module Ast =
             
         static member CreateNull =
             SynPat.Null(range0)
+            
+        static member CreateConst(expr) =
+            SynPat.Const(expr, range0)
 
     type SynBinding with
         static member Let(?access, ?isInline, ?isMutable, ?attributes, ?xmldoc, ?valData, ?pattern, ?returnInfo, ?expr) =
@@ -248,7 +251,7 @@ module Ast =
             let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
             let valData = defaultArg valData (SynValData(None, SynValInfo([], SynArgInfo.Empty), None))
             let headPat = defaultArg pattern SynPat.CreateNull
-            let expr = SynExpr.CreateTyped(SynExpr.CreateNull, SynType.CreateUnit)
+            let expr = defaultArg expr (SynExpr.CreateTyped(SynExpr.CreateNull, SynType.CreateUnit))
             let bind = DebugPointForBinding.NoDebugPointAtInvisibleBinding
             SynBinding.Binding(access, SynBindingKind.NormalBinding, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind )
             
@@ -262,3 +265,14 @@ module Ast =
         static member Create(typeName, ?attributes) =
             let attributes = defaultArg attributes SynAttributes.Empty
             SynBindingReturnInfo.SynBindingReturnInfo(typeName, range0, attributes)
+            
+    type SynUnionCase with
+        member x.HasFields =
+            let (SynUnionCase.UnionCase(_,_,typ,_,_,_)) = x
+            match typ with
+            | UnionCaseFields cases -> not cases.IsEmpty
+            | _ -> false
+            
+    type SynMatchClause with
+        static member Create(pat, whenExp, result) =
+            SynMatchClause.Clause(pat, whenExp, result, range0, DebugPointForTarget.No)
