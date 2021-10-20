@@ -153,7 +153,9 @@
         <MyriadSdkGenerateCodeDependsOn>$(MyriadSdkGenerateCodeDependsOn);ResolveReferences;MyriadSdkGenerateInputCache</MyriadSdkGenerateCodeDependsOn>
     </PropertyGroup>
 
-    <Target Name="MyriadSdkGenerateCode" DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' != 'true' " Inputs="@(MyriadCodegen);$(_MyriadSdkCodeGenInputCache);$(MyriadSdk_Generator_Exe)" Outputs="%(MyriadCodegen.OutputPath)">
+    <Target Name="MyriadSdkGenerateCode" DependsOnTargets="$(MyriadSdkGenerateCodeDependsOn)" BeforeTargets="CoreCompile" Condition=" '$(DesignTimeBuild)' != 'true' "
+            Inputs="@(MyriadCodegen);$(_MyriadSdkCodeGenInputCache);$(MyriadSdk_Generator_Exe)"
+            Outputs="%(MyriadCodegen.OutputPath)">
         <PropertyGroup>
             <_MyriadSdk_InputFileName>%(MyriadCodegen.Identity)</_MyriadSdk_InputFileName>
             <_MyriadSdk_OutputFileName>%(MyriadCodegen.OutputPath)</_MyriadSdk_OutputFileName>
@@ -161,17 +163,45 @@
             <_MyriadSdk_ConfigFile>$(MyriadConfigFile)</_MyriadSdk_ConfigFile>
             <_MyriadSdk_MyriadParams>%(MyriadCodegen.MyriadParams)</_MyriadSdk_MyriadParams>
             <_MyriadSdk_InlineGeneration>%(MyriadCodegen.MyriadInlineGeneration)</_MyriadSdk_InlineGeneration>
+            <_MyriadSdk_ContextFile>$(MSBuildProjectDirectory)/obj/myriad.context.toml</_MyriadSdk_ContextFile>
+            
         </PropertyGroup>
 
         <Flatten Items="@(MyriadCodegen)" Metadata="MyriadParams">
             <Output TaskParameter="Result" PropertyName="_MyriadSdk_MyriadParams2" />
         </Flatten>
 
+        <!-- Convert the property DefineConstants to an item so that it can be transfromed to comma separated list -->
+        <CreateItem Include="$(DefineConstants)">
+            <Output TaskParameter="Include" ItemName="_DefineConstants"/>
+        </CreateItem>
+
+        <PropertyGroup>
+            <_ProjectName>$(ProjectFileName)</_ProjectName>
+            <_ReferencePaths>@(ReferencePath->'"%(Identity)"', ',')</_ReferencePaths>
+            <_CompileBefore>@(CompileBefore->'"%(Identity)"', ',')</_CompileBefore>
+            <_Compile>@(Compile->'"%(Identity)"', ',')</_Compile>
+            <_CompileAfter>@(CompileAfter->'"%(Identity)"', ',')</_CompileAfter>
+            <_DefineConstants>@(_DefineConstants->'"%(Identity)"', ',')</_DefineConstants>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <_MyriadContext Include='project = "$(_ProjectName)"' />
+            <_MyriadContext Include='referencePaths=[;$(_ReferencePaths);]' />
+            <_MyriadContext Include='compileBefore=[;$(_CompileBefore);]' />
+            <_MyriadContext Include='compile=[;$(_Compile);]' />
+            <_MyriadContext Include='compileAfter=[;$(_CompileAfter);]' />
+            <_MyriadContext Include='defineConstants=[;$(_DefineConstants);]' />
+        </ItemGroup>
+
+        <WriteLinesToFile File="$(_MyriadSdk_ContextFile)" Lines="@(_MyriadContext)" Overwrite="true" Encoding="Unicode"/>
+
         <ItemGroup>
             <MyriadSdk_Args Include='--inputfile "$(_MyriadSdk_InputFileName)"' />
             <MyriadSdk_Args Include='--outputfile "$(_MyriadSdk_OutputFileName)"' />
             <MyriadSdk_Args Include='--configkey "$(_MyriadSdk_ConfigKey)"' Condition=" '$(_MyriadSdk_ConfigKey)' != '' " />
             <MyriadSdk_Args Include='--configfile "$(_MyriadSdk_ConfigFile)"' Condition=" '$(_MyriadSdk_ConfigFile)' != '' " />
+            <MyriadSdk_Args Include='--contextfile "$(_MyriadSdk_ContextFile)"' Condition=" '$(_MyriadSdk_ContextFile)' != '' " />
             <MyriadSdk_Args Include='--additionalparams "$(_MyriadSdk_MyriadParams2)"' Condition=" '$(_MyriadSdk_MyriadParams2)' != '' " />
             <MyriadSdk_Args Include='--wait-for-debugger' Condition=" '$(MyriadSdkWaitForDebugger)' == 'true' " />
             <MyriadSdk_Args Include='--verbose' Condition=" '$(MyriadSdkVerboseOutput)' == 'true' " />
@@ -181,6 +211,7 @@
 
         <!-- Uncomment to debug command line generation -->
         <!-- <Message Text="%0A$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')%0A" Importance="high"/> -->
+
         <!-- Use dotnet to execute the process. -->
         <Exec Command="$(MyriadSdk_Generator_ExeHost)&quot;$(MyriadSdk_Generator_Exe)&quot; @(MyriadSdk_Args -> '%(Identity)', ' ')" />
     </Target>
