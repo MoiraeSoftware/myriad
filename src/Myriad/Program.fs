@@ -10,6 +10,7 @@ open System.Collections.Generic
 open System.Diagnostics
 open Myriad.Core.Ast
 open FsAst
+open Tomlyn.Model
 
 module Implementation =
     let findPlugins (path: string) =
@@ -21,7 +22,7 @@ module Implementation =
                 then yield t ]
         gens
         
-    let getConfigHandler (verbose: bool) (config: Tomlyn.Model.TomlTable) =
+    let getConfigHandler (verbose: bool) (config: Model.TomlTable) =
         fun name ->
             if verbose then
                 printfn $"CONFIG: %A{config}"
@@ -43,8 +44,8 @@ module Implementation =
     let getConfig (configFile) =
 
         let configFile =
-                configFile
-                |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
+            configFile
+            |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
 
         let configFileCnt = File.ReadAllText configFile
         let config = Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
@@ -57,6 +58,7 @@ module Main =
         | OutputFile of string
         | ConfigFile of string
         | ConfigKey of string
+        | [<HiddenAttribute>] ContextFile of string
         | Plugin of string
         | [<CustomCommandLine("--wait-for-debugger")>] WaitForDebugger
         | Verbose
@@ -70,11 +72,13 @@ module Main =
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
                 | ConfigFile _ -> "Specify a TOML file to use as config."
                 | ConfigKey _ -> "Specify a key in config that will be passed to the generators."
+                | ContextFile _ -> "Specify a context file for the generators to use."
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
                 | Verbose -> "Log verbose processing details."
                 | AdditionalParams _ -> "Specify additional parameters."
                 | InlineGeneration -> "Generate code for the input file at the end of the input file."
+        
 
     [<EntryPoint>]
     let main argv =
@@ -96,6 +100,21 @@ module Main =
             let additionalParams = results.GetResults AdditionalParams |> dict
             let inlineGeneration = results.Contains InlineGeneration
             let plugins = results.GetResults Plugin
+            let contextFile = results.TryGetResult ContextFile
+            
+            let projectContext =
+                match contextFile with
+                | Some file when File.Exists file ->
+                    let result = Toml.Parse(File.ReadAllText(file), file).ToModel()
+                    let project = result.["project"] :?> String
+                    let refs = result.["referencePaths"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
+                    let compileBefore = result.["compileBefore"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
+                    let compile = result.["compile"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
+                    let compileAfter = result.["compileAfter"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
+                    let defineConstants = result.["defineConstants"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
+                    Some {project = project;refs = refs; compileBefore = compileBefore; compile = compile; compileAfter = compileAfter; defineConstants = defineConstants}
+                | _ -> None
+
 
             if verbose then
                 printfn "Plugins found:"
@@ -121,7 +140,7 @@ module Main =
                     try
                         if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile))
                         then
-                            let context = GeneratorContext.Create(configKey, configHandler, inputFile, additionalParams)
+                            let context = GeneratorContext.Create(configKey, configHandler, inputFile, projectContext, additionalParams)
                             Some (instance.Generate(context))
                         else None
                     with
