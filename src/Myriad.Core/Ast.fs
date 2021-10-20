@@ -204,7 +204,6 @@ module Ast =
             let attributes = defaultArg attributes SynAttributes.Empty
             let parameters = defaultArg parameters []
             let constraints = defaultArg constraints []
-            let id = id
             let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
             let preferPostfix = defaultArg preferPostfix false
             let access = defaultArg access None
