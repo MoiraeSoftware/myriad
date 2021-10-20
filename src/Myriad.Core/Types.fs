@@ -8,16 +8,26 @@ type MyriadGeneratorAttribute(name: string) =
     inherit Attribute()
     member _.Name = name
 
+type ProjectContext =
+    { project: string
+      refs: string array
+      compileBefore: string array
+      compile: string array
+      compileAfter: string array
+      defineConstants: string array }
+
 type GeneratorContext =
-    {   ConfigKey: string option
-        ConfigGetter: string -> (string * obj) seq
-        InputFilename: string
-        AdditionalParameters: IDictionary<string, string> }
-    
-    static member Create(configKey, configHandler, inputFile, additionalParams) =
+    { ConfigKey: string option
+      ConfigGetter: string -> (string * obj) seq
+      InputFilename: string
+      ProjectContext: ProjectContext option
+      AdditionalParameters: IDictionary<string, string> }
+
+    static member Create(configKey, configHandler, inputFile, projectContext, additionalParams) =
         { ConfigKey = configKey
           ConfigGetter = configHandler
           InputFilename = inputFile
+          ProjectContext = projectContext
           AdditionalParameters = additionalParams }
 
 [<RequireQualifiedAccess>]
@@ -26,5 +36,5 @@ type Output =
     | Source of string
 
 type IMyriadGenerator =
-    abstract member ValidInputExtensions: string seq
-    abstract member Generate: GeneratorContext -> Output
+    abstract member ValidInputExtensions : string seq
+    abstract member Generate : GeneratorContext -> Output
