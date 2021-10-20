@@ -26,12 +26,20 @@ To use Myriad via its MSBuild support you add the `Myriad.Core` and `Myriad.Sdk`
 
 An input file is specified by using the usual `Compile` element:
 ```xml
+<Compile Include="Library.fs"/>
 <Compile Include="Generated.fs">
     <MyriadFile>Library.fs</MyriadFile>
 </Compile>
 ```
-
 This is configuring Myriad so that a file called `Generated.fs` will be included in the build using `Library.fs` as input to the Myriad.  
+
+It is also possible to append the generated content to the input file.
+
+```xml
+<Compile Include="Library.fs">
+    <MyriadInlineGeneration>true</MyriadInlineGeneration>
+</Compile>
+```
 
 Myriad works by using plugins to generate code.  A plugin called fields is included with Myriad which takes inspiration from OCaml's [ppx_fields_conv](https://github.com/janestreet/ppx_fields_conv) plugin of the same name.
 
