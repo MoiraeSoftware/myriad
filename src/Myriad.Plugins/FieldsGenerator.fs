@@ -104,7 +104,7 @@ module internal Create =
                 Some (SynExpr.CreateIdent recordPrimeIdent, blockSep)
 
             let fieldUpdates =
-                let mapField (SynField.Field(_,_,id,_,_,_,_,_)) =
+                let mapField (Field(_,_,id,_,_,_,_,_)) =
                     let lid = LongIdentWithDots.Create [id.Value.idText]
                     let rfn = RecordFieldName(lid, true)
 
