@@ -3,6 +3,7 @@
 open System
 open System.IO
 open Myriad.Core
+open Myriad.Core.Ast
 open FSharp.Compiler.SyntaxTree
 open FsAst
 
@@ -20,21 +21,14 @@ type Example1Gen() =
 
             let let42 =
                 SynModuleDecl.CreateLet
-                    [ { SynBindingRcd.Let with
-                            Pattern = SynPatRcd.CreateLongIdent(LongIdentWithDots.CreateString "fourtyTwo", [])
-                            Expr = SynExpr.CreateConst(SynConst.Int32 42) } ]
-
+                    [ SynBinding.Let(pattern = SynPat.CreateLongIdent(LongIdentWithDots.CreateString "fourtyTwo", []), expr = SynExpr.CreateConst(SynConst.Int32 42)) ]
 
             let allModules =
                 File.ReadAllLines context.InputFilename
                 |> Seq.map (fun moduleName ->
-                                    let componentInfo = SynComponentInfoRcd.Create [ Ident.Create moduleName ]
+                                    let componentInfo = SynComponentInfo.Create [ Ident.Create moduleName ]
                                     let module' = SynModuleDecl.CreateNestedModule(componentInfo, [ let42 ])
                                     module')
                 |> Seq.toList
 
-            let namespaceOrModule =
-                { SynModuleOrNamespaceRcd.CreateNamespace(Ident.CreateLong example1Namespace)
-                    with Declarations = allModules }
-
-            [namespaceOrModule]
+            Output.Ast [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong example1Namespace, decls = allModules)]

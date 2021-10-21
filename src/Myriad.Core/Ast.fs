@@ -1,9 +1,12 @@
 namespace Myriad.Core
 
 open System
-open FSharp.Compiler.ErrorLogger
-open Fantomas
+open FSharp.Compiler.Text
 open FSharp.Compiler.SyntaxTree
+open FSharp.Compiler.XmlDoc
+open FSharp.Compiler.ErrorLogger
+open FSharp.Compiler.Range
+open Fantomas
 open FSharp.Compiler.SourceCodeServices
 
 module Ast =
@@ -173,4 +176,102 @@ module Ast =
     module Ident =
         let asCamelCase (ident: Ident) =
             Ident.Create(ident.idText.Substring(0, 1).ToLowerInvariant() + ident.idText.Substring(1))
+            
+    type  ParsedImplFileInput with
+        static member CreateFs(name, ?isScript, ?scopedPragmas, ?hashDirectives, ?modules, ?isLastCompiland, ?isExe) =
+            let file = $"%s{name}.fs"
+            let isScript = defaultArg isScript false
+            let qualName = QualifiedNameOfFile.Create name
+            let scopedPragmas = defaultArg scopedPragmas []
+            let hashDirectives = defaultArg hashDirectives []
+            let modules = defaultArg modules []
+            let isLastCompiland = defaultArg isLastCompiland true
+            let isExe = defaultArg isExe false
+            ParsedImplFileInput(file, isScript, qualName, scopedPragmas, hashDirectives, modules, (isLastCompiland, isExe))
+            
+    type SynModuleOrNamespace with
+        static member CreateNamespace(ident, ?isRecursive, ?decls, ?docs, ?attribs, ?access) =
+            let range = range0
+            let kind = SynModuleOrNamespaceKind.DeclaredNamespace
+            let isRecursive = defaultArg isRecursive false
+            let decls = defaultArg decls []
+            let docs = defaultArg docs  PreXmlDoc.Empty
+            let attribs = defaultArg attribs SynAttributes.Empty
+            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range)
+            
+    type SynComponentInfo with
+        static member Create(id: LongIdent, ?attributes, ?parameters, ?constraints, ?xmldoc, ?preferPostfix, ?access) =
+            let attributes = defaultArg attributes SynAttributes.Empty
+            let parameters = defaultArg parameters []
+            let constraints = defaultArg constraints []
+            let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
+            let preferPostfix = defaultArg preferPostfix false
+            let access = defaultArg access None
+            let range = range.Zero
+            { Attributes = attributes
+              Parameters = parameters
+              Constraints = constraints
+              Id = id
+              XmlDoc = xmldoc
+              PreferPostfix = preferPostfix
+              Access = access
+              Range = range }
+                    
+            
+    type SynPat with
+        static member CreateNamed(ident, pat, ?isSelf, ?access) =
+            let isSelf = defaultArg isSelf false
+            SynPat.Named(pat, ident, isSelf, access, range0)
+            
+        static member CreateWild =
+            SynPat.Wild(range0)
+            
+        static member CreateTyped(pat, typ) =
+            SynPat.Typed(pat, typ, range0)
+                         
+        static member CreateParen(exp) =
+            SynPat.Paren(exp, range0)
+            
+        static member CreateLongIdent(id, args, ?typarDecls, ?extraId, ?access) =
+            let args = SynArgPats.Pats(args)
+            SynPat.LongIdent(id, extraId, typarDecls, args, access, range0)
+            
+        static member CreateNull =
+            SynPat.Null(range0)
+            
+        static member CreateConst(expr) =
+            SynPat.Const(expr, range0)
 
+    type SynBinding with
+        static member Let(?access, ?isInline, ?isMutable, ?attributes, ?xmldoc, ?valData, ?pattern, ?returnInfo, ?expr) =
+            let isInline = defaultArg isInline false
+            let isMutable = defaultArg isMutable false
+            let attributes = defaultArg attributes SynAttributes.Empty
+            let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
+            let valData = defaultArg valData (SynValData(None, SynValInfo([], SynArgInfo.Empty), None))
+            let headPat = defaultArg pattern SynPat.CreateNull
+            let expr = defaultArg expr (SynExpr.CreateTyped(SynExpr.CreateNull, SynType.CreateUnit))
+            let bind = DebugPointForBinding.NoDebugPointAtInvisibleBinding
+            SynBinding.Binding(access, SynBindingKind.NormalBinding, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind )
+            
+            
+    type SynModuleDecl with
+        static member CreateLet(bindings, ?isRecursive) =
+            let isRecursive = defaultArg isRecursive false
+            SynModuleDecl.Let(isRecursive, bindings, range0)
+            
+    type SynBindingReturnInfo with
+        static member Create(typeName, ?attributes) =
+            let attributes = defaultArg attributes SynAttributes.Empty
+            SynBindingReturnInfo.SynBindingReturnInfo(typeName, range0, attributes)
+            
+    type SynUnionCase with
+        member x.HasFields =
+            let (SynUnionCase.UnionCase(_,_,typ,_,_,_)) = x
+            match typ with
+            | UnionCaseFields cases -> not cases.IsEmpty
+            | _ -> false
+            
+    type SynMatchClause with
+        static member Create(pat, whenExp, result) =
+            SynMatchClause.Clause(pat, whenExp, result, range0, DebugPointForTarget.No)
