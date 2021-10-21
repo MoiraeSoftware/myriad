@@ -187,11 +187,11 @@
 
         <ItemGroup>
             <_MyriadContext Include='project = "$(_ProjectName)"' />
-            <_MyriadContext Include='referencePaths=[;$(_ReferencePaths);]' />
-            <_MyriadContext Include='compileBefore=[;$(_CompileBefore);]' />
-            <_MyriadContext Include='compile=[;$(_Compile);]' />
-            <_MyriadContext Include='compileAfter=[;$(_CompileAfter);]' />
-            <_MyriadContext Include='defineConstants=[;$(_DefineConstants);]' />
+            <_MyriadContext Include='referencePaths=[;$([MSBuild]::Escape($(_ReferencePaths)));]' />
+            <_MyriadContext Include='compileBefore=[;$([MSBuild]::Escape($(_CompileBefore)));]' />
+            <_MyriadContext Include='compile=[;$([MSBuild]::Escape($(_Compile)));]' />
+            <_MyriadContext Include='compileAfter=[;$([MSBuild]::Escape($(_CompileAfter)));]' />
+            <_MyriadContext Include='defineConstants=[;$([MSBuild]::Escape($(_DefineConstants)));]' />
         </ItemGroup>
 
         <WriteLinesToFile File="$(_MyriadSdk_ContextFile)" Lines="@(_MyriadContext)" Overwrite="true" />
