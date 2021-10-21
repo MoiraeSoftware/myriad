@@ -194,7 +194,7 @@
             <_MyriadContext Include='defineConstants=[;$(_DefineConstants);]' />
         </ItemGroup>
 
-        <WriteLinesToFile File="$(_MyriadSdk_ContextFile)" Lines="@(_MyriadContext)" Overwrite="true" Encoding="Unicode"/>
+        <WriteLinesToFile File="$(_MyriadSdk_ContextFile)" Lines="@(_MyriadContext)" Overwrite="true" />
 
         <ItemGroup>
             <MyriadSdk_Args Include='--inputfile "$(_MyriadSdk_InputFileName)"' />
