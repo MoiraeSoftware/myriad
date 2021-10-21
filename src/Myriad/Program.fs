@@ -230,5 +230,5 @@ module Main =
             printfn $"ERROR: inputfile %s{fnf.FileName} doesn not exist\n%s{parser.PrintUsage()}"
             4
         | error ->
-            printfn $"%A{error}"
+            printfn $"OTHER: %A{error}"
             1
