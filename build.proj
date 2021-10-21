@@ -16,7 +16,7 @@
 
   <Target Name="Test">
     <Exec Command='dotnet build src/Myriad/Myriad.fsproj -c $(Configuration)' />
-    <Exec Command='dotnet run --fail-on-focused-tests --summary --project ./test/Myriad.IntegrationPluginTests/Myriad.IntegrationPluginTests.fsproj -c $(Configuration) -- --sequenced --debug' IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command='dotnet run -v diag --fail-on-focused-tests --summary --project ./test/Myriad.IntegrationPluginTests/Myriad.IntegrationPluginTests.fsproj -c $(Configuration)' IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
   <Target Name="Pack" DependsOnTargets="Clean;Restore;Test">
