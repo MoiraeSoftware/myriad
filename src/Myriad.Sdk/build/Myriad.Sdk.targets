@@ -178,20 +178,20 @@
 
         <PropertyGroup>
             <_ProjectName>$(ProjectFileName)</_ProjectName>
-            <_ReferencePaths>@(ReferencePath->'"%(Identity)"', ',')</_ReferencePaths>
-            <_CompileBefore>@(CompileBefore->'"%(Identity)"', ',')</_CompileBefore>
-            <_Compile>@(Compile->'"%(Identity)"', ',')</_Compile>
-            <_CompileAfter>@(CompileAfter->'"%(Identity)"', ',')</_CompileAfter>
-            <_DefineConstants>@(_DefineConstants->'"%(Identity)"', ',')</_DefineConstants>
+            <_ReferencePaths>@(ReferencePath->'%27%(Identity)%27', ',')</_ReferencePaths>
+            <_CompileBefore>@(CompileBefore->'%27%(Identity)%27', ',')</_CompileBefore>
+            <_Compile>@(Compile->'%27%(Identity)%27', ',')</_Compile>
+            <_CompileAfter>@(CompileAfter->'%27%(Identity)%27', ',')</_CompileAfter>
+            <_DefineConstants>@(_DefineConstants->'%27%(Identity)%27', ',')</_DefineConstants>
         </PropertyGroup>
 
         <ItemGroup>
             <_MyriadContext Include='project = "$(_ProjectName)"' />
-            <_MyriadContext Include='referencePaths=[;$([MSBuild]::Escape($(_ReferencePaths)));]' />
-            <_MyriadContext Include='compileBefore=[;$([MSBuild]::Escape($(_CompileBefore)));]' />
-            <_MyriadContext Include='compile=[;$([MSBuild]::Escape($(_Compile)));]' />
-            <_MyriadContext Include='compileAfter=[;$([MSBuild]::Escape($(_CompileAfter)));]' />
-            <_MyriadContext Include='defineConstants=[;$([MSBuild]::Escape($(_DefineConstants)));]' />
+            <_MyriadContext Include='referencePaths=[;$(_ReferencePaths);]' />
+            <_MyriadContext Include='compileBefore=[;$(_CompileBefore);]' />
+            <_MyriadContext Include='compile=[;$(_Compile);]' />
+            <_MyriadContext Include='compileAfter=[;$(_CompileAfter);]' />
+            <_MyriadContext Include='defineConstants=[;$(_DefineConstants);]' />
         </ItemGroup>
 
         <WriteLinesToFile File="$(_MyriadSdk_ContextFile)" Lines="@(_MyriadContext)" Overwrite="true" />
