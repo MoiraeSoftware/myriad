@@ -7,26 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.7.0]
+### Added
+- Added a project context to Myriad context that comprises all of the data 
+available at pre compile time that is useful to code generation, especially 
+when generating a typed Ast.  
+- Added more extensions to Ast nodes so they can be constructed easier.  
 ### Changed
-- Altered the generation interface to use plain AST nodes rather then Rdd wrapper records
+- Altered the generation code to use plain Ast nodes rather then wrapper records, in 
+the long term depreciating Rcd prefixed types from FsAst, simple extensions are preferred 
+and less verbose.  
+### Breaking
+- Altered the plugin API so that both Ast and string based output are possible via a 
+discriminated union return type.  
 
 ## [0.6.4]
 ### Added
-- More Ast extension to make creating Ast nodes easier
+- More Ast extensions to make creating Ast nodes easier.  
 
 ## [0.6.3]
 ### Fixed
-- Added stack trace to failing code generation
-
+- Added stack trace to failing code generation.  
 
 ## [0.6.2]
 ### Added
-- Cache invalidation has been improved for inline generation, both file hash and time stamp of the input file are now considered.
+- Cache invalidation has been improved for inline generation, both file hash and time stamp of 
+the input file are now considered.
 
 ## [0.6.1]
 ### Fixed
-- Targets file not using correct Using references
-- Inline generation not using the input file prior to myriad generation being appended.
+- Targets file not using correct Using references.  
+- Inline generation not using the input file prior to myriad generation being appended.  
 
 ## [0.6.0]
 ### Added
@@ -38,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rewrote the build script as msbuild
 
 ## [0.5.4]
-- Add support from config arguments to be specified in the msbuild config via the sub elements using: <MyriadParams><Param>test</Param></MyriadParams>
+- Add support from config arguments to be specified in the msbuild config via the sub elements 
+using: <MyriadParams><Param>test</Param></MyriadParams>
 - Add support for custom arguments via the --additionalparam myparam=test;myotherparam=test2
 - Update FSAst to 0.9.0
 - Add support for Aether via pipedsetters=true in myriad config for lens
