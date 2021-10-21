@@ -229,3 +229,6 @@ module Main =
         | :? FileNotFoundException as fnf ->
             printfn $"ERROR: inputfile %s{fnf.FileName} doesn not exist\n%s{parser.PrintUsage()}"
             4
+        | error ->
+            printfn $"%A{error}"
+            1

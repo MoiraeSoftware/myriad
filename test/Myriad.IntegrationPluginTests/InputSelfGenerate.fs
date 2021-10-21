@@ -251,6 +251,7 @@ module Module_FullyQualifiedDULenses =
             | Module_FullyQualifiedDU.FullyQualifiedCase x -> x
 
         getter, (fun (_: Module_FullyQualifiedDU) (value: int) -> Module_FullyQualifiedDU.FullyQualifiedCase value)
+
 namespace rec SelfTestFields
 
 module Test1 =
@@ -278,6 +279,7 @@ module Test1 =
               two = maptwo record'.two
               three = mapthree record'.three
               four = mapfour record'.four }
+
 namespace rec SelfTestDus
 
 module Currency =
