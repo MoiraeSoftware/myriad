@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <RollForward>major</RollForward>
-    <!-- <MyriadSdkVerboseOutput>true</MyriadSdkVerboseOutput> -->
+    <MyriadSdkVerboseOutput>true</MyriadSdkVerboseOutput>
     <!-- This allows you to specify a different config file -->
     <!-- <MyriadConfigFile>someglobalconfig.toml</MyriadConfigFile> -->
   </PropertyGroup>
