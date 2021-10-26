@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1]
+### Added
+- Added netstandard2.0 target
+
 ## [0.7.0]
 ### Added
 - Added a project context to Myriad context that comprises all of the data 
