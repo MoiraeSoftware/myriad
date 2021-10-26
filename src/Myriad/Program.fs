@@ -46,10 +46,12 @@ module Implementation =
         let configFile =
             configFile
             |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
-
-        let configFileCnt = File.ReadAllText configFile
-        let config = Toml.Parse(configFileCnt, configFile) |> Toml.ToModel
-        config
+        if File.Exists configFile then
+            let configFileCnt = File.ReadAllText configFile
+            let tomlDocument = Toml.Parse(configFileCnt, configFile)
+            let tomlTable = tomlDocument |> Toml.ToModel
+            tomlTable
+        else TomlTable()
 
 module Main =
     open Implementation
