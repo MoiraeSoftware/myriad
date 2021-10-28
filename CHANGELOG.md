@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.3]
+### Added
+- Added ProjectPath to the project context so the full name of the project is know by the plugin rather than just its project name
+- Added contextual loading of each plugin so transient assemblies are loaded relative to the plugin location.
 
 ## [0.7.2]
 ### Added
