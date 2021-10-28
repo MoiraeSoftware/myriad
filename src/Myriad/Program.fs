@@ -11,11 +11,13 @@ open System.Diagnostics
 open Myriad.Core.Ast
 open FsAst
 open Tomlyn.Model
+open McMaster.NETCore.Plugins
 
 module Implementation =
     let findPlugins (path: string) =
-        let assembly = System.Reflection.Assembly.LoadFrom(path)
-
+        
+        let loader = PluginLoader.CreateFromAssemblyFile(path)
+        let assembly = loader.LoadDefaultAssembly();
         let gens =
             [ for t in assembly.GetTypes() do
                 if t.GetCustomAttributes(typeof<MyriadGeneratorAttribute>, true).Length > 0
