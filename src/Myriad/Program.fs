@@ -112,12 +112,13 @@ module Main =
                 | Some file when File.Exists file ->
                     let result = Toml.Parse(File.ReadAllText(file), file).ToModel()
                     let project = result.["project"] :?> String
+                    let projectPath = result.["projectPath"] :?> String
                     let refs = result.["referencePaths"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
                     let compileBefore = result.["compileBefore"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
                     let compile = result.["compile"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
                     let compileAfter = result.["compileAfter"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
                     let defineConstants = result.["defineConstants"] :?> TomlArray |> Seq.cast<string> |> Array.ofSeq
-                    Some {project = project;refs = refs; compileBefore = compileBefore; compile = compile; compileAfter = compileAfter; defineConstants = defineConstants}
+                    Some {project = project; projectPath = projectPath; refs = refs; compileBefore = compileBefore; compile = compile; compileAfter = compileAfter; defineConstants = defineConstants}
                 | _ -> None
 
 

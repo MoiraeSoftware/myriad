@@ -178,6 +178,7 @@
 
         <PropertyGroup>
             <_ProjectName>$(ProjectFileName)</_ProjectName>
+            <_ProjectPath>$(ProjectPath)</_ProjectPath>
             <_ReferencePaths>@(ReferencePath->'%27%(Identity)%27', ',')</_ReferencePaths>
             <_CompileBefore>@(CompileBefore->'%27%(Identity)%27', ',')</_CompileBefore>
             <_Compile>@(Compile->'%27%(Identity)%27', ',')</_Compile>
@@ -187,6 +188,7 @@
 
         <ItemGroup>
             <_MyriadContext Include='project = "$(_ProjectName)"' />
+            <_MyriadContext Include='projectPath = "$(_ProjectPath)"' />
             <_MyriadContext Include='referencePaths=[;$(_ReferencePaths);]' />
             <_MyriadContext Include='compileBefore=[;$(_CompileBefore);]' />
             <_MyriadContext Include='compile=[;$(_Compile);]' />

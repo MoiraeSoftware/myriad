@@ -10,6 +10,7 @@ type MyriadGeneratorAttribute(name: string) =
 
 type ProjectContext =
     { project: string
+      projectPath: string
       refs: string array
       compileBefore: string array
       compile: string array
