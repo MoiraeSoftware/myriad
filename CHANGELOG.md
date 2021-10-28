@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.7.2]
+### Added
+- Added netcoreapp3.0 target for the Myriad CLI as theres no CLI version of netstandard2.0
+
 ## [0.7.1]
 ### Added
 - Added netstandard2.0 target
