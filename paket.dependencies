@@ -11,3 +11,4 @@ nuget FSharp.Core strategy: min
 nuget Tomlyn
 nuget Expecto
 nuget Aether
+nuget McMaster.NETCore.Plugins
