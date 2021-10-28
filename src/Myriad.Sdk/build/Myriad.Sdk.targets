@@ -187,8 +187,8 @@
         </PropertyGroup>
 
         <ItemGroup>
-            <_MyriadContext Include='project = "$(_ProjectName)"' />
-            <_MyriadContext Include='projectPath = "$(_ProjectPath)"' />
+            <_MyriadContext Include='project="$(_ProjectName)"' />
+            <_MyriadContext Include='projectPath=%27$(_ProjectPath)%27' />
             <_MyriadContext Include='referencePaths=[;$(_ReferencePaths);]' />
             <_MyriadContext Include='compileBefore=[;$(_CompileBefore);]' />
             <_MyriadContext Include='compile=[;$(_Compile);]' />
