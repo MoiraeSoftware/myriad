@@ -16,10 +16,11 @@ open McMaster.NETCore.Plugins
 module Implementation =
     let findPlugins (path: string) =
         
-        let loader = PluginLoader.CreateFromAssemblyFile(path)
-        let assembly = loader.LoadDefaultAssembly();
+        let loader = PluginLoader.CreateFromAssemblyFile(path, sharedTypes = [|typeof<MyriadGeneratorAttribute>; typeof<IMyriadGenerator> |])
+        let assembly = loader.LoadDefaultAssembly()
+        let types = assembly.GetTypes()
         let gens =
-            [ for t in assembly.GetTypes() do
+            [ for t in types do
                 if t.GetCustomAttributes(typeof<MyriadGeneratorAttribute>, true).Length > 0
                 then yield t ]
         gens
