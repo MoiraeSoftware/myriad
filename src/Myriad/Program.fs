@@ -142,62 +142,57 @@ module Main =
                 if verbose then
                     printfn $"Executing: %s{genType.FullName}..."
 
-                let result =
+                let result, errors =
                     try
                         if instance.ValidInputExtensions |> Seq.contains (Path.GetExtension(inputFile))
                         then
                             let context = GeneratorContext.Create(configKey, configHandler, inputFile, projectContext, additionalParams)
-                            Some (instance.Generate(context))
-                        else None
+                            Some (instance.Generate(context)), None
+                        else None, None
                     with
                     | exc ->
-                        // emit the module with exception text
-                        let info = SynComponentInfo.Create (Ident.CreateLong $"%s{genType.Name}Failure")
-                        let pattern =
-                            // intentionally generating invalid identifier name to fail the compilation
-                            let name = LongIdentWithDots.CreateString "!CompilationError"
-                            SynPat.CreateLongIdent(name, [])
-                        let letBinding = SynBinding.Let(pattern = pattern, expr = SynExpr.CreateConstString (exc.ToString()))
-                        let modulDecl = SynModuleDecl.CreateNestedModule(info, [SynModuleDecl.CreateLet [letBinding]])
-                        Some (Output.Ast [SynModuleOrNamespace.CreateNamespace(Ident.CreateLong "", isRecursive = true, decls = [modulDecl])])
+                        let info = $"%s{genType.Name} Failure"
+                        let message = exc.ToString()
+                        None, Some ($"%s{info}%s{Environment.NewLine}!CompilationError%s{Environment.NewLine}%s{message}")
 
                 if verbose then printfn $"Result: '%A{result}'"
 
-                result
+                result, errors
 
             if verbose then
                 printfn "Execute generators:"
                 printfn $"Input Filename:\n:%A{inputFile}"
 
-            let generated =
-                generators
-                |> List.choose (runGenerator inputFile)
+            let generated = generators |> List.map (runGenerator inputFile)
 
             let formattedCode =
                 let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
                 
-                let parseTree =
+                let outputCode =
                     let filename =
-                        if inlineGeneration then
-                            inputFile
-                        else if outputFile.IsSome then
-                            outputFile.Value
+                        if inlineGeneration then inputFile
+                        else if outputFile.IsSome then outputFile.Value
                         else failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
+
                     generated
-                    |> List.map (fun f ->
+                    |> List.map (fun (f, errors) ->
+                        //if theres an error just fail here
+                        match errors with
+                        | Some error -> failwithf $"%s{error}"
+                        | _ -> ()
+
                         match f with
-                        | Output.Ast ast ->
+                        | Some(Output.Ast ast) ->
                             let parseTree = ParsedInput.ImplFile(ParsedImplFileInput.CreateFs(filename, modules = ast))
                             if verbose then    
                                 printfn "Generated Ast:------------------------------------"
                                 printfn $"%A{parseTree}"
                                 printfn "--------------------------------------------------"
                             CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
-                        | Output.Source source -> source )
-                    
+                        | Some (Output.Source source) -> source
+                        | None -> "")
 
-
-                parseTree |> String.concat Environment.NewLine
+                outputCode |> String.concat Environment.NewLine
             
             let code =  Generation.getHeaderedCode formattedCode
             if verbose then

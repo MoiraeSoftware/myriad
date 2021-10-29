@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.4]
+### Changed
+- Exceptions are no longer written to the generated files but are instead reported to the command line
+With the advent on in line generation, errors out to the source code can be quite disruptive
+
+
 ## [0.7.3]
 ### Added
 - Added ProjectPath to the project context so the full name of the project is know by the plugin rather than just its project name
