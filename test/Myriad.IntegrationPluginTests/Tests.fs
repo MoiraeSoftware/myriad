@@ -132,5 +132,21 @@ let tests =
                 let value =  Aether.Optic.get AetherTestLens.AetherPersonLenses.Address person
                 Expect.equal value person.Address "Gets the address lens via Aether"
             }
+
+            test "Aether set" {
+                let person: AetherPerson = {
+                    Name = "Sherlock"
+                    Address = {
+                        Street = "Baker st."
+                        HouseNumber = 221
+                    }
+                }
+                let updated = person |> Aether.Optic.set AetherTestLens.AetherPersonLenses.Address {
+                    Street = "Baker st."
+                    HouseNumber = 222
+                }
+                let value =  Aether.Optic.get AetherTestLens.AetherPersonLenses.Address updated
+                Expect.equal value { Street = "Baker st."; HouseNumber = 222 } "Sets the address lens via Aether"
+            }
         ]
     ]
