@@ -2,9 +2,9 @@ name: github pages
 
 on:
   push:
-    branches:
-      - master  # Set a branch to deploy
-  pull_request:
+    branches: [master]
+    paths:
+    - 'docs/**'
 
 jobs:
   deploy:
@@ -12,8 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+          ref: master
+          submodules: true
+          fetch-depth: 0
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
@@ -29,5 +30,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/master'
         with:
+          commit_message: ${{ github.event.head_commit.message }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: ./docs/public
