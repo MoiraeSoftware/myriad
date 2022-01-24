@@ -1,0 +1,97 @@
+<!doctype html><html lang=en class="js csstransforms3d">
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.92.0">
+<meta name=description content>
+<link rel=icon href=/myriad/images/favicon.png type=image/png>
+<title>Myriad Overview :: Myriad</title>
+<link href=/myriad/css/nucleus.css?1643052652 rel=stylesheet>
+<link href=/myriad/css/fontawesome-all.min.css?1643052652 rel=stylesheet>
+<link href=/myriad/css/featherlight.min.css?1643052652 rel=stylesheet>
+<link href=/myriad/css/perfect-scrollbar.min.css?1643052652 rel=stylesheet>
+<link href=/myriad/css/auto-complete.css?1643052652 rel=stylesheet>
+<link href=/myriad/css/theme.css?1643052652 rel=stylesheet>
+<link href=/myriad/css/tabs.css?1643052652 rel=stylesheet>
+<link href=/myriad/css/hugo-theme.css?1643052652 rel=stylesheet>
+<script src=/myriad/js/jquery.min.js?1643052652></script>
+<style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
+</head>
+<body data-url=/myriad/>
+<nav id=sidebar>
+<div id=header-wrapper>
+<div id=header>
+<h1>Myriad</h1>
+</div>
+<div class=searchbox>
+<label for=search-by><i class="fas fa-search"></i></label>
+<input data-search-input id=search-by type=search placeholder=Search...>
+<span data-search-clear><i class="fas fa-times"></i></span>
+</div>
+<script src=/myriad/js/lunr.min.js?1643052652></script>
+<script src=/myriad/js/auto-complete.js?1643052652></script>
+<script>var index_url="/myriad/index.json",root_url="/",baseUri=root_url.replace(/\/$/,'')</script>
+<script src=/myriad/js/search.js?1643052652></script>
+</div>
+<div id=homelinks>
+<ul>
+<li>
+<a class=padding href=/myriad/><i class="fas fa-home"></i> Home</a>
+</li>
+</ul>
+</div>
+<div class=highlightable>
+<ul class=topics>
+<li data-nav-id=/myriad/tutorials/ title=Tutorials class=dd-item><a href=/myriad/tutorials/><b>1. </b>Tutorials</a><ul>
+<li data-nav-id=/myriad/tutorials/configuration/ title="Configuration And Plugins" class=dd-item><a href=/myriad/tutorials/configuration/>Configuration And Plugins</a></li>
+<li data-nav-id=/myriad/tutorials/debugging/ title=Debugging class=dd-item><a href=/myriad/tutorials/debugging/>Debugging</a></li>
+<li data-nav-id=/myriad/tutorials/external-plugins/ title="External Plugins" class=dd-item><a href=/myriad/tutorials/external-plugins/>External Plugins</a></li>
+<li data-nav-id=/myriad/tutorials/msbuild-usage/ title="MSBuild usage" class=dd-item><a href=/myriad/tutorials/msbuild-usage/>MSBuild usage</a></li></ul></li>
+<li data-nav-id=/myriad/plugins/ title=Plugins class=dd-item><a href=/myriad/plugins/><b>2. </b>Plugins</a><ul>
+<li data-nav-id=/myriad/plugins/record-fields/ title=Records class=dd-item><a href=/myriad/plugins/record-fields/>Records</a></li>
+<li data-nav-id=/myriad/plugins/du-extensions/ title="Discriminated Unions" class=dd-item><a href=/myriad/plugins/du-extensions/>Discriminated Unions</a></li>
+<li data-nav-id=/myriad/plugins/lenses/ title=Lenses class=dd-item><a href=/myriad/plugins/lenses/>Lenses</a></li></ul></li>
+<li data-nav-id=/myriad/how-tos/ title="How To's" class=dd-item><a href=/myriad/how-tos/><b>3. </b>How To's</a><ul>
+<li data-nav-id=/myriad/how-tos/creating-a-generator/ title="Creating a Generator" class=dd-item><a href=/myriad/how-tos/creating-a-generator/><i class="fas fa-external-link-square-alt"></i> Creating a Generator</a></li></ul></li>
+</ul>
+<div id=footer>
+<p>Built with <a href=https://github.com/McShelby/hugo-theme-relearn><i class="fas fa-heart"></i></a> by <a href=https://gohugo.io/>Hugo</a></p>
+</div>
+</div>
+</nav>
+<div id=body>
+<div id=overlay></div>
+<div class="padding highlightable">
+<div id=head-tags>
+</div>
+<main id=body-inner>
+<span id=sidebar-toggle-span>
+<a href=# id=sidebar-toggle data-sidebar-toggle><i class="fas fa-bars"></i> navigation</a>
+</span>
+<h1 id=myriad>Myriad</h1>
+<p>Myriad is a code generator, it can take an arbitrary file and uses it to produce F# code. The file can be anything from a plain txt file to an F# file to anything else.</p>
+<p>Myriad can be used via MSBuild as part of a your project file, or standalone from its CLI tool.</p>
+<p>The idea behind Myriad is to un-complicate, as far as possible, the ability to generate code and do meta-programming in F#. By meta-programming in F# I mean generating actual F# types and constructs like discriminated unions and records, not just IL output or simple classes like type providers.</p>
+<p>Myriad is an evolution of the ideas I developed while working with F#&rsquo;s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins rather than modifying or adjusting Type Providers and other F# improvements that would take a long time to be developed and released.</p>
+<p>The way Myriad a plugin works is that it that works on a particular file type or input data, this could be a fragment of AST input or a proto file etc. The plugin is supplied metadata such as file name and project information. there are also various helpers in the library make it easier to produce the AST output with the final form being source code that is built into your project. The advantages of this are the compiler can optimise the generated code and the tooling can operate effectively as you can navigate the generated code as normal.</p>
+</main>
+</div>
+<div id=navigation>
+<a class="nav nav-next" href=/myriad/tutorials/ title=Tutorials><i class="fa fa-chevron-right"></i></a>
+</div>
+</div>
+<div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
+<div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
+</div>
+<script src=/myriad/js/clipboard.min.js?1643052652></script>
+<script src=/myriad/js/perfect-scrollbar.min.js?1643052652></script>
+<script src=/myriad/js/perfect-scrollbar.jquery.min.js?1643052652></script>
+<script src=/myriad/js/jquery.sticky.js?1643052652></script>
+<script src=/myriad/js/jquery.svg.pan.zoom.js?1643052652></script>
+<script src=/myriad/js/featherlight.min.js?1643052652></script>
+<script src=/myriad/js/modernizr.custom-3.6.0.js?1643052652></script>
+<script src=/myriad/js/mermaid.min.js?1643052652></script>
+<script>typeof mermaid!='undefined'&&mermaid.mermaidAPI.initialize(Object.assign({securityLevel:"antiscript"},JSON.parse('{ "startOnLoad": true }'),{startOnLoad:!1}))</script>
+<script src=/myriad/js/relearn.js?1643052652></script>
+</body>
+</html>
