@@ -6,7 +6,7 @@ menu_order: 1
 
 # Myriad
 
-Myriad is a code generator, it can take an arbitrary file and uses it to produce actual F# code.  The file can be anything from a plain txt file to an F# file.  
+Myriad is a code generator, it can take an arbitrary file and uses it to produce F# code.  The file can be anything from a plain txt file to an F# file to anything else.  
 
 Myriad can be used via MSBuild as part of a your project file, or standalone from its CLI tool.
 
