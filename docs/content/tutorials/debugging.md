@@ -6,7 +6,7 @@ menu_order: 4
 
 # Debugging
 
-![Generator](/pexels-markus-spiske-965345.jpg)
+![Generator](pexels-markus-spiske-965345.jpg)
 To debug Myriad, you can use the following two command line options:
 
 * `--verbose` — write diagnostic logs out to standard out
