@@ -14,13 +14,17 @@ jobs:
         with:
           ref: master
           submodules: true
-          fetch-depth: 2
+          fetch-depth: 1
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'
           extended: true
+          
+      - name: PreBuild
+        working-directory: ./docs
+        run: npm install
 
       - name: Build
         working-directory: ./docs
