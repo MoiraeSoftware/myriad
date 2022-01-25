@@ -4,10 +4,13 @@ title = "Myriad"
 theme = "docsy"
 disableLandingPageButton = true
 contentDir = "content/"
+relativeURLs = true
+canonifyURLs = true
 
 # For search functionality
 [outputs]
 home = [ "HTML", "RSS"]
+section = [ "HTML", "RSS"]
 
 [[menu.main]]
     name = "GitHub"
