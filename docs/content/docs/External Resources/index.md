@@ -2,6 +2,10 @@
 title: External resources
 menu_order: 4
 pre: "<i class='fas fa-cog'></i> "
+menu:
+  main:
+    weight: 20
+    pre: <i class='fas fa-info-circle'></i>
 
 ---
 
