@@ -7,18 +7,7 @@ contentDir = "content/"
 
 # For search functionality
 [outputs]
-home = [ "HTML", "RSS", "JSON"]
-
-[Lanugages]
-[Lanugages.en]
-
-landingPageURL = "/en"
-landingPageName = "<i class='fas fa-shome'></i> Redirect to Homeddd"
-
-[Lanugages.fr]
-
-landingPageURL = "/fr"
-landingPageName = "<i class='fas fa-home'></i> Accueil"
+home = [ "HTML", "RSS"]
 
 [[menu.main]]
     name = "GitHub"
