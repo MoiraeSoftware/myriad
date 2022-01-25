@@ -2,6 +2,7 @@
 title: Debugging
 category: tutorial
 menu_order: 4
+pre: "<i class='fas fa-bug'></i> "
 ---
 
 # Debugging

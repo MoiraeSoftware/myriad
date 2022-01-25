@@ -1,6 +1,8 @@
 ---
 title: Discriminated Unions
 weight: 2
+pre: "<i class='far fa-object-group'></i> "
+
 ---
 
 The input file in this example `Library.fs` looks like this:

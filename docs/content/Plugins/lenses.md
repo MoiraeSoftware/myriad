@@ -1,6 +1,7 @@
 ---
 title: Lenses
 weight: 3
+pre: "<i class='fas fa-camera'></i> " 
 ---
 
 Myriad can also generate [lenses](https://fsprojects.github.io/FSharpPlus/tutorial.html#Lens) for records and single-case discriminated unions.

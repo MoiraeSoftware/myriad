@@ -1,6 +1,8 @@
 ---
 title: Records
 weight: 1
+pre: "<i class='fas fa-compact-disc'></i> "
+
 ---
 
 The input file in this example `Library.fs` looks like this:

@@ -2,6 +2,8 @@
 title: External Plugins
 category: tutorial
 menu_order: 3
+pre: "<i class='fas fa-external-link-alt'></i> "
+
 ---
 
 # Using external plugins

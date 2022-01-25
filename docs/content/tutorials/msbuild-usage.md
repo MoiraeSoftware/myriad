@@ -2,6 +2,8 @@
 title: MSBuild usage
 category: tutorial
 menu_order: 2
+pre: "<i class='fab fa-microsoft'></i> "
+
 ---
 
 # MSBuild usage

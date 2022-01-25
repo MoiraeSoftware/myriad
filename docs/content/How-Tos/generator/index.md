@@ -2,7 +2,8 @@
 title: Creating a Generator
 category: how-to
 menu_order: 4
-pre: "<i class='fas fa-external-link-square-alt'></i> "
+pre: "<i class='fas fa-cog'></i> "
+
 
 ---
 

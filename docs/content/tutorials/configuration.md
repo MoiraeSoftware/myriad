@@ -2,6 +2,8 @@
 title: Configuration And Plugins
 category: tutorial
 menu_order: 5
+pre: "<i class='fas fa-cog'></i> "
+
 ---
 
 # Configuration

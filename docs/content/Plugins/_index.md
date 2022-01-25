@@ -1,9 +1,10 @@
-+++
-chapter = true
-pre = "<b>2. </b>"
-title = "Plugins"
-weight = 2
-+++
+---
+chapter: true
+pre: "<b>2. </b>"
+title: Plugins
+weight: 2
+
+---
 
 ### Plugins
 
