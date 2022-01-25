@@ -24,7 +24,7 @@ Myriad is a code generator, in response to an input code can be generated, speci
 {{% blocks/section type="section" color="dark" %}}
 ## How does Myriad help?  
 
-The idea behind Myriad is to un-complicate, as far as possible, the ability to generate code and do meta-programming in F#. By meta-programming in F# I mean generating actual F# types, not just IL output or simple classes like type providers but full F# types like discriminated unions and records.  
+The idea behind Myriad is to un-complicate, as far as possible, the ability to generate code and do meta-programming in F#. By meta-programming in F# I mean generating actual F# types too, not just IL output or simple classes like type providers but outputting full F# types like discriminated unions and records.  
 
 Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins rather than modifying or adjusting Type Providers and other F# improvements that would take a long time to be developed and released.  
 
