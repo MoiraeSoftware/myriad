@@ -32,7 +32,7 @@ The way a Myriad plugin works is that it that works on a particular file type or
 {{% /blocks/section %}}
 
 {{% blocks/section type="section" color="primary" %}}
-## What's next for Myriad?
+## What's next for Myriad?  
 
 Im in the process of updating the documentation here so that all of the new features adding in the latter part of 2021 afre all included as part of the documentation, hopefully there will also be video tutorials to demonstrate this too.  
 {{% /blocks/section %}}
