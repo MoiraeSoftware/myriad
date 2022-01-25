@@ -5,7 +5,7 @@ theme = "docsy"
 disableLandingPageButton = true
 contentDir = "content/"
 relativeURLs = true
-canonifyURLs = true
+canonifyURLs = true 
 
 # For search functionality
 [outputs]
