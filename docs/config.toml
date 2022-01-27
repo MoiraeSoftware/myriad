@@ -9,11 +9,15 @@ disableLandingPageButton = true
 home = [ "HTML", "RSS", "JSON"]
 
 
-[[menu.main]]
-    name = "GitHub"
-    weight = 60
-    url = "https://github.com/MoiraeSoftware/myriad"
-    pre = "<i class='fab fa-github'></i>"
+[[menu.shortcuts]]
+name = "<i class='fas fa-tags'></i> Tags"
+url = "/tags"
+weight = 30
+
+[[menu.shortcuts]]
+name = "<i class='fab fa-github'></i> GitHub"
+weight = 60
+url = "https://github.com/MoiraeSoftware/myriad"
 
 [markup]
   [markup.goldmark]

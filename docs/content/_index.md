@@ -1,19 +1,13 @@
 ---
 title: "About Myriad"
-linkTitle: "About"
-menu:
-  main:
-    weight: 20
-    pre: <i class='fas fa-info-circle'></i>
-layout: docs
+weight: 20
 ---
 
-Myriad is a code generator, it can take an arbitrary file and uses it to produce F# code.  The file can be anything from a plain txt file to an F# file to anything else.  
-
-Read on to find out more, or visit our [documentation](docs/) to get started!
+# Welcome to Myriad
+Myriad is a code generator, it can take an arbitrary file and uses it to produce F# code.  The file can be anything from a plain txt file to an F# file to anything else.  Read on to find out more, or visit our [documentation](docs/) to get started!
  
 
-## How does Myriad work, how is it different to ...  
+## How does Myriad work, how is it different?  
 
 Myriad is a code generator, in response to an input code can be generated, specifically F# code is generated which means all the various constructs available in F# such as records, discriminated unions, Active patterns etc, can all be generated in response to an input.  Myriad can be used via MSBuild as part of a your project file, or standalone by using the CLI tool.  If differs  from the way F# type provider works as it can produce F# types in response to other types or any arbitrary file or input, the code that is output can be examined in the development environment and can also be generated inline with your exiting code.  Myriad predates C# source generators but the way it work is quite similar, Myriad was influenced somewhat by Ocaml's Ppx code generation.    
 
