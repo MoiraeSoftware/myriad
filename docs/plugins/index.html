@@ -5,7 +5,7 @@
 <meta name=generator content="Hugo 0.92.0">
 <meta name=description content>
 <link rel=icon href=/myriad/images/favicon.png type=image/png>
-<title>About Myriad :: Myriad</title>
+<title>Plugins :: Myriad</title>
 <link href=/myriad/css/nucleus.css?1643294499 rel=stylesheet>
 <link href=/myriad/css/fontawesome-all.min.css?1643294499 rel=stylesheet>
 <link href=/myriad/css/featherlight.min.css?1643294499 rel=stylesheet>
@@ -17,7 +17,7 @@
 <script src=/myriad/js/jquery.min.js?1643294499></script>
 <style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
 </head>
-<body data-url=/myriad/>
+<body data-url=/myriad/docs/plugins/>
 <nav id=sidebar>
 <div id=header-wrapper>
 <div id=header>
@@ -42,13 +42,13 @@
 </div>
 <div class=highlightable>
 <ul class=topics>
-<li data-nav-id=/myriad/docs/ title="Welcome to Myriad" class=dd-item><a href=/myriad/docs/>Docs</a><ul>
+<li data-nav-id=/myriad/docs/ title="Welcome to Myriad" class="dd-item parent"><a href=/myriad/docs/>Docs</a><ul>
 <li data-nav-id=/myriad/docs/tutorials/ title=Tutorials class="dd-item alwaysopen"><a href=/myriad/docs/tutorials/><b>1. </b>Tutorials</a><ul>
 <li data-nav-id=/myriad/docs/tutorials/configuration/ title="Configuration And Plugins" class=dd-item><a href=/myriad/docs/tutorials/configuration/><i class="fas fa-cog"></i> Configuration And Plugins</a></li>
 <li data-nav-id=/myriad/docs/tutorials/debugging/ title=Debugging class=dd-item><a href=/myriad/docs/tutorials/debugging/><i class="fas fa-bug"></i> Debugging</a></li>
 <li data-nav-id=/myriad/docs/tutorials/external-plugins/ title="External Plugins" class=dd-item><a href=/myriad/docs/tutorials/external-plugins/><i class="fas fa-external-link-alt"></i> External Plugins</a></li>
 <li data-nav-id=/myriad/docs/tutorials/msbuild-usage/ title="MSBuild usage" class=dd-item><a href=/myriad/docs/tutorials/msbuild-usage/><i class="fab fa-microsoft"></i> MSBuild usage</a></li></ul></li>
-<li data-nav-id=/myriad/docs/plugins/ title=Plugins class="dd-item alwaysopen"><a href=/myriad/docs/plugins/><b>2. </b>Plugins</a><ul>
+<li data-nav-id=/myriad/docs/plugins/ title=Plugins class="dd-item active parent alwaysopen"><a href=/myriad/docs/plugins/><b>2. </b>Plugins</a><ul>
 <li data-nav-id=/myriad/docs/plugins/record-fields/ title=Records class=dd-item><a href=/myriad/docs/plugins/record-fields/><i class="fas fa-compact-disc"></i> Records</a></li>
 <li data-nav-id=/myriad/docs/plugins/du-extensions/ title="Discriminated Unions" class=dd-item><a href=/myriad/docs/plugins/du-extensions/><i class="far fa-object-group"></i> Discriminated Unions</a></li>
 <li data-nav-id=/myriad/docs/plugins/lenses/ title=Lenses class=dd-item><a href=/myriad/docs/plugins/lenses/><i class="fas fa-camera"></i> Lenses</a></li></ul></li>
@@ -63,26 +63,36 @@
 <div id=body>
 <div id=overlay></div>
 <div class="padding highlightable">
+<div>
+<div id=top-bar>
+<div id=breadcrumbs>
+<span id=sidebar-toggle-span>
+<a href=# id=sidebar-toggle data-sidebar-toggle>
+<i class="fas fa-bars"></i>
+</a>
+</span>
+<ol class=links itemscope itemtype=http://schema.org/BreadcrumbList>
+<meta itemprop=itemListOrder content="Descending">
+<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="3"><a itemprop=item href=/myriad/><span itemprop=name>About Myriad</span></a> > </li>
+<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="2"><a itemprop=item href=/myriad/docs/><span itemprop=name>Welcome to Myriad</span></a> > </li>
+<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="1"><a itemprop=item href=/myriad/docs/plugins/ aria-disabled=true><span itemprop=name>Plugins</span></a></li>
+</ol>
+</div>
+</div>
+</div>
 <div id=head-tags>
 </div>
+<div id=chapter>
 <main id=body-inner>
-<span id=sidebar-toggle-span>
-<a href=# id=sidebar-toggle data-sidebar-toggle><i class="fas fa-bars"></i> navigation</a>
-</span>
-<p>Myriad is a code generator, it can take an arbitrary file and uses it to produce F# code. The file can be anything from a plain txt file to an F# file to anything else.</p>
-<p>Read on to find out more, or visit our <a href=docs/>documentation</a> to get started!</p>
-<h2 id=how-does-myriad-work-how-is-it-different-to->How does Myriad work, how is it different to &mldr;</h2>
-<p>Myriad is a code generator, in response to an input code can be generated, specifically F# code is generated which means all the various constructs available in F# such as records, discriminated unions, Active patterns etc, can all be generated in response to an input. Myriad can be used via MSBuild as part of a your project file, or standalone by using the CLI tool. If differs from the way F# type provider works as it can produce F# types in response to other types or any arbitrary file or input, the code that is output can be examined in the development environment and can also be generated inline with your exiting code. Myriad predates C# source generators but the way it work is quite similar, Myriad was influenced somewhat by Ocaml&rsquo;s Ppx code generation.</p>
-<h2 id=how-does-myriad-help>How does Myriad help?</h2>
-<p>The idea behind Myriad is to un-complicate, as far as possible, the ability to generate code and do meta-programming in F#. By meta-programming in F# I mean generating actual F# types too, not just IL output or simple classes like type providers but outputting full F# types like discriminated unions and records.</p>
-<p>Myriad is an evolution of the ideas I developed while working with F#&rsquo;s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins rather than modifying or adjusting Type Providers and other F# improvements that would take a long time to be developed and released.</p>
-<p>The way a Myriad plugin works is that it that works on a particular file type or input data, this could be a fragment of AST input or a proto file etc. The plugin is supplied metadata such as file name and project information. there are also various helpers in the library make it easier to produce the AST output with the final form being source code that is built into your project. The advantages of this are the compiler can optimise the generated code and the tooling can operate effectively as you can navigate the generated code as normal.</p>
-<h2 id=whats-next-for-myriad>What&rsquo;s next for Myriad?</h2>
-<p>Im in the process of updating the documentation here so that all of the new features adding in the latter part of 2021 afre all included as part of the documentation, hopefully there will also be video tutorials to demonstrate this too.</p>
+<p>The following are some guides on how to use the different plugins included with Myriad.</p>
+<footer class=footline>
+</footer>
+</div>
 </main>
 </div>
 <div id=navigation>
-<a class="nav nav-next" href=/myriad/docs/ title="Welcome to Myriad"><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-prev" href=/myriad/docs/tutorials/msbuild-usage/ title="MSBuild usage"><i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/myriad/docs/plugins/record-fields/ title=Records><i class="fa fa-chevron-right"></i></a>
 </div>
 </div>
 <div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
