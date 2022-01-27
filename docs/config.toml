@@ -5,14 +5,14 @@ theme = "docsy"
 disableLandingPageButton = true
 contentDir = "content/"
 
-# For search functionality
+# For search functionality  
 [outputs]
 home = [ "HTML", "RSS"]
 
 
 [[menu.main]]
     name = "GitHub"
-    weight = 50
+    weight = 60
     url = "https://github.com/MoiraeSoftware/myriad"
     pre = "<i class='fab fa-github'></i>"
 

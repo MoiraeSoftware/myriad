@@ -24,7 +24,9 @@ jobs:
           
       - name: PreBuild
         working-directory: ./docs
-        run: npm install
+        run: |
+          npm install -D --save autoprefixer
+          npm install -D --save postcss-cli
 
       - name: Build
         working-directory: ./docs
