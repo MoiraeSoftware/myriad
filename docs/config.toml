@@ -1,13 +1,13 @@
 baseURL = "https://moiraesoftware.github.io/myriad/"
 languageCode = "en-us"
 title = "Myriad"
-theme = "docsy"
+theme = "relearn"
 disableLandingPageButton = true
 contentDir = "content/"
 
 # For search functionality  
 [outputs]
-home = [ "HTML", "RSS"]
+home = [ "HTML", "RSS", "JSON"]
 
 
 [[menu.main]]
