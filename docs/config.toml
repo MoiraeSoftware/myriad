@@ -1,9 +1,8 @@
 baseURL = "https://moiraesoftware.github.io/myriad/"
 languageCode = "en-us"
 title = "Myriad"
-theme = "relearn"
+theme = "hugo-theme-relearn"
 disableLandingPageButton = true
-contentDir = "content/"
 
 # For search functionality  
 [outputs]
