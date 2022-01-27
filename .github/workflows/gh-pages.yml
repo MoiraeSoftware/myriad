@@ -21,12 +21,6 @@ jobs:
         with:
           hugo-version: 'latest'
           extended: true
-          
-      - name: PreBuild
-        working-directory: ./docs
-        run: |
-          npm install -D --save autoprefixer
-          npm install -D --save postcss-cli
 
       - name: Build
         working-directory: ./docs
