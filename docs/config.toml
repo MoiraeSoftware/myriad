@@ -5,7 +5,7 @@ theme = "docsy"
 disableLandingPageButton = true
 contentDir = "content/"
 
-# For search functionality
+# For search functionality  
 [outputs]
 home = [ "HTML", "RSS"]
 
