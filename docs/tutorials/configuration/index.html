@@ -99,7 +99,7 @@
 <main id=body-inner>
 <h1>Configuration And Plugins</h1>
 <h1 id=configuration>Configuration</h1>
-<p>Myriad uses a configuration file called <code>myriad.toml</code> which uses the <a href=https://toml.io/en/>toml format</a>. Myriad looks in the current directory fro this file but it can be configured by placing <code>MyriadConfigFile</code> in your project file like this:</p>
+<p>Myriad uses a configuration file called <code>myriad.toml</code> which uses the <a href=https://toml.io/en/>toml format</a>. Myriad looks in the current directory for this file but it can be configured by placing <code>MyriadConfigFile</code> in your project file like this:</p>
 <pre tabindex=0><code class=language-msbuild data-lang=msbuild>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
 &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
   &lt;PropertyGroup&gt;
@@ -133,12 +133,12 @@ type Test1 = { one: int; two: string; three: float; four: float32 }
 <span style=color:#66d9ef>type</span> <span style=color:#a6e22e>IMyriadGenerator</span> <span style=color:#f92672>=</span>
     <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>member</span> ValidInputExtensions<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> seq
     <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>member</span> Generate<span style=color:#f92672>:</span> GeneratorContext <span style=color:#f92672>-&gt;</span> FsAst.AstRcd.SynModuleOrNamespaceRcd <span style=color:#66d9ef>list</span>
-</code></pre></div><p>ValidInputExtensions is used so a plugin is tied to certain file types as input, if you plugin generating ast fragments from java files then you would add <code>.java</code> to the <code>ValidInputExtensions</code> implementation for example.</p>
+</code></pre></div><p>ValidInputExtensions is used so a plugin is tied to certain file types as input, if you plugin generates ast fragments from java files then you would add <code>.java</code> to the <code>ValidInputExtensions</code> implementation for example.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp>    <span style=color:#66d9ef>interface</span> IMyriadGenerator <span style=color:#66d9ef>with</span>
         <span style=color:#66d9ef>member</span> __.<span style=color:#a6e22e>ValidInputExtensions</span> <span style=color:#f92672>=</span> seq <span style=color:#f92672>{</span><span style=color:#e6db74>&#34;.java&#34;</span><span style=color:#f92672>}</span>
         <span style=color:#75715e>//...
 </span></code></pre></div><p>While we are discussing the <code>IMyriadGenerator</code> interface lets discuss the <code>Generate</code> member:</p>
-<p>Generate takes a <code>GeneratorContext</code> which contains the <code>ConfigKey</code> as mentioned above, the <code>ConfigGetter</code> : <code>string -> (string * obj) seq</code> which is a mean to allow access to the <code>myriad.toml</code> file, you give the function the configuration ket you wish to receive and it returns the configuration. Finally a <code>InputFilename</code> is also passed in so you can load or parse your input files ready to generate an AST. If you look at the included plugins you can see the mechanism for extracting and building AST fragments for reference.</p>
+<p>Generate takes a <code>GeneratorContext</code> which contains the <code>ConfigKey</code> as mentioned above, the <code>ConfigGetter</code> : <code>string -> (string * obj) seq</code> which is a mean to allow access to the <code>myriad.toml</code> file, you give the function the configuration key you wish to receive and it returns the configuration. Finally an <code>InputFilename</code> is also passed in so you can load or parse your input files ready to generate an AST. If you look at the included plugins you can see the mechanism for extracting and building AST fragments for reference.</p>
 <footer class=footline>
 </footer>
 </main>
