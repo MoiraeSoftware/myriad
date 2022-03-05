@@ -9,12 +9,22 @@ The idea behind Myriad is to un-complicate, as far as possible, the ability to d
 Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins. Myriad provides an approach to compiler extension that isn't modifying or adjusting Type Providers or waiting a long time for other F# language improvements. You write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project. This lets the compiler optimise generated output in addition to allowing tooling to operate effectively.
 
 ![Build](https://github.com/MoiraeSoftware/myriad/workflows/Build/badge.svg)
-
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K115UYS)
 
-- - -
+## Terms of use
 
-## MSBuild usage
+ By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
+
+ - You **condemn Russia and its military aggression against Ukraine**
+ - You **recognize that Russia is an occupant that unlawfully invaded a sovereign state**
+ - You **support Ukraine's territorial integrity, including its claims over temporarily occupied territories of Crimea and Donbas**
+ - You **reject false narratives perpetuated by Russian state propaganda**
+
+ To learn more about the war and how you can help, [click here](https://tyrrrz.me). Glory to Ukraine! 🇺🇦
+ 
+ - - -
+
+## Usage via MSBuild
 
 To use Myriad via its MSBuild support you add the `Myriad.Core` and `Myriad.Sdk` package references:
 ```xml
@@ -101,7 +111,7 @@ let records = [{one = "a"; two = "aa"; three = 42.0; four = 172.0f}
  records |> List.sortBy Test1.one
 ```
 
-### Lenses
+### Lens plugin
 
 Myriad can also generate [lenses](https://fsprojects.github.io/FSharpPlus/tutorial.html#Lens) for records and single-case discriminated unions.
 Lens is a _pair_ of a `getter` and a `setter` for one property of the type. Given the object `Lens` allows you to get the value of the property or to update it, creating a new object. The advantage of _lenses_ is an ability to combine them to read or update nested fields of the object.
@@ -162,7 +172,7 @@ The full fsproj is detail below:
 
 ## Plugins
 
-Plugins for Myriad are supplied by simply including the nuget package in your project. The nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used by Myriad automatically. Following the source for the fields plugin can be used as reference until more details about authoring plugins is created.
+Plugins for Myriad are supplied by including the nuget package in your project. The nuget infrastructure supplies the necessary MSBuild props and targets so that the plugin is used by Myriad automatically. Following the source for the fields plugin can be used as reference until more details about authoring plugins is created.
 
 ### Using external Plugins
 
