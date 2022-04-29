@@ -1,20 +1,20 @@
 namespace Myriad.Core
 
 open System
-open FSharp.Compiler.Text
-open FSharp.Compiler.SyntaxTree
-open FSharp.Compiler.XmlDoc
-open FSharp.Compiler.ErrorLogger
-open FSharp.Compiler.Range
+open FSharp.Compiler.Syntax
+open FSharp.Compiler.Diagnostics
+open FSharp.Compiler.CodeAnalysis
 open Fantomas
-open FSharp.Compiler.SourceCodeServices
+open FSharp.Compiler.Text.Range
+open FSharp.Compiler.Xml
 
 module Ast =
+    
     let fromFilename filename =
         let allLines = Generation.linesToKeep filename |> String.concat Environment.NewLine
         let parsingOpts = {FSharpParsingOptions.Default with
                                SourceFiles = [| filename |]
-                               ErrorSeverityOptions = FSharpErrorSeverityOptions.Default }
+                               ErrorSeverityOptions = FSharpDiagnosticOptions.Default }
         let checker = FSharpChecker.Create()
         CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString allLines, parsingOpts, checker)
 
@@ -35,7 +35,7 @@ module Ast =
 
     let getAttributeConstants (attrib: SynAttribute) =
         let (|StringConst|_|) = function
-            | SynExpr.Const(SynConst.String(text,_), _) -> Some text
+            | SynExpr.Const( SynConst.String(text,_,_), _) -> Some text
             | _ -> None
 
         match attrib.ArgExpr with
@@ -58,16 +58,16 @@ module Ast =
         |> List.collect (fun n -> n.Attributes)
         |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName)
 
-    let hasAttributeWithName<'a> (attributeName: string) (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+    let hasAttributeWithName<'a> (attributeName: string) (SynTypeDefn(SynComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _ciRange),  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
         attributes
         |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<'a> attributeName))
 
-    let hasAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+    let hasAttribute<'a> (SynTypeDefn(SynComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _ciRange),  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
         attributes
         |> List.collect (fun n -> n.Attributes)
         |> List.exists (typeNameMatches typeof<'a>)
 
-    let getAttribute<'a>  (TypeDefn(ComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _), _typeDefRepr, _memberDefs, _))  =
+    let getAttribute<'a> (SynTypeDefn(SynComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _ciRange),  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
         attributes
         |> List.collect (fun n -> n.Attributes)
         |> List.tryFind (typeNameMatches typeof<'a>)
@@ -78,7 +78,7 @@ module Ast =
                     match moduleDecl with
                     | SynModuleDecl.Types(types, _) ->
                         yield (ns, types)
-                    | SynModuleDecl.NestedModule(ComponentInfo(attribs, typeParams, constraints, longId, xmlDoc, preferPostfix, accessibility, range), isRec, decls, _, _range) ->
+                    | SynModuleDecl.NestedModule(SynComponentInfo(attribs, typeParams, constraints, longId, xmlDoc, preferPostfix, accessibility, range), isRec, decls, _, _range, _trivia) ->
                         let combined = longId |> List.append ns
                         yield! (extractTypes decls combined)
                     | other -> ()
@@ -90,12 +90,12 @@ module Ast =
                     yield! extractTypes moduleDecls namespaceId
             | _ -> () ]
 
-    let isRecord (TypeDefn(_componentInfo, typeDefRepr, _memberDefs, _)) =
+    let isRecord (SynTypeDefn(_componentInfo, typeDefRepr, _memberDefs,_,_,_)) =
         match typeDefRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record _, _) -> true
         | _ -> false
 
-    let isDu (TypeDefn(_componentInfo, typeDefRepr, _memberDefs, _)) =
+    let isDu (SynTypeDefn(_componentInfo, typeDefRepr, _memberDefs,_,_,_)) =
         match typeDefRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union _, _) -> true
         | _ -> false
@@ -135,7 +135,7 @@ module Ast =
                 [ for moduleDecl in moduleDecls do
                       match moduleDecl with
                       | SynModuleDecl.Types (types, _) -> yield (ns, types)
-                      | SynModuleDecl.NestedModule (ComponentInfo (_attribs, _typeParams, _constraints, longId, _xmlDoc, _preferPostfix, _accessibility, _range), _isRec, decls, _local, _outerRange) ->
+                      | SynModuleDecl.NestedModule (SynComponentInfo (_attribs, _typeParams, _constraints, longId, _xmlDoc, _preferPostfix, _accessibility, _range), _isRec, decls, _local, _outerRange,_trivia) ->
                           let combined = longId |> List.append ns
                           yield! (extractTypes decls combined)
                       | _other -> () ]
@@ -173,6 +173,7 @@ module Ast =
             recordsOrDus
         
     open FsAst  
+
     module Ident =
         let asCamelCase (ident: Ident) =
             Ident.Create(ident.idText.Substring(0, 1).ToLowerInvariant() + ident.idText.Substring(1))
@@ -202,12 +203,11 @@ module Ast =
     type SynComponentInfo with
         static member Create(id: LongIdent, ?attributes, ?parameters, ?constraints, ?xmldoc, ?preferPostfix, ?access) =
             let attributes = defaultArg attributes SynAttributes.Empty
-            let parameters = defaultArg parameters []
             let constraints = defaultArg constraints []
             let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
             let preferPostfix = defaultArg preferPostfix false
             let access = defaultArg access None
-            let range = range.Zero
+            let range = range0
             { Attributes = attributes
               Parameters = parameters
               Constraints = constraints
@@ -219,9 +219,9 @@ module Ast =
                     
             
     type SynPat with
-        static member CreateNamed(ident, pat, ?isSelf, ?access) =
-            let isSelf = defaultArg isSelf false
-            SynPat.Named(pat, ident, isSelf, access, range0)
+        static member CreateNamed(ident, ?isThisVal, ?access) =
+            let isThisVal = defaultArg isThisVal false
+            SynPat.Named(ident, isThisVal, access, range0)
             
         static member CreateWild =
             SynPat.Wild(range0)
@@ -232,9 +232,9 @@ module Ast =
         static member CreateParen(exp) =
             SynPat.Paren(exp, range0)
             
-        static member CreateLongIdent(id, args, ?typarDecls, ?extraId, ?access) =
+        static member CreateLongIdent(id, args, ?prop, ?typarDecls, ?extraId, ?access) =
             let args = SynArgPats.Pats(args)
-            SynPat.LongIdent(id, extraId, typarDecls, args, access, range0)
+            SynPat.LongIdent(id, prop, extraId, typarDecls, args, access, range0)
             
         static member CreateNull =
             SynPat.Null(range0)
@@ -251,8 +251,9 @@ module Ast =
             let valData = defaultArg valData (SynValData(None, SynValInfo([], SynArgInfo.Empty), None))
             let headPat = defaultArg pattern SynPat.CreateNull
             let expr = defaultArg expr (SynExpr.CreateTyped(SynExpr.CreateNull, SynType.CreateUnit))
-            let bind = DebugPointForBinding.NoDebugPointAtInvisibleBinding
-            SynBinding.Binding(access, SynBindingKind.NormalBinding, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind )
+            let bind = DebugPointAtBinding.NoneAtInvisible
+            let trivia = FSharp.Compiler.SyntaxTrivia.SynBindingTrivia.Zero
+            SynBinding.SynBinding(access, SynBindingKind.Normal, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind, trivia)
             
             
     type SynModuleDecl with
@@ -267,11 +268,11 @@ module Ast =
             
     type SynUnionCase with
         member x.HasFields =
-            let (SynUnionCase.UnionCase(_,_,typ,_,_,_)) = x
+            let (SynUnionCase.SynUnionCase(_,_,typ,_,_,_,_)) = x
             match typ with
-            | UnionCaseFields cases -> not cases.IsEmpty
+            | SynUnionCaseKind.Fields fields -> not fields.IsEmpty
             | _ -> false
             
     type SynMatchClause with
-        static member Create(pat, whenExp, result) =
-            SynMatchClause.Clause(pat, whenExp, result, range0, DebugPointForTarget.No)
+        static member Create(pat, whenExp, result, trivia) =
+            SynMatchClause.SynMatchClause(pat, whenExp, result, range0, DebugPointAtTarget.No, FSharp.Compiler.SyntaxTrivia.SynMatchClauseTrivia.Zero)
