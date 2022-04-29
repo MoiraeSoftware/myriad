@@ -1,7 +1,7 @@
 # How to build:
 1. Make sure you have version of `dotnet` specified in [global.json](global.json)
 2. Run `dotnet tool restore` to install required local tools
-3. Run `dotnet build`
+3. Run `dotnet build -c Release -t:Build`
 
 # How to debug:
 - uncomment line     `<!-- <MyriadSdkWaitForDebugger>true</MyriadSdkWaitForDebugger> -->` in test\Myriad.IntegrationPluginTests\Myriad.IntegrationPluginTests.fsproj
