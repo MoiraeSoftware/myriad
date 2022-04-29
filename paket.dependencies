@@ -1,12 +1,12 @@
-version 6.0.13
+version 7.1.5
 source https://api.nuget.org/v3/index.json
-framework: net50, netstandard20, netcoreapp30
+framework: net60, netstandard21, netcoreapp31
 storage: none
 
 nuget Argu
 nuget FSAst
-nuget Fantomas ~> 4
-nuget FSharp.Compiler.Service ~> 38
+nuget Fantomas
+nuget FSharp.Compiler.Service
 nuget FSharp.Core strategy: min
 nuget Tomlyn
 nuget Expecto
