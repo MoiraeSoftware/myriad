@@ -2,7 +2,7 @@
 open System
 open Fantomas
 open System.IO
-open FSharp.Compiler.SyntaxTree
+open FSharp.Compiler.Syntax
 open Argu
 open Myriad.Core
 open Tomlyn
