@@ -53,22 +53,27 @@ module Ast =
 
         typeNameMatches attributeType attrib && (argumentMatched attributeArg)
 
+    type SynComponentInfo with
+        member x.attributes =
+            let (SynComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _ciRange)) = x
+            attributes
+
     let (|HasAttribute|_|) (attributeName: string) (attributes: SynAttributes) =
         attributes
         |> List.collect (fun n -> n.Attributes)
         |> List.tryFind (hasAttributeWithConst typeof<MyriadGeneratorAttribute> attributeName)
 
-    let hasAttributeWithName<'a> (attributeName: string) (SynTypeDefn(SynComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _ciRange),  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
-        attributes
+    let hasAttributeWithName<'a> (attributeName: string) (SynTypeDefn(synComponentInfo,  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
+        synComponentInfo.attributes
         |> List.exists (fun n -> n.Attributes |> List.exists (hasAttributeWithConst typeof<'a> attributeName))
 
-    let hasAttribute<'a> (SynTypeDefn(SynComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _ciRange),  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
-        attributes
+    let hasAttribute<'a> (SynTypeDefn(synComponentInfo,  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
+        synComponentInfo.attributes
         |> List.collect (fun n -> n.Attributes)
         |> List.exists (typeNameMatches typeof<'a>)
 
-    let getAttribute<'a> (SynTypeDefn(SynComponentInfo(attributes, _typeParams, _constraints, _recordIdent, _doc, _preferPostfix, _access, _ciRange),  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
-        attributes
+    let getAttribute<'a> (SynTypeDefn(synComponentInfo,  _typeDefRepr, _memberDefs, _implicitCtor,_range ,_trivia))  =
+        synComponentInfo.attributes
         |> List.collect (fun n -> n.Attributes)
         |> List.tryFind (typeNameMatches typeof<'a>)
 
