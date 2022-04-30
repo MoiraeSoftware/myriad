@@ -7,6 +7,7 @@ open FSharp.Compiler.CodeAnalysis
 open Fantomas
 open FSharp.Compiler.Text.Range
 open FSharp.Compiler.Xml
+open FSharp.Compiler.SyntaxTrivia
 
 module Ast =
     
@@ -83,7 +84,7 @@ module Ast =
                     match moduleDecl with
                     | SynModuleDecl.Types(types, _) ->
                         yield (ns, types)
-                    | SynModuleDecl.NestedModule(SynComponentInfo(attribs, typeParams, constraints, longId, xmlDoc, preferPostfix, accessibility, range), isRec, decls, _, _range, _trivia) ->
+                    | SynModuleDecl.NestedModule(SynComponentInfo(_, _, _, longId, _, _, _, _), _, decls, _, _, _) ->
                         let combined = longId |> List.append ns
                         yield! (extractTypes decls combined)
                     | other -> ()
@@ -91,7 +92,7 @@ module Ast =
 
         [   match ast with
             | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g)) ->
-                for SynModuleOrNamespace(namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _range) as ns in modules do
+                for SynModuleOrNamespace(namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
                     yield! extractTypes moduleDecls namespaceId
             | _ -> () ]
 
