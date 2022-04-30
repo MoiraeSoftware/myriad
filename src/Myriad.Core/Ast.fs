@@ -280,5 +280,5 @@ module Ast =
             | _ -> false
             
     type SynMatchClause with
-        static member Create(pat, whenExp, result, trivia) =
+        static member Create(pat, whenExp, result) =
             SynMatchClause.SynMatchClause(pat, whenExp, result, range0, DebugPointAtTarget.No, FSharp.Compiler.SyntaxTrivia.SynMatchClauseTrivia.Zero)
