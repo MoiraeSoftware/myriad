@@ -9,7 +9,6 @@ open Tomlyn
 open System.Collections.Generic
 open System.Diagnostics
 open Myriad.Core.Ast
-open FsAst
 open Tomlyn.Model
 open McMaster.NETCore.Plugins
 
@@ -30,8 +29,9 @@ module Implementation =
             if verbose then
                 printfn $"CONFIG: %A{config}"
                 printfn $"LOOKING FOR: %s{name}"
-            match config.TryGetToml name with
-            | true, x when x.Kind = Model.ObjectKind.Table ->
+
+            match config.TryGetValue name with
+            | true, x -> //when x.Kind = Model.ObjectKind.Table ->
                 try
                     let x = (x :?> Model.TomlTable)
                     let x = (x :> IDictionary<string,obj>)
@@ -52,7 +52,7 @@ module Implementation =
         if File.Exists configFile then
             let configFileCnt = File.ReadAllText configFile
             let tomlDocument = Toml.Parse(configFileCnt, configFile)
-            let tomlTable = tomlDocument |> Toml.ToModel
+            let tomlTable = tomlDocument.ToModel()
             tomlTable
         else TomlTable()
 
@@ -96,6 +96,7 @@ module Main =
             if results.Contains WaitForDebugger then
                 while not(Debugger.IsAttached) do
                   Threading.Thread.Sleep(100)
+                  Console.WriteLine (sprintf $"Process: %d{System.Diagnostics.Process.GetCurrentProcess().Id}")
                 Debugger.Break()
 
             let inputFile = results.GetResult InputFile
@@ -157,7 +158,7 @@ module Main =
 
                 if verbose then printfn $"Result: '%A{result}'"
 
-                result, errors
+                genType, result, errors
 
             if verbose then
                 printfn "Execute generators:"
@@ -175,19 +176,18 @@ module Main =
                         else failwith "Error: No OutputFile was included, and --selfgeneration was not specified."
 
                     generated
-                    |> List.map (fun (f, errors) ->
+                    |> List.map (fun (genType, output, errors) ->
                         //if theres an error just fail here
                         match errors with
                         | Some error -> failwithf $"%s{error}"
                         | _ -> ()
 
-                        match f with
+                        match output with
                         | Some(Output.Ast ast) ->
                             let parseTree = ParsedInput.ImplFile(ParsedImplFileInput.CreateFs(filename, modules = ast))
                             if verbose then    
-                                printfn "Generated Ast:------------------------------------"
-                                printfn $"%A{parseTree}"
-                                printfn "--------------------------------------------------"
+                                printfn $"Parsed Input :------------------------------------\n%A{parseTree}\n--------------------------------------------------"
+                                printfn $"About to format generated ouptut from %A{genType}"
                             CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
                         | Some (Output.Source source) -> source
                         | None -> "")
