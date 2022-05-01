@@ -1,7 +1,6 @@
 ﻿namespace Myriad.Plugins
 
 open System
-open System.Reflection
 open FSharp.Compiler.Syntax
 open FSharp.Compiler.Xml
 open Myriad.Core
@@ -10,103 +9,8 @@ open FSharp.Compiler.Text.Range
 open FSharp.Compiler.SyntaxTrivia
 open FsAst
 
-module DynamicReflection =
-    open System
-    open System.Reflection
-    open Microsoft.FSharp.Reflection
-
-    // Various flags that specify what members can be called 
-    // NOTE: Remove 'BindingFlags.NonPublic' if you want a version
-    // that can call only public methods of classes
-    let staticFlags = BindingFlags.NonPublic ||| BindingFlags.Public ||| BindingFlags.Static 
-    let instanceFlags = BindingFlags.NonPublic ||| BindingFlags.Public ||| BindingFlags.Instance
-    let private ctorFlags = instanceFlags
-    let inline asMethodBase(a:#MethodBase) = a :> MethodBase
-
-    // The operator takes just instance and a name. Depending on how it is used
-    // it either calls method (when 'R is function) or accesses a property
-    let (?) (o:obj) name : 'R =
-      // The return type is a function, which means that we want to invoke a method
-      if FSharpType.IsFunction(typeof<'R>) then
-
-        // Get arguments (from a tuple) and their types
-        let argType, resType = FSharpType.GetFunctionElements(typeof<'R>)
-        // Construct an F# function as the result (and cast it to the
-        // expected function type specified by 'R)
-        FSharpValue.MakeFunction(typeof<'R>, fun args ->
-          
-          // We treat elements of a tuple passed as argument as a list of arguments
-          // When the 'o' object is 'System.Type', we call static methods
-          let methods, instance, args = 
-            let args = 
-              // If argument is unit, we treat it as no arguments,
-              // if it is not a tuple, we create singleton array,
-              // otherwise we get all elements of the tuple
-              if argType = typeof<unit> then [| |]
-              elif not(FSharpType.IsTuple(argType)) then [| args |]
-              else FSharpValue.GetTupleFields(args)
-
-            // Static member call (on value of type System.Type)?
-            if (typeof<System.Type>).IsAssignableFrom(o.GetType()) then 
-              let methods = (unbox<Type> o).GetMethods(staticFlags) |> Array.map asMethodBase
-              let ctors = (unbox<Type> o).GetConstructors(ctorFlags) |> Array.map asMethodBase
-              Array.concat [ methods; ctors ], null, args
-            else 
-              o.GetType().GetMethods(instanceFlags) |> Array.map asMethodBase, o, args
-            
-          // A simple overload resolution based on the name and the number of parameters only
-          // TODO: This doesn't correctly handle multiple overloads with same parameter count
-          let methods = 
-            [ for m in methods do
-                if m.Name = name && m.GetParameters().Length = args.Length then yield m ]
-            
-          // If we find suitable method or constructor to call, do it!
-          match methods with 
-          | [] -> failwithf $"No method '%s{name}' with %d{args.Length} arguments found"
-          | _::_::_ -> failwithf $"Multiple methods '%s{name}' with %d{args.Length} arguments found"
-          | [:? ConstructorInfo as c] -> c.Invoke(args)
-          | [ m ] -> m.Invoke(instance, args) ) |> unbox<'R>
-
-      else
-        // The result type is not an F# function, so we're getting a property
-        // When the 'o' object is 'System.Type', we access static properties
-        let typ, flags, instance = 
-          if (typeof<System.Type>).IsAssignableFrom(o.GetType()) 
-            then unbox o, staticFlags, null
-            else o.GetType(), instanceFlags, o
-          
-        // Find a property that we can call and get the value
-        let prop = typ.GetProperty(name, flags)
-        if prop = null && instance = null then 
-          // The syntax can be also used to access nested types of a type
-          let nested = typ.Assembly.GetType(typ.FullName + "+" + name)
-          // Return nested type if we found one
-          if nested = null then 
-            failwithf $"Property or nested type '%s{name}' not found in '%s{typ.Name}'." 
-          elif not ((typeof<'R>).IsAssignableFrom(typeof<System.Type>)) then
-            let rname = (typeof<'R>.Name)
-            failwithf $"Cannot return nested type '%s{nested.Name}' as a type '%s{rname}'."
-          else nested |> box |> unbox<'R>
-        else
-          // Call property and return result if we found some
-          let meth = prop.GetGetMethod(true)
-          if prop = null then failwithf $"Property '%s{name}' found, but doesn't have 'get' method."
-          try meth.Invoke(instance, [| |]) |> unbox<'R>
-          with _ -> failwithf $"Failed to get value of '%s{name}' property (of type '%s{typ.Name}')"
-
 module internal CreateLenses =
     let r = range0
-    open DynamicReflection
-    // Create type that provides access to some types
-    type Compiler private () =
-      static let compiler = Assembly.Load("FSharp.Compiler.Service")
-      static member syntaxTreeOps = compiler.GetType("FSharp.Compiler.SyntaxTreeOps")
-      static member synArgNameGenerator = compiler.GetType("FSharp.Compiler.SyntaxTreeOps.SynArgNameGenerator")
-
-
-
-
-
     let private wrap lens (wrapperName : Option<string>) =
         match wrapperName with
         | Some name when not (String.IsNullOrWhiteSpace(name)) ->
@@ -124,22 +28,7 @@ module internal CreateLenses =
 
         let pattern =
             let name = LongIdentWithDots.CreateString fieldName.idText
-            SynPat.CreateLongIdent(name, [])
-
-        let createLambda (args: SynPat list) (bodyExpr: SynExpr) =
-            let parsedData = Some (args, bodyExpr)
-                       
-            let lambda =
-                let compiler = Assembly.Load("FSharp.Compiler.Service")
-                let syntaxTreeOps = compiler.GetType("FSharp.Compiler.SyntaxTreeOps")
-                let synArgNameGenerator = compiler.GetType("FSharp.Compiler.SyntaxTreeOps+SynArgNameGenerator")
-                let nameGen = synArgNameGenerator?``.ctor``()
-                let (_a: SynSimplePats list,b: SynExpr) = syntaxTreeOps?PushCurriedPatternsToExpr(nameGen, range0, false, args, None, bodyExpr)
-                b
-            lambda
-            
-            
-
+            SynPat.CreateLongIdent(name, [])      
         
         let expr =
             let srcVarName = "x"
@@ -153,7 +42,7 @@ module internal CreateLenses =
             let getPats = [SynPat.CreateTyped(SynPat.CreateNamed(srcIdent), recordType)]
             
             // fun (x : Record) -> x.Property
-            let get = createLambda getPats (SynExpr.CreateLongIdent(false, getBody, None))
+            let get = SynExpr.CreateLambda getPats (SynExpr.CreateLongIdent(false, getBody, None))
 
             let valueIdent = Ident.Create "value"
             let valuePattern = [SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType)]
@@ -169,16 +58,16 @@ module internal CreateLenses =
 
             // (value : PropertyType) -> { x with Property = value }
             let innerLambdaWithValue valueArgs =
-                createLambda valueArgs recordUpdate
+                SynExpr.CreateLambda valueArgs recordUpdate
 
             let set =
                 if aetherStyle then
                     // fun (value : PropertyType) -> (x : Record) -> { x with Property = value }
-                    createLambda valuePattern (innerLambdaWithValue getPats)
+                    SynExpr.CreateLambda valuePattern (innerLambdaWithValue getPats)
                     //SynExpr.Lambda (false, true, valueArgPattern, innerLambdaWithValue getPats, None, r, SynExprLambdaTrivia.Zero)
                 else
                     // fun (x : Record) (value : PropertyType) -> { x with Property = value }
-                    createLambda getPats (innerLambdaWithValue valuePattern)
+                    SynExpr.CreateLambda getPats (innerLambdaWithValue valuePattern)
                     //SynExpr.Lambda (false, true, getPats, innerLambdaWithValue valueArgPattern, None, r, SynExprLambdaTrivia.Zero)
 
             let tuple = SynExpr.CreateTuple [ SynExpr.CreateParen get; SynExpr.CreateParen set ]
