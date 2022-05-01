@@ -120,21 +120,27 @@ module internal CreateLenses =
 
             let setter =
                 let valueIdent = Ident.Create "value"
-                let valuePattern = SynSimplePat.Typed(SynSimplePat.Id (valueIdent, None, false, false, false, r), fieldType, r)
-                let valueArgPatterns = SynSimplePats.SimplePats ([valuePattern], r)
+                //let valuePattern = SynSimplePat.Typed(SynSimplePat.Id (valueIdent, None, false, false, false, r), fieldType, r)
+                let valueArgPatterns =
+                    [SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType)]
+                    //SynSimplePats.SimplePats ([valuePattern], r)
 
                 let duType =
                     LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
                     |> SynType.CreateLongIdent
 
-                let createCase =
-                    SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.LongIdent (false, fullCaseName, None, r), SynExpr.Ident valueIdent, r)
+                let createCase = SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.LongIdent (false, fullCaseName, None, r), SynExpr.Ident valueIdent, r)
+                
                 let innerLambdaWithValue =
-                    SynExpr.Lambda (false, true, valueArgPatterns, createCase, None, r, SynExprLambdaTrivia.Zero)
-                let recordArg = SynSimplePat.Typed(SynSimplePat.Id (Ident.Create "_", None, false, false, false, r), duType, r)
-                let getArgs = SynSimplePats.SimplePats ([recordArg], r)
+                    //SynExpr.Lambda (false, true, valueArgPatterns, createCase, None, r, SynExprLambdaTrivia.Zero)
+                    SynExpr.CreateLambda valueArgPatterns createCase
+                //let recordArg = SynSimplePat.Typed(SynSimplePat.Id (Ident.Create "_", None, false, false, false, r), duType, r)
+                let getArgs =
+                    [SynPat.CreateTyped(SynPat.CreateNamed (Ident.Create "_"), duType)]
+                    //SynSimplePats.SimplePats ([recordArg], r)
 
-                SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r, SynExprLambdaTrivia.Zero)
+                //SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r, SynExprLambdaTrivia.Zero)
+                SynExpr.CreateLambda getArgs innerLambdaWithValue
 
             let tuple = SynExpr.CreateTuple [ SynExpr.Ident getterName; setter ]
 
