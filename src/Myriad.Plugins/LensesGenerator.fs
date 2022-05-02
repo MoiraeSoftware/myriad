@@ -39,13 +39,13 @@ module internal CreateLenses =
             //let recordArg = SynSimplePat.Typed(SynSimplePat.Id (srcIdent, None, false, false, false, r), recordType, r)
             
             // (x : Record)
-            let getPats = [SynPat.CreateTyped(SynPat.CreateNamed(srcIdent), recordType)]
+            let getPats = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(srcIdent), recordType))]
             
             // fun (x : Record) -> x.Property
             let get = SynExpr.CreateLambda getPats (SynExpr.CreateLongIdent(false, getBody, None))
 
             let valueIdent = Ident.Create "value"
-            let valuePattern = [SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType)]
+            let valuePattern = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType))]
                 //SynSimplePat.Typed(SynSimplePat.Id (valueIdent, None, false, false, false, r), fieldType, r)
             
             // (value : PropertyType)
@@ -105,7 +105,7 @@ module internal CreateLenses =
         let lensExpression =
             let matchCase =
                 let caseVariableName = "x"
-                let args = [SynPat.CreateLongIdent (LongIdentWithDots.CreateString caseVariableName, [])]
+                let args = [SynPat.CreateParen(SynPat.CreateLongIdent (LongIdentWithDots.CreateString caseVariableName, []))]
                 let matchCaseIdent = SynPat.CreateLongIdent(fullCaseName, args)
 
                 let rhs = SynExpr.CreateIdent (Ident.Create caseVariableName)
@@ -122,7 +122,7 @@ module internal CreateLenses =
                 let valueIdent = Ident.Create "value"
                 //let valuePattern = SynSimplePat.Typed(SynSimplePat.Id (valueIdent, None, false, false, false, r), fieldType, r)
                 let valueArgPatterns =
-                    [SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType)]
+                    [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType))]
                     //SynSimplePats.SimplePats ([valuePattern], r)
 
                 let duType =
@@ -136,7 +136,7 @@ module internal CreateLenses =
                     SynExpr.CreateLambda valueArgPatterns createCase
                 //let recordArg = SynSimplePat.Typed(SynSimplePat.Id (Ident.Create "_", None, false, false, false, r), duType, r)
                 let getArgs =
-                    [SynPat.CreateTyped(SynPat.CreateNamed (Ident.Create "_"), duType)]
+                    [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed (Ident.Create "_"), duType))]
                     //SynSimplePats.SimplePats ([recordArg], r)
 
                 //SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r, SynExprLambdaTrivia.Zero)
@@ -152,9 +152,10 @@ module internal CreateLenses =
 
                 let synPat = SynPat.LongIdent (LongIdentWithDots.CreateString "getter", None, None, None, SynArgPats.Pats [synPat], None, r)
 
-                SynBinding.SynBinding (None, SynBindingKind.Normal, false, false, [], PreXmlDoc.Empty, valData, synPat, None, matchExpression, r, DebugPointAtBinding.NoneAtDo, SynBindingTrivia.Zero)
+                let trivia = {EqualsRange = Some range0; LetKeyword = Some range0}
+                SynBinding.SynBinding (None, SynBindingKind.Normal, false, false, [], PreXmlDoc.Empty, valData, synPat, None, matchExpression, r, DebugPointAtBinding.NoneAtDo, trivia)
 
-            let lens = SynExpr.LetOrUse (false, false, [getterLet], tuple, r, { InKeyword = None })
+            let lens = SynExpr.LetOrUse (false, false, [getterLet], tuple, r, { InKeyword = Some range0 })
 
             wrap lens wrapperName
 
