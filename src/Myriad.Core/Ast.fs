@@ -363,7 +363,8 @@ module Ast =
             
     type SynMatchClause with
         static member Create(pat, whenExp, result) =
-            SynMatchClause.SynMatchClause(pat, whenExp, result, range0, DebugPointAtTarget.No, FSharp.Compiler.SyntaxTrivia.SynMatchClauseTrivia.Zero)
+            let trivia = {SynMatchClauseTrivia.ArrowRange = Some range0; BarRange = Some range0}
+            SynMatchClause.SynMatchClause(pat, whenExp, result, range0, DebugPointAtTarget.No, trivia)
 
     open DynamicReflection
     type SynExpr with
@@ -375,4 +376,10 @@ module Ast =
                 let nameGen = synArgNameGenerator?``.ctor``()
                 let (_a: SynSimplePats list,b: SynExpr) = syntaxTreeOps?PushCurriedPatternsToExpr(nameGen, range0, false, args, None, bodyExpr)
                 b
-            lambda
+            let trivia = {SynExprLambdaTrivia.ArrowRange = Some range0 }
+            let rec fixTrivia exp =
+                match exp with
+                | SynExpr.Lambda(a,b,c,d,e,_,_) -> SynExpr.Lambda(a,b,c,d,e,range0,trivia)
+                | other -> other
+            fixTrivia lambda
+            
