@@ -7,6 +7,7 @@ open FSharp.Compiler.CodeAnalysis
 open Fantomas
 open FSharp.Compiler.Text.Range
 open FSharp.Compiler.Xml
+open FSharp.Compiler.SyntaxTrivia
 
 module DynamicReflection =
     open System.Reflection
@@ -296,15 +297,7 @@ module Ast =
             let preferPostfix = defaultArg preferPostfix false
             let access = defaultArg access None
             let range = range0
-            { Attributes = attributes
-              Parameters = parameters
-              Constraints = constraints
-              Id = id
-              XmlDoc = xmldoc
-              PreferPostfix = preferPostfix
-              Access = access
-              Range = range }
-                    
+            SynComponentInfo(attributes, parameters, constraints,id, xmldoc,preferPostfix, access, range)                    
             
     type SynPat with
         static member CreateNamed(ident, ?isThisVal, ?access) =
@@ -339,8 +332,9 @@ module Ast =
             let valData = defaultArg valData (SynValData(None, SynValInfo([], SynArgInfo.Empty), None))
             let headPat = defaultArg pattern SynPat.CreateNull
             let expr = defaultArg expr (SynExpr.CreateTyped(SynExpr.CreateNull, SynType.CreateUnit))
-            let bind = DebugPointAtBinding.NoneAtInvisible
-            let trivia = FSharp.Compiler.SyntaxTrivia.SynBindingTrivia.Zero
+            let bind = DebugPointAtBinding.NoneAtLet
+            let trivia = { LetKeyword = Some range0
+                           EqualsRange = Some range0 }
             SynBinding.SynBinding(access, SynBindingKind.Normal, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind, trivia)
             
             
@@ -348,6 +342,12 @@ module Ast =
         static member CreateLet(bindings, ?isRecursive) =
             let isRecursive = defaultArg isRecursive false
             SynModuleDecl.Let(isRecursive, bindings, range0)
+            
+        static member CreateNestedModule(ci, decls, ?isRec, ?isCont) =
+            let isRec = defaultArg isRec false
+            let isCont = defaultArg isCont false
+            let trivia = {SynModuleDeclNestedModuleTrivia.EqualsRange = Some range0; ModuleKeyword = Some range0 }
+            SynModuleDecl.NestedModule(ci, isRec, decls, isCont, range0, trivia)
             
     type SynBindingReturnInfo with
         static member Create(typeName, ?attributes) =

@@ -1,6 +1,7 @@
 namespace Myriad.Plugins
 
 open FSharp.Compiler.Syntax
+open FSharp.Compiler.SyntaxTrivia
 open FsAst
 open Myriad.Core
 open Myriad.Core.Ast
@@ -208,7 +209,8 @@ module internal CreateDUModule =
                 yield! isCase ]
 
             let info = SynComponentInfo.Create recordId
-            let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
+
+            let mdl = SynModuleDecl.CreateNestedModule(info,  declarations)
             let dusNamespace =
                 config
                 |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )

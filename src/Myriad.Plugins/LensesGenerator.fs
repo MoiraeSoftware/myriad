@@ -180,7 +180,7 @@ module internal CreateLenses =
         let (SynComponentInfo(_attributes, _typeParams, _constraints, recordId, _doc, _preferPostfix, _access, _range)) = synComponentInfo
 
         // Append "Lenses" to the module name
-        let moduleIdent = updateLastItem recordId (fun i -> Ident.Create $"%s{i.idText}Lenses")
+        let moduleIdent = updateLastItem recordId (fun i -> Ident.Create (sprintf $"%s{i.idText}Lenses"))
 
         let wrapperName =
             match attr.ArgExpr with

@@ -149,14 +149,14 @@ module internal Create =
 
             let map = createMap recordId recordFields
 
-            let declarations = [
+            let decls = [
                 yield openParent
                 yield! fieldMaps
                 yield create
                 yield map ]
 
             let info = SynComponentInfo.Create recordId
-            let mdl = SynModuleDecl.CreateNestedModule(info, declarations)
+            let mdl = SynModuleDecl.CreateNestedModule(info,  decls)
             let fieldsNamespace =
                 config
                 |> Seq.tryPick (fun (n,v) -> if n = "namespace" then Some (v :?> string) else None  )
