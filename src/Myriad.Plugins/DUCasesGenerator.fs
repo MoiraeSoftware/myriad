@@ -1,8 +1,6 @@
 namespace Myriad.Plugins
 
 open FSharp.Compiler.Syntax
-open FSharp.Compiler.SyntaxTrivia
-open FsAst
 open Myriad.Core
 open Myriad.Core.Ast
 
