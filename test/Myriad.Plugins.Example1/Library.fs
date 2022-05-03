@@ -1,11 +1,9 @@
 ﻿namespace Myriad.Plugins.Example1
 
-open System
 open System.IO
 open Myriad.Core
 open Myriad.Core.Ast
 open FSharp.Compiler.Syntax
-open FsAst
 
 [<MyriadGenerator("example1")>]
 type Example1Gen() =
