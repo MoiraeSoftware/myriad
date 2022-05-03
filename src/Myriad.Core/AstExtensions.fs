@@ -84,13 +84,18 @@ module AstExtensions =
         static member CreateRecord (fields: list<RecordFieldName * option<SynExpr>>) =
             let fields = fields |> List.map (fun (rfn, synExpr) -> SynExprRecordField (rfn, None, synExpr, None))
             SynExpr.Record(None, None, fields, range0)
+            
         static member CreateRecordUpdate (copyInfo: SynExpr, fieldUpdates) =
-            let fields = fieldUpdates |> List.map (fun (rfn, synExpr) -> SynExprRecordField(rfn, None, synExpr, None))
-            SynExpr.Record(None, None, fields, range0)
+            let blockSep = (range0, None) : BlockSeparator
+            let fields = fieldUpdates |> List.map (fun (rfn, synExpr) -> SynExprRecordField(rfn, Some range0, synExpr, Some blockSep))
+            let copyInfo = Some (copyInfo, blockSep)
+            SynExpr.Record(None, copyInfo, fields, range0)
+            
         static member CreateRecordUpdate (copyInfo: SynExpr, fieldUpdates ) =
             let blockSep = (range0, None) : BlockSeparator
             let copyInfo = Some (copyInfo, blockSep)
             SynExpr.Record (None, copyInfo, fieldUpdates, range0)
+            
         /// Creates:
         ///
         /// ```
