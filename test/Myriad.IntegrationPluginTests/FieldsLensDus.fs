@@ -195,10 +195,10 @@ module Test1 =
         (record': Test1)
         =
         { record' with
-              one = mapone record'.one
-              two = maptwo record'.two
-              three = mapthree record'.three
-              four = mapfour record'.four }
+            one = mapone record'.one
+            two = maptwo record'.two
+            three = mapthree record'.three
+            four = mapfour record'.four }
 
 namespace rec TestDus
 
