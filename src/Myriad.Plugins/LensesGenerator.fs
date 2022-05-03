@@ -7,11 +7,10 @@ open Myriad.Core
 open Myriad.Core.Ast
 open FSharp.Compiler.Text.Range
 open FSharp.Compiler.SyntaxTrivia
-open FsAst
 
 module internal CreateLenses =
     let r = range0
-    let private wrap lens (wrapperName : Option<string>) =
+    let private wrap (wrapperName : Option<string>) lens =
         match wrapperName with
         | Some name when not (String.IsNullOrWhiteSpace(name)) ->
             let wrapperVar = SynExpr.CreateLongIdent (false, LongIdentWithDots (Ident.CreateLong name, []), None)
