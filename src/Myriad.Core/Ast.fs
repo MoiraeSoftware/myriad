@@ -368,18 +368,18 @@ module Ast =
 
     open DynamicReflection
     type SynExpr with
-        static member CreateLambda (args: SynPat list) (bodyExpr: SynExpr) =
+        static member CreateLambda(pats: SynPat list, body: SynExpr) =
             let lambda =
                 let compiler = System.Reflection.Assembly.Load("FSharp.Compiler.Service")
                 let syntaxTreeOps = compiler.GetType("FSharp.Compiler.SyntaxTreeOps")
                 let synArgNameGenerator = compiler.GetType("FSharp.Compiler.SyntaxTreeOps+SynArgNameGenerator")
                 let nameGen = synArgNameGenerator?``.ctor``()
-                let (_a: SynSimplePats list,b: SynExpr) = syntaxTreeOps?PushCurriedPatternsToExpr(nameGen, range0, false, args, None, bodyExpr)
-                b
+                let (_a: SynSimplePats list, lambda: SynExpr) = syntaxTreeOps?PushCurriedPatternsToExpr(nameGen, range0, false, pats, None, body)
+                lambda
             let trivia = {SynExprLambdaTrivia.ArrowRange = Some range0 }
             let rec fixTrivia exp =
                 match exp with
-                | SynExpr.Lambda(a,b,c,d,e,_,_) -> SynExpr.Lambda(a,b,c,d,e,range0,trivia)
+                | SynExpr.Lambda(a,b,c,d,e,_,_) -> SynExpr.Lambda(a,b,c,fixTrivia d,e,range0,trivia)
                 | other -> other
             fixTrivia lambda
             
