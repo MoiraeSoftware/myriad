@@ -366,12 +366,13 @@ module Ast =
 
     open DynamicReflection
     type SynExpr with
-        static member CreateLambda(pats: SynPat list, body: SynExpr) =
+        static member CreateLambda(pats: SynPat list, body: SynExpr, ?isMember: bool) =
+            let isMember = defaultArg isMember false
             let compiler = System.Reflection.Assembly.Load("FSharp.Compiler.Service")
             let syntaxTreeOps = compiler.GetType("FSharp.Compiler.SyntaxTreeOps")
             let synArgNameGenerator = compiler.GetType("FSharp.Compiler.SyntaxTreeOps+SynArgNameGenerator")
             let nameGen = synArgNameGenerator?``.ctor``()
-            syntaxTreeOps?mkSynFunMatchLambdas(nameGen, false, range0, pats, Some range0, body)
+            syntaxTreeOps?mkSynFunMatchLambdas(nameGen, isMember, range0, pats, Some range0, body)
             
 
             
