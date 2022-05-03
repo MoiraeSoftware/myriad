@@ -371,8 +371,7 @@ module Ast =
             let syntaxTreeOps = compiler.GetType("FSharp.Compiler.SyntaxTreeOps")
             let synArgNameGenerator = compiler.GetType("FSharp.Compiler.SyntaxTreeOps+SynArgNameGenerator")
             let nameGen = synArgNameGenerator?``.ctor``()
-            let (_a: SynSimplePats list, lambda: SynExpr) = syntaxTreeOps?PushCurriedPatternsToExpr(nameGen, range0, false, pats, Some range0, body)
-            lambda
+            syntaxTreeOps?mkSynFunMatchLambdas(nameGen, false, range0, pats, Some range0, body)
             
 
             
