@@ -4,7 +4,6 @@ framework: net60, netstandard21, netcoreapp31
 storage: none
 
 nuget Argu
-nuget FSAst
 nuget Fantomas
 nuget FSharp.Compiler.Service
 nuget FSharp.Core strategy: min

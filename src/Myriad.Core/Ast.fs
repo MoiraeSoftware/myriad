@@ -260,8 +260,6 @@ module Ast =
                 |> List.map (fun (ns, types) -> ns, types |> List.filter (fun t -> t |> isDu || t |> isRecord))
 
             recordsOrDus
-        
-    open FsAst  
 
     module Ident =
         let asCamelCase (ident: Ident) =
