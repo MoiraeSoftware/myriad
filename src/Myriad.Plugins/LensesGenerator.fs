@@ -9,12 +9,11 @@ open FSharp.Compiler.Text.Range
 open FSharp.Compiler.SyntaxTrivia
 
 module internal CreateLenses =
-    let r = range0
     let private wrap (wrapperName : Option<string>) lens =
         match wrapperName with
         | Some name when not (String.IsNullOrWhiteSpace(name)) ->
             let wrapperVar = SynExpr.CreateLongIdent (false, LongIdentWithDots (Ident.CreateLong name, []), None)
-            SynExpr.App (ExprAtomicFlag.NonAtomic, false, wrapperVar, SynExpr.CreateParen lens, r)
+            SynExpr.App (ExprAtomicFlag.NonAtomic, false, wrapperVar, SynExpr.CreateParen lens, range0)
         | _ -> lens
 
     let private createLensForRecordField (parent: LongIdent) (wrapperName : Option<string>) (aetherStyle: bool) (field: SynField) =
@@ -24,63 +23,42 @@ module internal CreateLenses =
         let recordType =
             LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
-
-        let pattern =
-            let name = LongIdentWithDots.CreateString fieldName.idText
-            SynPat.CreateLongIdent(name, [])      
+                    
+        let letPat = SynPat.CreateNamed fieldName
+        let lambdaGetBody = SynExpr.CreateLongIdent(LongIdentWithDots.Create ["x"; fieldName.idText])
+        let lambdaGetPats = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "x"), recordType))]
         
-        let expr =
-            let srcVarName = "x"
-            let srcIdent = Ident.Create srcVarName
-
-            // x.Property
-            let getBody = LongIdentWithDots.Create [srcVarName; fieldName.idText]
-            //let recordArg = SynSimplePat.Typed(SynSimplePat.Id (srcIdent, None, false, false, false, r), recordType, r)
-            
-            // (x : Record)
-            let getPats = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(srcIdent), recordType))]
-            
-            // fun (x : Record) -> x.Property
-            let get = SynExpr.CreateLambda getPats (SynExpr.CreateLongIdent(false, getBody, None))
-
-            let valueIdent = Ident.Create "value"
-            let valuePattern = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType))]
-                //SynSimplePat.Typed(SynSimplePat.Id (valueIdent, None, false, false, false, r), fieldType, r)
-            
-            // (value : PropertyType)
-            //let valueArgPatterns = SynSimplePats.SimplePats ([valuePattern], r)
-            let copySrc = SynExpr.CreateLongIdent(false, LongIdentWithDots.Create [srcVarName], None)
-            let recordToUpdateName : RecordFieldName = (LongIdentWithDots.CreateString fieldName.idText, true)
-            
-            // { x with Property = value }
-            let recordUpdate = SynExpr.CreateRecordUpdate (copySrc, [(recordToUpdateName, SynExpr.Ident valueIdent |> Some)])
-
-            // (value : PropertyType) -> { x with Property = value }
-            let innerLambdaWithValue valueArgs =
-                SynExpr.CreateLambda valueArgs recordUpdate
-
-            let set =
+        let lambdaSetBody =
+            let innerPats =
                 if aetherStyle then
-                    // fun (value : PropertyType) -> (x : Record) -> { x with Property = value }
-                    SynExpr.CreateLambda valuePattern (innerLambdaWithValue getPats)
-                    //SynExpr.Lambda (false, true, valueArgPattern, innerLambdaWithValue getPats, None, r, SynExprLambdaTrivia.Zero)
+                    [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "value"), fieldType))
+                     SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "x"), recordType))]
                 else
-                    // fun (x : Record) (value : PropertyType) -> { x with Property = value }
-                    SynExpr.CreateLambda getPats (innerLambdaWithValue valuePattern)
-                    //SynExpr.Lambda (false, true, getPats, innerLambdaWithValue valueArgPattern, None, r, SynExprLambdaTrivia.Zero)
-
-            let tuple = SynExpr.CreateTuple [ SynExpr.CreateParen get; SynExpr.CreateParen set ]
-
-            wrap tuple wrapperName
-
-        SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr)]
+                    [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "x"), recordType))
+                     SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "value"), fieldType)) ]
+                    
+            let innerBody =
+                let copySrc = SynExpr.CreateLongIdent(false, LongIdentWithDots.Create ["x"], None)
+                let recordUpdateName :RecordFieldName = (LongIdentWithDots.CreateString fieldName.idText, true)
+                let fieldList = [(recordUpdateName, Some(SynExpr.Ident (Ident.Create "value")))]
+                SynExpr.CreateRecordUpdate (copySrc, fieldList)
+                
+            SynExpr.CreateLambda(pats = innerPats, body = innerBody)
+        let lambdaSetPats = []
+                                              
+        let letBody =
+            SynExpr.CreateTuple[
+                SynExpr.CreateParen(SynExpr.CreateLambda(pats = lambdaGetPats, body = lambdaGetBody))
+                SynExpr.CreateParen(SynExpr.CreateLambda(pats = lambdaSetPats, body = lambdaSetBody))] |> wrap wrapperName
+            
+        SynModuleDecl.CreateLet [SynBinding.Let(pattern = letPat, expr = letBody)]
 
     let private createLensForDU (requiresQualifiedAccess : bool) (parent: LongIdent) (wrapperName : Option<string>) (du : SynUnionCase) =
         let (SynUnionCase.SynUnionCase(_,id,duType,_,_,_,_)) = du
         let (SynField.SynField(_,_,_,fieldType,_,_,_,_)) =
             match duType with
             | SynUnionCaseKind.Fields [singleCase] -> singleCase
-            | SynUnionCaseKind.Fields (_ :: _) -> failwith "It is impossible to create a lens for a DU with several cases"
+            | SynUnionCaseKind.Fields (_ :: _) -> failwith "It is not possible to create a lens for a DU with several cases"
             | _ -> failwithf "Unsupported type"
 
         let duType =
@@ -97,14 +75,13 @@ module internal CreateLenses =
             else
                 [id.idText]
 
-        // The name of the DU case, optionally preceded by the name of the DU itself, if
-        // fully qualified access is required
+        // The name of the DU case, optionally preceded by the name of the DU itself, if fully qualified access is required
         let fullCaseName = LongIdentWithDots.Create matchCaseIdentParts
 
         let lensExpression =
             let matchCase =
                 let caseVariableName = "x"
-                let args = [SynPat.CreateParen(SynPat.CreateLongIdent (LongIdentWithDots.CreateString caseVariableName, []))]
+                let args = [SynPat.CreateLongIdent (LongIdentWithDots.CreateString caseVariableName, [])]
                 let matchCaseIdent = SynPat.CreateLongIdent(fullCaseName, args)
 
                 let rhs = SynExpr.CreateIdent (Ident.Create caseVariableName)
@@ -119,44 +96,36 @@ module internal CreateLenses =
 
             let setter =
                 let valueIdent = Ident.Create "value"
-                //let valuePattern = SynSimplePat.Typed(SynSimplePat.Id (valueIdent, None, false, false, false, r), fieldType, r)
-                let valueArgPatterns =
-                    [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType))]
-                    //SynSimplePats.SimplePats ([valuePattern], r)
+
+                let valueArgPatterns = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType))]
 
                 let duType =
                     LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
                     |> SynType.CreateLongIdent
 
-                let createCase = SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.LongIdent (false, fullCaseName, None, r), SynExpr.Ident valueIdent, r)
+                let createCase = SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.LongIdent (false, fullCaseName, None, range0), SynExpr.Ident valueIdent, range0)
                 
-                let innerLambdaWithValue =
-                    //SynExpr.Lambda (false, true, valueArgPatterns, createCase, None, r, SynExprLambdaTrivia.Zero)
-                    SynExpr.CreateLambda valueArgPatterns createCase
-                //let recordArg = SynSimplePat.Typed(SynSimplePat.Id (Ident.Create "_", None, false, false, false, r), duType, r)
-                let getArgs =
-                    [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed (Ident.Create "_"), duType))]
-                    //SynSimplePats.SimplePats ([recordArg], r)
+                let innerLambdaWithValue = SynExpr.CreateLambda([], createCase) //inner does not have pats as they are pushed in via the outer lambda
 
-                //SynExpr.Lambda (false, true, getArgs, innerLambdaWithValue, None, r, SynExprLambdaTrivia.Zero)
-                SynExpr.CreateLambda getArgs innerLambdaWithValue
+                let getArgs = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed (Ident.Create "_"), duType))
+                               SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType))] //inner lambdas pat ∆
+
+                SynExpr.CreateLambda(pats = getArgs, body = innerLambdaWithValue)
 
             let tuple = SynExpr.CreateTuple [ SynExpr.Ident getterName; setter ]
 
             let getterLet =
                 let valData = SynValData.SynValData(None, SynValInfo.Empty, None)
-                let synPat = SynPat.Named(Ident.Create "x", false, None, r)
-                let synPat = SynPat.Typed(synPat, duType, r)
-                let synPat = SynPat.Paren (synPat, r)
+                let synPat = SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "x", false), duType))
 
-                let synPat = SynPat.LongIdent (LongIdentWithDots.CreateString "getter", None, None, None, SynArgPats.Pats [synPat], None, r)
+                let synPat = SynPat.LongIdent (LongIdentWithDots.CreateString "getter", None, None, None, SynArgPats.Pats [synPat], None, range0)
 
                 let trivia = {EqualsRange = Some range0; LetKeyword = Some range0}
-                SynBinding.SynBinding (None, SynBindingKind.Normal, false, false, [], PreXmlDoc.Empty, valData, synPat, None, matchExpression, r, DebugPointAtBinding.NoneAtDo, trivia)
+                SynBinding.SynBinding (None, SynBindingKind.Normal, false, false, [], PreXmlDoc.Empty, valData, synPat, None, matchExpression, range0, DebugPointAtBinding.NoneAtDo, trivia)
 
-            let lens = SynExpr.LetOrUse (false, false, [getterLet], tuple, r, { InKeyword = Some range0 })
+            let lens = SynExpr.LetOrUse (false, false, [getterLet], tuple, range0, { InKeyword = None })
 
-            wrap lens wrapperName
+            lens |> wrap wrapperName
 
         SynModuleDecl.CreateLet [ SynBinding.Let(pattern = pattern, expr = lensExpression) ]
     let private updateLastItem list updater =
@@ -194,7 +163,7 @@ module internal CreateLenses =
             | expr-> failwithf $"Unsupported syntax of specifying the wrapper name for type %A{recordId}.\nExpr: %A{expr}"
 
         let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
-        let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, r)
+        let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
         let openParent = SynModuleDecl.CreateOpen openTarget
         let moduleInfo = SynComponentInfo.Create moduleIdent
 
