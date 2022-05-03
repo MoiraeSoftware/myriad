@@ -96,7 +96,6 @@ module Main =
             if results.Contains WaitForDebugger then
                 while not(Debugger.IsAttached) do
                   Threading.Thread.Sleep(100)
-                  Console.WriteLine (sprintf $"Process: %d{System.Diagnostics.Process.GetCurrentProcess().Id}")
                 Debugger.Break()
 
             let inputFile = results.GetResult InputFile
