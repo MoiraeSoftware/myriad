@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     tags:
-      - 'v*' # Publish on any new tag
+      - 'v*' # Publish on any new tag matching v*, i.e. v1.0, v1.7.2
 
 jobs:
   build:
@@ -18,7 +18,8 @@ jobs:
     - name: Get version from tag
       id: tag_name
       run: |
-          echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
+        echo ::set-output name=current_version::${GITHUB_REF#refs/tags/}
+      shell: bash
     - uses: actions/checkout@v3
     - name: Setup dotnet
       uses: actions/setup-dotnet@v2
