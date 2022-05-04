@@ -1,169 +1,52 @@
-<!doctype html><html lang=en class="js csstransforms3d">
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=generator content="Hugo 0.92.0">
-<meta name=description content>
-<link rel=icon href=/myriad/images/favicon.png type=image/png>
-<title>Records :: Myriad</title>
-<link href=/myriad/css/nucleus.css?1643295840 rel=stylesheet>
-<link href=/myriad/css/fontawesome-all.min.css?1643295840 rel=stylesheet>
-<link href=/myriad/css/featherlight.min.css?1643295840 rel=stylesheet>
-<link href=/myriad/css/perfect-scrollbar.min.css?1643295840 rel=stylesheet>
-<link href=/myriad/css/auto-complete.css?1643295840 rel=stylesheet>
-<link href=/myriad/css/theme.css?1643295840 rel=stylesheet>
-<link href=/myriad/css/tabs.css?1643295840 rel=stylesheet>
-<link href=/myriad/css/hugo-theme.css?1643295840 rel=stylesheet>
-<script src=/myriad/js/jquery.min.js?1643295840></script>
-<style>:root #header+#content>#left>#rlblock_left{display:none!important}</style>
-</head>
-<body data-url=/myriad/docs/plugins/record-fields/>
-<nav id=sidebar>
-<div id=header-wrapper>
-<div id=header>
-<h1>Myriad</h1>
-</div>
-<div class=searchbox>
-<label for=search-by><i class="fas fa-search"></i></label>
+<!doctype html><html lang=en class="js csstransforms3d"><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=generator content="Hugo 0.98.0"><meta name=description content><link rel=icon href=/myriad/images/favicon.png type=image/png><title>Records :: Myriad</title><link href=/myriad/css/nucleus.css?1651674716 rel=stylesheet><link href=/myriad/css/fontawesome-all.min.css?1651674716 rel=stylesheet><link href=/myriad/css/featherlight.min.css?1651674716 rel=stylesheet><link href=/myriad/css/perfect-scrollbar.min.css?1651674716 rel=stylesheet><link href=/myriad/css/auto-complete.css?1651674716 rel=stylesheet><link href=/myriad/css/theme.css?1651674716 rel=stylesheet><link href=/myriad/css/tabs.css?1651674716 rel=stylesheet><link href=/myriad/css/hugo-theme.css?1651674716 rel=stylesheet><script src=/myriad/js/jquery.min.js?1651674716></script><style>:root #header+#content>#left>#rlblock_left{display:none!important}</style></head><body data-url=/myriad/docs/plugins/record-fields/><nav id=sidebar><div id=header-wrapper><div id=header><h1>Myriad</h1></div><div class=searchbox><label for=search-by><i class="fas fa-search"></i></label>
 <input data-search-input id=search-by type=search placeholder=Search...>
-<span data-search-clear><i class="fas fa-times"></i></span>
-</div>
-<script src=/myriad/js/lunr.min.js?1643295840></script>
-<script src=/myriad/js/auto-complete.js?1643295840></script>
-<script>var index_url="/myriad/index.json",root_url="/",baseUri=root_url.replace(/\/$/,'')</script>
-<script src=/myriad/js/search.js?1643295840></script>
-</div>
-<div id=homelinks>
-<ul>
-<li>
-<a class=padding href=/myriad/><i class="fas fa-home"></i> Home</a>
-</li>
-</ul>
-</div>
-<div class=highlightable>
-<ul class=topics>
-<li data-nav-id=/myriad/docs/ title=Docs class="dd-item parent"><a href=/myriad/docs/><i class="fas fa-book"> </i> Docs</a><ul>
-<li data-nav-id=/myriad/docs/tutorials/ title=Tutorials class="dd-item alwaysopen"><a href=/myriad/docs/tutorials/><b>1. </b>Tutorials</a><ul>
-<li data-nav-id=/myriad/docs/tutorials/configuration/ title="Configuration And Plugins" class=dd-item><a href=/myriad/docs/tutorials/configuration/><i class="fas fa-cog"></i> Configuration And Plugins</a></li>
-<li data-nav-id=/myriad/docs/tutorials/debugging/ title=Debugging class=dd-item><a href=/myriad/docs/tutorials/debugging/><i class="fas fa-bug"></i> Debugging</a></li>
-<li data-nav-id=/myriad/docs/tutorials/external-plugins/ title="External Plugins" class=dd-item><a href=/myriad/docs/tutorials/external-plugins/><i class="fas fa-external-link-alt"></i> External Plugins</a></li>
-<li data-nav-id=/myriad/docs/tutorials/msbuild-usage/ title="MSBuild usage" class=dd-item><a href=/myriad/docs/tutorials/msbuild-usage/><i class="fab fa-microsoft"></i> MSBuild usage</a></li></ul></li>
-<li data-nav-id=/myriad/docs/plugins/ title=Plugins class="dd-item parent alwaysopen"><a href=/myriad/docs/plugins/><b>2. </b>Plugins</a><ul>
-<li data-nav-id=/myriad/docs/plugins/record-fields/ title=Records class="dd-item active"><a href=/myriad/docs/plugins/record-fields/><i class="fas fa-compact-disc"></i> Records</a></li>
-<li data-nav-id=/myriad/docs/plugins/du-extensions/ title="Discriminated Unions" class=dd-item><a href=/myriad/docs/plugins/du-extensions/><i class="far fa-object-group"></i> Discriminated Unions</a></li>
-<li data-nav-id=/myriad/docs/plugins/lenses/ title=Lenses class=dd-item><a href=/myriad/docs/plugins/lenses/><i class="fas fa-camera"></i> Lenses</a></li></ul></li>
-<li data-nav-id=/myriad/docs/external-resources/ title="External resources" class=dd-item><a href=/myriad/docs/external-resources/><i class="fas fa-cog"></i> External resources</a></li></ul></li>
-<li data-nav-id=/myriad/blog/ title=News class=dd-item><a href=/myriad/blog/>News</a><ul></ul></li>
-</ul>
-<div id=shortcuts>
-<div class=nav-title>More</div>
-<ul>
-<li><a class=padding href=https://moiraesoftware.github.io/myriad/tags><i class="fas fa-tags"></i> Tags</a></li>
-<li><a class=padding href=https://github.com/MoiraeSoftware/myriad><i class="fab fa-github"></i> GitHub</a></li>
-</ul>
-</div>
-<div id=footer>
-<p>Built with <a href=https://github.com/McShelby/hugo-theme-relearn><i class="fas fa-heart"></i></a> by <a href=https://gohugo.io/>Hugo</a></p>
-</div>
-</div>
-</nav>
-<div id=body>
-<div id=overlay></div>
-<div class="padding highlightable">
-<div>
-<div id=top-bar>
-<div id=breadcrumbs>
-<span id=sidebar-toggle-span>
-<a href=# id=sidebar-toggle data-sidebar-toggle>
-<i class="fas fa-bars"></i>
-</a>
-</span>
-<span id=toc-menu><i class="fas fa-list-alt"></i></span>
-<ol class=links itemscope itemtype=http://schema.org/BreadcrumbList>
-<meta itemprop=itemListOrder content="Descending">
-<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="4"><a itemprop=item href=/myriad/><span itemprop=name>About Myriad</span></a> > </li>
-<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="3"><a itemprop=item href=/myriad/docs/><span itemprop=name>Docs</span></a> > </li>
-<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="2"><a itemprop=item href=/myriad/docs/plugins/><span itemprop=name>Plugins</span></a> > </li>
-<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="1"><a itemprop=item href=/myriad/docs/plugins/record-fields/ aria-disabled=true><span itemprop=name>Records</span></a></li>
-</ol>
-</div>
-<div class=progress>
-<div class=wrapper>
-<nav id=TableOfContents></nav>
-</div>
-</div>
-</div>
-</div>
-<div id=head-tags>
-</div>
-<main id=body-inner>
-<h1>Records</h1>
-<p>The input file in this example <code>Library.fs</code> looks like this:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=color:#66d9ef>namespace</span> Example
-<span style=color:#66d9ef>open</span> Myriad.Plugins
-
-<span style=color:#f92672>[&lt;</span>Generator.Fields <span style=color:#e6db74>&#34;fields&#34;</span><span style=color:#f92672>&gt;]</span>
-<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Test1</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span> one<span style=color:#f92672>:</span> int<span style=color:#f92672>;</span> two<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span><span style=color:#f92672>;</span> three<span style=color:#f92672>:</span> <span style=color:#66d9ef>float</span><span style=color:#f92672>;</span> four<span style=color:#f92672>:</span> <span style=color:#66d9ef>float32</span> <span style=color:#f92672>}</span>
-<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Test2</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span> one<span style=color:#f92672>:</span> Test1<span style=color:#f92672>;</span> two<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> <span style=color:#f92672>}</span>
-</code></pre></div><p>An attribute is used by the fields plugin so that the code generator knows which parts of the input AST should be consumed by the plugin. If you had several records and you only wanted the fields plugin to operate on <code>Test1</code> then the attribute would be used like in the example about to only apply <code>Generator.Fields</code> to the <code>Test1</code> record. Note, if you wanted a plugin that just processes the whole input then there is no need to provide such an attribute. Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code, its up to you how you generate the code, Myriad just aims to help to make this as painless and flexible as possible.</p>
-<p>To control what namespace is used as well as supplying any other information to plugins a <code>myriad.toml</code> configuration file is used. This is specified in the generator attribute, in the example above you can see the configuration section is <code>fields</code> <code>[&lt;Generator.Fields "fields">]</code>. The corresponding <code>myriad.toml</code> file looks as follows:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-toml data-lang=toml>[<span style=color:#a6e22e>fields</span>]
-<span style=color:#a6e22e>namespace</span> = <span style=color:#e6db74>&#34;TestFields&#34;</span>
-</code></pre></div><p>The fields plugin uses only a single configuration key <code>namespace</code> to control the resulting namespace the record helpers are generated</p>
-<p>The fields plugin in this example will generate the following code at prebuild and compile the code into your assembly:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=color:#75715e>//------------------------------------------------------------------------------
-</span><span style=color:#75715e>//        This code was generated by myriad.
-</span><span style=color:#75715e>//        Changes to this file will be lost when the code is regenerated.
-</span><span style=color:#75715e>//------------------------------------------------------------------------------
-</span><span style=color:#75715e></span><span style=color:#66d9ef>namespace</span> <span style=color:#66d9ef>rec</span> TestFields
-
-<span style=color:#66d9ef>module</span> Test1 <span style=color:#f92672>=</span>
-    <span style=color:#66d9ef>open</span> Example
-
-    <span style=color:#66d9ef>let</span> one <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>one
-    <span style=color:#66d9ef>let</span> two <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>two
-    <span style=color:#66d9ef>let</span> three <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>three
-    <span style=color:#66d9ef>let</span> four <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>four
-
-    <span style=color:#66d9ef>let</span> create <span style=color:#f92672>(</span>one <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>(</span>two <span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>three <span style=color:#f92672>:</span> <span style=color:#66d9ef>float</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>four <span style=color:#f92672>:</span> <span style=color:#66d9ef>float32</span><span style=color:#f92672>)</span> <span style=color:#f92672>:</span> Test1 <span style=color:#f92672>=</span>
-        <span style=color:#f92672>{</span> one <span style=color:#f92672>=</span> one
-          two <span style=color:#f92672>=</span> two
-          three <span style=color:#f92672>=</span> three
-          four <span style=color:#f92672>=</span> four <span style=color:#f92672>}</span>
-
-    <span style=color:#66d9ef>let</span> map <span style=color:#f92672>(</span>mapone <span style=color:#f92672>:</span> int <span style=color:#f92672>-&gt;</span> int<span style=color:#f92672>)</span> <span style=color:#f92672>(</span>maptwo <span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>string</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>mapthree <span style=color:#f92672>:</span> <span style=color:#66d9ef>float</span> <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>float</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>mapfour <span style=color:#f92672>:</span> <span style=color:#66d9ef>float32</span> <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>float32</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>record&#39;<span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
-      <span style=color:#f92672>{</span> record&#39; <span style=color:#66d9ef>with</span>
-          one <span style=color:#f92672>=</span> mapone record&#39;<span style=color:#f92672>.</span>one
-          two <span style=color:#f92672>=</span> maptwo record&#39;<span style=color:#f92672>.</span>two
-          three <span style=color:#f92672>=</span> mapthree record&#39;<span style=color:#f92672>.</span>three
-          four <span style=color:#f92672>=</span> mapfour record&#39;<span style=color:#f92672>.</span>four <span style=color:#f92672>}</span>
-</code></pre></div><p>The fields plugin generates a <code>map</code> for each field in the input record, a <code>create</code> function taking each field, and a <code>map</code> function that takes one function per field in the input record.</p>
-<p>The map functions for each field are useful in situations where you just want to use a single field from a record in a lambda like a list of records:</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=color:#66d9ef>let</span> records <span style=color:#f92672>=</span> <span style=color:#f92672>[{</span>one <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;a&#34;</span><span style=color:#f92672>;</span> two <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;aa&#34;</span><span style=color:#f92672>;</span> three <span style=color:#f92672>=</span> 42<span style=color:#f92672>.</span>0<span style=color:#f92672>;</span> four <span style=color:#f92672>=</span> 172<span style=color:#f92672>.</span>0f<span style=color:#f92672>}</span>
-               <span style=color:#f92672>{</span>one <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;b&#34;</span><span style=color:#f92672>;</span> two <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;bb&#34;</span><span style=color:#f92672>;</span> three <span style=color:#f92672>=</span> 42<span style=color:#f92672>.</span>0<span style=color:#f92672>;</span> four <span style=color:#f92672>=</span> 172<span style=color:#f92672>.</span>0f<span style=color:#f92672>}]</span>
- records <span style=color:#f92672>|&gt;</span> List.sortBy Test1.one
-</code></pre></div>
-<footer class=footline>
-</footer>
-</main>
-</div>
-<div id=navigation>
-<a class="nav nav-prev" href=/myriad/docs/plugins/ title=Plugins><i class="fa fa-chevron-left"></i></a>
-<a class="nav nav-next" href=/myriad/docs/plugins/du-extensions/ title="Discriminated Unions"><i class="fa fa-chevron-right"></i></a>
-</div>
-</div>
-<div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
-<div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
-</div>
-<script src=/myriad/js/clipboard.min.js?1643295840></script>
-<script src=/myriad/js/perfect-scrollbar.min.js?1643295840></script>
-<script src=/myriad/js/perfect-scrollbar.jquery.min.js?1643295840></script>
-<script src=/myriad/js/jquery.sticky.js?1643295840></script>
-<script src=/myriad/js/jquery.svg.pan.zoom.js?1643295840></script>
-<script src=/myriad/js/featherlight.min.js?1643295840></script>
-<script src=/myriad/js/modernizr.custom-3.6.0.js?1643295840></script>
-<script src=/myriad/js/mermaid.min.js?1643295840></script>
-<script>typeof mermaid!='undefined'&&mermaid.mermaidAPI.initialize(Object.assign({securityLevel:"antiscript"},JSON.parse('{ "startOnLoad": true }'),{startOnLoad:!1}))</script>
-<script src=/myriad/js/relearn.js?1643295840></script>
-</body>
-</html>
+<span data-search-clear><i class="fas fa-times"></i></span></div><script src=/myriad/js/lunr.min.js?1651674716></script>
+<script src=/myriad/js/auto-complete.js?1651674716></script>
+<script>var index_url="/myriad/index.json",root_url="/",baseUri=root_url.replace(/\/$/,'')</script><script src=/myriad/js/search.js?1651674716></script></div><div id=homelinks><ul><li><a class=padding href=/myriad/><i class="fas fa-home"></i> Home</a></li></ul></div><div class=highlightable><ul class=topics><li data-nav-id=/myriad/docs/ title=Docs class="dd-item parent"><a href=/myriad/docs/><i class="fas fa-book"></i>Docs</a><ul><li data-nav-id=/myriad/docs/tutorials/ title=Tutorials class="dd-item alwaysopen"><a href=/myriad/docs/tutorials/><b>1. </b>Tutorials</a><ul><li data-nav-id=/myriad/docs/tutorials/configuration/ title="Configuration And Plugins" class=dd-item><a href=/myriad/docs/tutorials/configuration/><i class="fas fa-cog"></i> Configuration And Plugins</a></li><li data-nav-id=/myriad/docs/tutorials/debugging/ title=Debugging class=dd-item><a href=/myriad/docs/tutorials/debugging/><i class="fas fa-bug"></i> Debugging</a></li><li data-nav-id=/myriad/docs/tutorials/external-plugins/ title="External Plugins" class=dd-item><a href=/myriad/docs/tutorials/external-plugins/><i class="fas fa-external-link-alt"></i> External Plugins</a></li><li data-nav-id=/myriad/docs/tutorials/msbuild-usage/ title="MSBuild usage" class=dd-item><a href=/myriad/docs/tutorials/msbuild-usage/><i class="fab fa-microsoft"></i> MSBuild usage</a></li></ul></li><li data-nav-id=/myriad/docs/plugins/ title=Plugins class="dd-item parent alwaysopen"><a href=/myriad/docs/plugins/><b>2. </b>Plugins</a><ul><li data-nav-id=/myriad/docs/plugins/record-fields/ title=Records class="dd-item active"><a href=/myriad/docs/plugins/record-fields/><i class="fas fa-compact-disc"></i> Records</a></li><li data-nav-id=/myriad/docs/plugins/du-extensions/ title="Discriminated Unions" class=dd-item><a href=/myriad/docs/plugins/du-extensions/><i class="far fa-object-group"></i> Discriminated Unions</a></li><li data-nav-id=/myriad/docs/plugins/lenses/ title=Lenses class=dd-item><a href=/myriad/docs/plugins/lenses/><i class="fas fa-camera"></i> Lenses</a></li></ul></li><li data-nav-id=/myriad/docs/external-resources/ title="External resources" class=dd-item><a href=/myriad/docs/external-resources/><i class="fas fa-cog"></i> External resources</a></li></ul></li><li data-nav-id=/myriad/blog/ title=News class=dd-item><a href=/myriad/blog/>News</a><ul></ul></li></ul><div id=shortcuts><div class=nav-title>More</div><ul><li><a class=padding href=https://moiraesoftware.github.io/myriad/tags><i class="fas fa-tags"></i> Tags</a></li><li><a class=padding href=https://github.com/MoiraeSoftware/myriad><i class="fab fa-github"></i> GitHub</a></li></ul></div><div id=footer><p>Built with <a href=https://github.com/McShelby/hugo-theme-relearn><i class="fas fa-heart"></i></a> by <a href=https://gohugo.io/>Hugo</a></p></div></div></nav><div id=body><div id=overlay></div><div class="padding highlightable"><div><div id=top-bar><div id=breadcrumbs><span id=sidebar-toggle-span><a href=# id=sidebar-toggle data-sidebar-toggle><i class="fas fa-bars"></i></a></span>
+<span id=toc-menu><i class="fas fa-list-alt"></i></span><ol class=links itemscope itemtype=http://schema.org/BreadcrumbList><meta itemprop=itemListOrder content="Descending"><li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="4"><a itemprop=item href=/myriad/><span itemprop=name>About Myriad</span></a> ></li><li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="3"><a itemprop=item href=/myriad/docs/><span itemprop=name>Docs</span></a> ></li><li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="2"><a itemprop=item href=/myriad/docs/plugins/><span itemprop=name>Plugins</span></a> ></li><li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement><meta itemprop=position content="1"><a itemprop=item href=/myriad/docs/plugins/record-fields/ aria-disabled=true><span itemprop=name>Records</span></a></li></ol></div><div class=progress><div class=wrapper><nav id=TableOfContents></nav></div></div></div></div><div id=head-tags></div><main id=body-inner><h1>Records</h1><p>The input file in this example <code>Library.fs</code> looks like this:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#66d9ef>namespace</span> Example
+</span></span><span style=display:flex><span><span style=color:#66d9ef>open</span> Myriad.Plugins
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[&lt;</span>Generator.Fields <span style=color:#e6db74>&#34;fields&#34;</span><span style=color:#f92672>&gt;]</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Test1</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span> one<span style=color:#f92672>:</span> int<span style=color:#f92672>;</span> two<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span><span style=color:#f92672>;</span> three<span style=color:#f92672>:</span> <span style=color:#66d9ef>float</span><span style=color:#f92672>;</span> four<span style=color:#f92672>:</span> <span style=color:#66d9ef>float32</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Test2</span> <span style=color:#f92672>=</span> <span style=color:#f92672>{</span> one<span style=color:#f92672>:</span> Test1<span style=color:#f92672>;</span> two<span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>An attribute is used by the fields plugin so that the code generator knows which parts of the input AST should be consumed by the plugin. If you had several records and you only wanted the fields plugin to operate on <code>Test1</code> then the attribute would be used like in the example about to only apply <code>Generator.Fields</code> to the <code>Test1</code> record. Note, if you wanted a plugin that just processes the whole input then there is no need to provide such an attribute. Myriad aims to be a library rather than a full framework that ties you to the mechanism used to input and generate code, its up to you how you generate the code, Myriad just aims to help to make this as painless and flexible as possible.</p><p>To control what namespace is used as well as supplying any other information to plugins a <code>myriad.toml</code> configuration file is used. This is specified in the generator attribute, in the example above you can see the configuration section is <code>fields</code> <code>[&lt;Generator.Fields "fields">]</code>. The corresponding <code>myriad.toml</code> file looks as follows:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-toml data-lang=toml><span style=display:flex><span>[<span style=color:#a6e22e>fields</span>]
+</span></span><span style=display:flex><span><span style=color:#a6e22e>namespace</span> = <span style=color:#e6db74>&#34;TestFields&#34;</span>
+</span></span></code></pre></div><p>The fields plugin uses only a single configuration key <code>namespace</code> to control the resulting namespace the record helpers are generated</p><p>The fields plugin in this example will generate the following code at prebuild and compile the code into your assembly:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#75715e>//------------------------------------------------------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e>//        This code was generated by myriad.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>//        Changes to this file will be lost when the code is regenerated.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>//------------------------------------------------------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>namespace</span> <span style=color:#66d9ef>rec</span> TestFields
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>module</span> Test1 <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>open</span> Example
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> one <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>one
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> two <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>two
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> three <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>three
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> four <span style=color:#f92672>(</span>x <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span> x<span style=color:#f92672>.</span>four
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> create <span style=color:#f92672>(</span>one <span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>(</span>two <span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>three <span style=color:#f92672>:</span> <span style=color:#66d9ef>float</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>four <span style=color:#f92672>:</span> <span style=color:#66d9ef>float32</span><span style=color:#f92672>)</span> <span style=color:#f92672>:</span> Test1 <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>{</span> one <span style=color:#f92672>=</span> one
+</span></span><span style=display:flex><span>          two <span style=color:#f92672>=</span> two
+</span></span><span style=display:flex><span>          three <span style=color:#f92672>=</span> three
+</span></span><span style=display:flex><span>          four <span style=color:#f92672>=</span> four <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> map <span style=color:#f92672>(</span>mapone <span style=color:#f92672>:</span> int <span style=color:#f92672>-&gt;</span> int<span style=color:#f92672>)</span> <span style=color:#f92672>(</span>maptwo <span style=color:#f92672>:</span> <span style=color:#66d9ef>string</span> <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>string</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>mapthree <span style=color:#f92672>:</span> <span style=color:#66d9ef>float</span> <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>float</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>mapfour <span style=color:#f92672>:</span> <span style=color:#66d9ef>float32</span> <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>float32</span><span style=color:#f92672>)</span> <span style=color:#f92672>(</span>record&#39;<span style=color:#f92672>:</span> Test1<span style=color:#f92672>)</span> <span style=color:#f92672>=</span>
+</span></span><span style=display:flex><span>      <span style=color:#f92672>{</span> record&#39; <span style=color:#66d9ef>with</span>
+</span></span><span style=display:flex><span>          one <span style=color:#f92672>=</span> mapone record&#39;<span style=color:#f92672>.</span>one
+</span></span><span style=display:flex><span>          two <span style=color:#f92672>=</span> maptwo record&#39;<span style=color:#f92672>.</span>two
+</span></span><span style=display:flex><span>          three <span style=color:#f92672>=</span> mapthree record&#39;<span style=color:#f92672>.</span>three
+</span></span><span style=display:flex><span>          four <span style=color:#f92672>=</span> mapfour record&#39;<span style=color:#f92672>.</span>four <span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The fields plugin generates a <code>map</code> for each field in the input record, a <code>create</code> function taking each field, and a <code>map</code> function that takes one function per field in the input record.</p><p>The map functions for each field are useful in situations where you just want to use a single field from a record in a lambda like a list of records:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fsharp data-lang=fsharp><span style=display:flex><span><span style=color:#66d9ef>let</span> records <span style=color:#f92672>=</span> <span style=color:#f92672>[{</span>one <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;a&#34;</span><span style=color:#f92672>;</span> two <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;aa&#34;</span><span style=color:#f92672>;</span> three <span style=color:#f92672>=</span> 42<span style=color:#f92672>.</span>0<span style=color:#f92672>;</span> four <span style=color:#f92672>=</span> 172<span style=color:#f92672>.</span>0f<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>               <span style=color:#f92672>{</span>one <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;b&#34;</span><span style=color:#f92672>;</span> two <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;bb&#34;</span><span style=color:#f92672>;</span> three <span style=color:#f92672>=</span> 42<span style=color:#f92672>.</span>0<span style=color:#f92672>;</span> four <span style=color:#f92672>=</span> 172<span style=color:#f92672>.</span>0f<span style=color:#f92672>}]</span>
+</span></span><span style=display:flex><span> records <span style=color:#f92672>|&gt;</span> List.sortBy Test1.one
+</span></span></code></pre></div><footer class=footline></footer></main></div><div id=navigation><a class="nav nav-prev" href=/myriad/docs/plugins/ title=Plugins><i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/myriad/docs/plugins/du-extensions/ title="Discriminated Unions"><i class="fa fa-chevron-right"></i></a></div></div><div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px><div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div></div><script src=/myriad/js/clipboard.min.js?1651674716></script>
+<script src=/myriad/js/perfect-scrollbar.min.js?1651674716></script>
+<script src=/myriad/js/perfect-scrollbar.jquery.min.js?1651674716></script>
+<script src=/myriad/js/jquery.sticky.js?1651674716></script>
+<script src=/myriad/js/jquery.svg.pan.zoom.js?1651674716></script>
+<script src=/myriad/js/featherlight.min.js?1651674716></script>
+<script src=/myriad/js/modernizr.custom-3.6.0.js?1651674716></script>
+<script src=/myriad/js/mermaid.min.js?1651674716></script>
+<script>typeof mermaid!="undefined"&&mermaid.mermaidAPI.initialize(Object.assign({securityLevel:"antiscript"},JSON.parse('{ "startOnLoad": true }'),{startOnLoad:!1}))</script><script src=/myriad/js/relearn.js?1651674716></script></body></html>
