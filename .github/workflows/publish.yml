@@ -20,6 +20,7 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ matrix.dotnet }}
+        include-prerelease: true
     - name: Restore tools
       run: dotnet tool restore
     - name: Run Test
