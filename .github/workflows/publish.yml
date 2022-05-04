@@ -15,9 +15,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v3
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ matrix.dotnet }}
     - name: Restore tools
@@ -28,7 +28,7 @@ jobs:
       run: dotnet build -c Release -t:Pack
     - name: Get Changelog Entry
       id: changelog_reader
-      uses: mindsers/changelog-reader-action@v1.1.0
+      uses: mindsers/changelog-reader-action@v2
       with:
         version: ${{ github.ref }}
         path: ./CHANGELOG.md
