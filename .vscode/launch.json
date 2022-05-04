@@ -17,7 +17,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/myriad/bin/Debug/netcoreapp3.0/myriad.dll",
             "args": [
-                "--plugin", "${workspaceFolder}/src/Myriad.Plugins/bin/Debug/net5.0/Myriad.Plugins.dll",
+                "--plugin", "${workspaceFolder}/src/Myriad.Plugins/bin/Debug/net6.0/Myriad.Plugins.dll",
                 "--inputfile", "${workspaceFolder}/samples/Example/Library.fs",
                 "--outputfile",  "${workspaceFolder}/samples/Example/Verify.fs",
                 "--namespace", "Test"

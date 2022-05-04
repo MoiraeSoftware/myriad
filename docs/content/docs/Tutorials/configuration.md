@@ -14,7 +14,7 @@ Myriad uses a configuration file called `myriad.toml` which uses the [toml forma
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <MyriadConfigFile>myConfig.toml</MyriadConfigFile>
   </PropertyGroup>

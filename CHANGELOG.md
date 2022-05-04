@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0]
+### Changed
+- Updated to dotnet 6.0.202
+- Various improvements to lens generation code
+
 ## [0.7.4]
 ### Changed
 - Exceptions are no longer written to the generated files but are instead reported to the command line

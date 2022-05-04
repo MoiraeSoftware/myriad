@@ -113,9 +113,7 @@ module RecordWithEmptyWrapperNameLenses =
 
     let one_empty_wrapper_name =
         (fun (x: RecordWithEmptyWrapperName) -> x.one_empty_wrapper_name),
-        (fun (x: RecordWithEmptyWrapperName) (value: int) ->
-            { x with
-                  one_empty_wrapper_name = value })
+        (fun (x: RecordWithEmptyWrapperName) (value: int) -> { x with one_empty_wrapper_name = value })
 namespace rec SelfTestLens
 
 module RecordWithWrappedLensViaTypedefofLenses =
@@ -275,10 +273,10 @@ module Test1 =
         (record': Test1)
         =
         { record' with
-              ones = mapones record'.ones
-              two = maptwo record'.two
-              three = mapthree record'.three
-              four = mapfour record'.four }
+            ones = mapones record'.ones
+            two = maptwo record'.two
+            three = mapthree record'.three
+            four = mapfour record'.four }
 
 namespace rec SelfTestDus
 

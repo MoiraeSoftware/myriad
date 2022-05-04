@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <MyriadSdk_Generator_ExeHost>dotnet </MyriadSdk_Generator_ExeHost>
-        <MyriadSdk_Generator_Exe>$(MSBuildThisFileDirectory)../tools/net5.0/any/Myriad.dll</MyriadSdk_Generator_Exe>
+        <MyriadSdk_Generator_Exe>$(MSBuildThisFileDirectory)../tools/net6.0/any/Myriad.dll</MyriadSdk_Generator_Exe>
     </PropertyGroup>
 
 </Project>

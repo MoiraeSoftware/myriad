@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <RollForward>major</RollForward>
@@ -63,7 +63,7 @@
   <!-- use the dll directly rather than using a nuget -->
   <PropertyGroup>
     <MyriadSdk_Generator_ExeHost>dotnet </MyriadSdk_Generator_ExeHost>
-    <MyriadSdk_Generator_Exe>../../src/Myriad/bin/$(Configuration)/net5.0/Myriad.dll</MyriadSdk_Generator_Exe>
+    <MyriadSdk_Generator_Exe>../../src/Myriad/bin/$(Configuration)/net6.0/Myriad.dll</MyriadSdk_Generator_Exe>
   </PropertyGroup>
   <!-- include to enable the generation of myriad output -->
   <Import Project="..\..\src\Myriad.Sdk\build\Myriad.Sdk.targets" />
