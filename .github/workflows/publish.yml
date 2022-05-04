@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     tags:
-      - '*' # Publish on any new tag
+      - 'v*' # Publish on any new tag
 
 jobs:
   build:
@@ -15,6 +15,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+    - name: Get version from tag
+      id: tag_name
+      run: |
+          echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
     - uses: actions/checkout@v3
     - name: Setup dotnet
       uses: actions/setup-dotnet@v2
@@ -31,7 +35,7 @@ jobs:
       id: changelog_reader
       uses: mindsers/changelog-reader-action@v2
       with:
-        version: ${{ github.ref }}
+        version: ${{ steps.tag_name.outputs.current_version }}
         path: ./CHANGELOG.md
     - name: Create Release
       id: create_release
