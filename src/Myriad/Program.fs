@@ -24,12 +24,13 @@ module Implementation =
                 then yield t ]
         gens
         
-    let getConfigHandler (verbose: bool) (config: Model.TomlTable) =
-        fun name ->
-            if verbose then
-                printfn $"CONFIG: %A{config}"
-                printfn $"LOOKING FOR: %s{name}"
+    let getConfigHandler (verbose: bool) (config: Model.TomlTable option) (name: string) =
+        if verbose then
+            printfn $"Config is: %A{config}"
+            printfn $"Looking for: %s{name}"
 
+        match config with
+        | Some config ->
             match config.TryGetValue name with
             | true, x -> //when x.Kind = Model.ObjectKind.Table ->
                 try
@@ -38,11 +39,15 @@ module Implementation =
                     x |> Seq.map (|KeyValue|)
                 with
                 | _ ->
-                    printfn "FAIL !"
+                    printfn "Failure while creating config sequence"
                     Seq.empty
             | _ ->
-                printfn "FAIL @"
+                printfn $"Failed to find key %s{name}"
                 Seq.empty
+        | None ->
+            if verbose then
+                printfn "No configuration passed"
+            Seq.empty
 
     let getConfig (configFile) =
 
@@ -53,8 +58,8 @@ module Implementation =
             let configFileCnt = File.ReadAllText configFile
             let tomlDocument = Toml.Parse(configFileCnt, configFile)
             let tomlTable = tomlDocument.ToModel()
-            tomlTable
-        else TomlTable()
+            Some tomlTable
+        else None
 
 module Main =
     open Implementation
