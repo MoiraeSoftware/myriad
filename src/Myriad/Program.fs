@@ -183,15 +183,19 @@ module Main =
                     |> List.map (fun (genType, output, errors) ->
                         //if theres an error just fail here
                         match errors with
-                        | Some error -> failwithf $"%s{error}"
-                        | _ -> ()
+                        | Some error -> failwithf $"Error in %A{genType}: %s{error}"
+                        | None -> ()
 
                         match output with
                         | Some(Output.Ast ast) ->
                             let parseTree = ParsedInput.ImplFile(ParsedImplFileInput.CreateFs(filename, modules = ast))
                             if verbose then    
-                                printfn $"Parsed Input :------------------------------------\n%A{parseTree}\n--------------------------------------------------"
-                                printfn $"About to format generated ouptut from %A{genType}"
+                                printfn $"""
+Parsed Input :------------------------------------
+%A{parseTree}"
+--------------------------------------------------
+About to format generated ouptut from %A{genType}"""
+
                             CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
                         | Some (Output.Source source) -> source
                         | None -> "")
