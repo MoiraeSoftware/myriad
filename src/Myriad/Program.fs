@@ -24,8 +24,8 @@ module Implementation =
                 then yield t ]
         gens
         
-    let getConfigHandler (verbose: bool) (config: Model.TomlTable option) (name: string) =
-        if verbose then
+    let getConfigHandler (isVerbose: bool) (config: Model.TomlTable option) (name: string) =
+        if isVerbose then
             printfn $"Config is: %A{config}"
             printfn $"Looking for: %s{name}"
 
@@ -45,12 +45,11 @@ module Implementation =
                 printfn $"Failed to find key %s{name}"
                 Seq.empty
         | None ->
-            if verbose then
+            if isVerbose then
                 printfn "No configuration passed"
             Seq.empty
 
     let getConfig (configFile) =
-
         let configFile =
             configFile
             |> Option.defaultValue (Path.Combine(Environment.CurrentDirectory, "myriad.toml"))
@@ -78,14 +77,14 @@ module Main =
         interface IArgParserTemplate with
             member s.Usage =
                 match s with
-                | InputFile _ -> "specify a file to use as input."
+                | InputFile _ -> "Specify a file to use as input."
                 | OutputFile _ -> "Specify the file name that the generated code will be written to."
-                | ConfigFile _ -> "Specify a TOML file to use as config."
-                | ConfigKey _ -> "Specify a key in config that will be passed to the generators."
-                | ContextFile _ -> "Specify a context file for the generators to use."
+                | ConfigFile _ -> "Specify a myriad.toml file to use as config."
+                | ConfigKey _ -> "Specify a key in the config that will be passed to the generator."
+                | ContextFile _ -> "Specify a context file for the generator to use."
                 | Plugin _ -> "Register an assembly plugin."
                 | WaitForDebugger _ -> "Wait for the debugger to attach."
-                | Verbose -> "Log verbose processing details."
+                | Verbose -> "Verbose output."
                 | AdditionalParams _ -> "Specify additional parameters."
                 | InlineGeneration -> "Generate code for the input file at the end of the input file."
         
