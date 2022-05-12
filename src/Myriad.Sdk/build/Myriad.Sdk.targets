@@ -114,9 +114,8 @@
         </ItemGroup>
 
         <ItemGroup>
-            <MyriadCodegen Include="%(MyriadSource.FullPath)">
+            <MyriadCodegen Include="%(MyriadSource.FullPath)" Condition=" '%(MyriadSource.FullPath)' != '' And ('%(Compile.MyriadInlineGeneration)' == 'false' Or '%(Compile.MyriadInlineGeneration)' == '') ">
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadSource.OutputPath)'))</OutputPath>
-                <OutputPath Condition=" '%(MyriadSource.OutputPath)' == '' ">%(MyriadSource.FullPath).fs</OutputPath>
                 <ConfigKey>%(MyriadSource.ConfigKey)</ConfigKey>
                 <MyriadParams>%(MyriadSource.MyriadParams)</MyriadParams>
                 <MyriadInlineGeneration>%(MyriadSource.MyriadInlineGeneration)</MyriadInlineGeneration>
@@ -144,7 +143,6 @@
             <MyriadSdk_CodeGenInputs Include="@(MyriadCodegenHash->'%(FileHash)')" />
             <MyriadSdk_CodeGenInputs Include="@(MyriadCodegenHash->'%(ModifiedTime)')" />
             <MyriadSdk_CodeGenInputs Include="@(ReferencePath)" />
-            <MyriadSdk_CodeGenInputs Include="@(MyriadSdk_Generator_Exe)" />
         </ItemGroup>
 
         <Hash ItemsToHash="@(MyriadSdk_CodeGenInputs)">
