@@ -1,5 +1,9 @@
 <Project>
 
+    <PropertyGroup>
+        <MyriadConfigFile Condition=" '$(MyriadConfigFile)' == '' " >$(MSBuildProjectDirectory)\myriad.toml</MyriadConfigFile>
+    </PropertyGroup>
+    
     <UsingTask TaskName="Flatten" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
 
         <ParameterGroup>
