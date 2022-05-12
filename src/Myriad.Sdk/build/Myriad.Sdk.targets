@@ -118,7 +118,7 @@
 
         <ItemGroup>
             <MyriadCodegen Include="%(MyriadSource.FullPath)" Condition=" '%(MyriadSource.FullPath)' != '' And ('%(Compile.MyriadInlineGeneration)' == 'false' Or '%(Compile.MyriadInlineGeneration)' == '') ">
-                <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadSource.OutputPath)'))</OutputPath>
+                <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">%(MyriadSource.OutputPath)</OutputPath>
                 <ConfigKey>%(MyriadSource.ConfigKey)</ConfigKey>
                 <MyriadParams>%(MyriadSource.MyriadParams)</MyriadParams>
                 <Generators>%(MyriadSource.Generators)</Generators>
