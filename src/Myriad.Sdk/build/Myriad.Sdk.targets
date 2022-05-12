@@ -133,7 +133,9 @@
     This is based on the _GenerateCompileDependencyCache target from the .NET project system. -->
     <Target Name="MyriadSdkGenerateInputCache" DependsOnTargets="ResolveAssemblyReferences;_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateCode">
 
-        <GetFileHash Files="%(MyriadCodegen.Identity)">
+        <Touch Condition="!Exists($(MyriadConfigFile))" Files="$(MyriadConfigFile)" AlwaysCreate="true" />
+        
+        <GetFileHash Files="%(MyriadCodegen.Identity);$(MyriadSdk_Generator_Exe);$(MyriadConfigFile)">
             <Output TaskParameter="Items" ItemName="MyriadCodegenHash" />
         </GetFileHash>
 
