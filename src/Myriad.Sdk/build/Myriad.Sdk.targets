@@ -102,6 +102,7 @@
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
                 <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
                 <Generators>%(Compile.Generators)</Generators>
+                <MyriadInlineGeneration>false</MyriadInlineGeneration>
             </MyriadSource>
         </ItemGroup>
 
@@ -111,7 +112,7 @@
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
                 <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
                 <Generators>%(Compile.Generators)</Generators>
-                <MyriadInlineGeneration>%(Compile.MyriadInlineGeneration)</MyriadInlineGeneration>
+                <MyriadInlineGeneration>true</MyriadInlineGeneration>
             </MyriadSource>
         </ItemGroup>
 
