@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- If `MyriadConfigFile` does not specified assume it would be `ProjectDirectory/myriad.toml`.
-- If the is no config file present create one empty.
+- If `MyriadConfigFile` is not specified assume it would be: `ProjectDirectory/myriad.toml`.
+- If there is no config file present create one empty.
 
 
 ## [0.8.0]
