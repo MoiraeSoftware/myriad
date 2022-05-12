@@ -98,7 +98,7 @@
 
         <ItemGroup>
             <MyriadSource Include="%(Compile.MyriadFile)" Condition=" '%(Compile.MyriadFile)' != '' And ('%(Compile.MyriadInlineGeneration)' == 'false' Or '%(Compile.MyriadInlineGeneration)' == '') ">
-                <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
+                <OutputPath>%(Compile.FullPath)</OutputPath>
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
                 <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
                 <Generators>%(Compile.Generators)</Generators>
@@ -108,7 +108,7 @@
 
         <ItemGroup>
             <MyriadSource Include="%(Compile.Identity)" Condition=" ('%(Compile.MyriadFile)' == '' And '%(Compile.MyriadInlineGeneration)' == 'true') ">
-                <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
+                <OutputPath>%(Compile.FullPath))</OutputPath>
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
                 <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
                 <Generators>%(Compile.Generators)</Generators>
