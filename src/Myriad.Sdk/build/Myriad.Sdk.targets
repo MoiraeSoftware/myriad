@@ -101,6 +101,7 @@
                 <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
                 <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
+                <Generators>%(Compile.Generators)</Generators>
             </MyriadSource>
         </ItemGroup>
 
@@ -109,6 +110,7 @@
                 <OutputPath>$([System.IO.Path]::GetFullPath('%(Compile.FullPath)'))</OutputPath>
                 <ConfigKey>%(Compile.MyriadConfigKey)</ConfigKey>
                 <MyriadParams>%(Compile.MyriadParams)</MyriadParams>
+                <Generators>%(Compile.Generators)</Generators>
                 <MyriadInlineGeneration>%(Compile.MyriadInlineGeneration)</MyriadInlineGeneration>
             </MyriadSource>
         </ItemGroup>
@@ -118,6 +120,7 @@
                 <OutputPath Condition=" '%(MyriadSource.OutputPath)' != '' ">$([System.IO.Path]::GetFullPath('%(MyriadSource.OutputPath)'))</OutputPath>
                 <ConfigKey>%(MyriadSource.ConfigKey)</ConfigKey>
                 <MyriadParams>%(MyriadSource.MyriadParams)</MyriadParams>
+                <Generators>%(MyriadSource.Generators)</Generators>
                 <MyriadInlineGeneration>%(MyriadSource.MyriadInlineGeneration)</MyriadInlineGeneration>
             </MyriadCodegen>
         </ItemGroup>
