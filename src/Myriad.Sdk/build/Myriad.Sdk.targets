@@ -169,19 +169,21 @@
             <_MyriadSdk_ConfigKey>%(MyriadCodegen.ConfigKey)</_MyriadSdk_ConfigKey>
             <_MyriadSdk_ConfigFile>$(MyriadConfigFile)</_MyriadSdk_ConfigFile>
             <_MyriadSdk_MyriadParams>%(MyriadCodegen.MyriadParams)</_MyriadSdk_MyriadParams>
-            <_MyriadSdk_InlineGeneration>%(MyriadCodegen.MyriadInlineGeneration)</_MyriadSdk_InlineGeneration>
+            <_MyriadSdk_InlineGeneration>%(MyriadCodegen.InlineGeneration)</_MyriadSdk_InlineGeneration>
             <_MyriadSdk_ContextFile>$(MSBuildProjectDirectory)/obj/myriad.context.toml</_MyriadSdk_ContextFile>
+            <_MyriadSdk_Generators>%(MyriadCodegen.Generators)</_MyriadSdk_Generators>
             
         </PropertyGroup>
 
         <Flatten Items="@(MyriadCodegen)" Metadata="MyriadParams">
-            <Output TaskParameter="Result" PropertyName="_MyriadSdk_MyriadParams2" />
+            <Output TaskParameter="Result" PropertyName="_MyriadSdk_MyriadParams_Flattened" />
         </Flatten>
 
-        <!-- Convert the property DefineConstants to an item so that it can be transfromed to comma separated list -->
-        <CreateItem Include="$(DefineConstants)">
-            <Output TaskParameter="Include" ItemName="_DefineConstants"/>
-        </CreateItem>
+        <!-- Convert the property DefineConstants and _MyriadSdk_Generators to items so that it can be transfromed to separated list -->
+        <ItemGroup>
+            <_DefineConstants Include="$(DefineConstants)" />
+            <_GeneratorsOnly Include="$(_MyriadSdk_Generators)" />
+        </ItemGroup>
 
         <PropertyGroup>
             <_ProjectName>$(ProjectFileName)</_ProjectName>
@@ -211,11 +213,12 @@
             <MyriadSdk_Args Include='--configkey "$(_MyriadSdk_ConfigKey)"' Condition=" '$(_MyriadSdk_ConfigKey)' != '' " />
             <MyriadSdk_Args Include='--configfile "$(_MyriadSdk_ConfigFile)"' Condition=" '$(_MyriadSdk_ConfigFile)' != '' " />
             <MyriadSdk_Args Include='--contextfile "$(_MyriadSdk_ContextFile)"' Condition=" '$(_MyriadSdk_ContextFile)' != '' " />
-            <MyriadSdk_Args Include='--additionalparams "$(_MyriadSdk_MyriadParams2)"' Condition=" '$(_MyriadSdk_MyriadParams2)' != '' " />
+            <MyriadSdk_Args Include='--additionalparams "$(_MyriadSdk_MyriadParams_Flattened)"' Condition=" '$(_MyriadSdk_MyriadParams_Flattened)' != '' " />
             <MyriadSdk_Args Include='--wait-for-debugger' Condition=" '$(MyriadSdkWaitForDebugger)' == 'true' " />
             <MyriadSdk_Args Include='--verbose' Condition=" '$(MyriadSdkVerboseOutput)' == 'true' " />
             <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' " />
             <MyriadSdk_Args Include='--inlinegeneration' Condition=" '$(_MyriadSdk_InlineGeneration)' == 'true' " />
+            <MyriadSdk_Args Include='--generator-filter "%(_GeneratorsOnly.Identity)"' Condition=" '%(_GeneratorsOnly.Identity)' != '' " />
         </ItemGroup>
 
         <!-- Uncomment to debug command line generation -->
