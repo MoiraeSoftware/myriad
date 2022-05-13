@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Added support for generator filters with msbuild property `<Generators>generatorName1;generatorName2</Generators>` only the named generators are run, all others are excluded, the Generators element is added under the Compile element as follows:
+    ```
+        <Compile Include="Input.fs">
+            <MyriadParams>
+                <MyriadParam1>1</MyriadParam1>
+                <MyriadParam2>2</MyriadParam2>
+            </MyriadParams>
+            <Generators>LensesGenerator;FieldsGenerator;DUCasesGenerator</Generators>
+        </Compile>
+    ```
+
 - If `MyriadConfigFile` is not specified assume it would be: `ProjectDirectory/myriad.toml`.
 - If there is no config file present create one empty.
 
