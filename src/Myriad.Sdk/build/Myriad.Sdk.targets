@@ -131,8 +131,7 @@
         </PropertyGroup>
     </Target>
 
-    <!--
-    Update the file which captures the total set of all inputs to the code generator.
+    <!-- Update the file which captures the total set of all inputs to the code generator.
     This is based on the _GenerateCompileDependencyCache target from the .NET project system. -->
     <Target Name="MyriadSdkGenerateInputCache" DependsOnTargets="ResolveAssemblyReferences;_MyriadSdkFilesList" BeforeTargets="MyriadSdkGenerateCode">
 
