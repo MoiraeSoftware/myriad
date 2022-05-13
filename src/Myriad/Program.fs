@@ -26,8 +26,7 @@ module Implementation =
         
     let getConfigHandler (isVerbose: bool) (config: Model.TomlTable option) (name: string) =
         if isVerbose then
-            printfn $"Config is: %A{config}"
-            printfn $"Looking for: %s{name}"
+            printfn $"Looking for: %s{name} in config"
 
         match config with
         | Some config ->
@@ -100,7 +99,6 @@ module Main =
             let results = parser.Parse argv
             let verbose = results.Contains Verbose
 
-            if verbose then printfn $"command args: %A{argv}"
             if results.Contains WaitForDebugger then
                 while not(Debugger.IsAttached) do
                   Threading.Thread.Sleep(100)
@@ -114,13 +112,8 @@ module Main =
             let inlineGeneration = results.Contains InlineGeneration
             let plugins = results.GetResults Plugin
             let contextFile = results.TryGetResult ContextFile
-            let generatorsOnly = defaultArg (results.TryGetResult GeneratorFilter) []
-            
-            if verbose then
-                if List.isNotEmpty generatorsOnly then
-                    printfn "GeneratorFilters:"
-                    generatorsOnly |> List.iter (printfn "%s")
-            
+            let generatorsFilters = (results.GetResults GeneratorFilter) |> List.concat
+                        
             let projectContext =
                 match contextFile with
                 | Some file when File.Exists file ->
@@ -137,7 +130,7 @@ module Main =
 
 
             if verbose then
-                printfn "Plugins found:"
+                printfn "------------------------------------\nMyriad starting, plugins found:"
                 plugins |> List.iter (printfn "- '%s'")
 
             let generators =
@@ -146,7 +139,7 @@ module Main =
 
             if verbose then
                 printfn "Generators found:"
-                generators |> List.iter (fun t -> printfn $"- '%s{t.FullName}'")
+                generators |> List.iter (fun t -> printfn $"- %s{t.FullName}")
 
             let runGenerator (inputFile: string) (genType: Type) =
                 let instance = Activator.CreateInstance(genType) :?> IMyriadGenerator
@@ -154,7 +147,7 @@ module Main =
                 let configHandler = getConfigHandler verbose config
 
                 if verbose then
-                    printfn $"Executing: %s{genType.FullName}..."
+                    printfn $"Executing Generator: %s{genType.FullName} for %s{inputFile}"
 
                 let result, errors =
                     try
@@ -169,15 +162,29 @@ module Main =
                         let message = exc.ToString()
                         None, Some ($"%s{info}%s{Environment.NewLine}!CompilationError%s{Environment.NewLine}%s{message}")
 
-                if verbose then printfn $"Result: '%A{result}'"
+                if verbose then printfn $"Result: %A{result}"
 
                 genType, result, errors
 
-            if verbose then
-                printfn "Execute generators:"
-                printfn $"Input Filename:\n:%A{inputFile}"
-
-            let generated = generators |> List.map (runGenerator inputFile)
+            let generated =
+                if verbose then
+                    if generatorsFilters.IsEmpty then
+                        printfn "GeneratorFilters <No filters>"
+                    else printfn $"GeneratorFilters %A{generatorsFilters}"
+                generators
+                |> List.filter (fun g -> if generatorsFilters.IsEmpty then
+                                             if verbose then
+                                                printfn $"- %s{g.Name}: is included"
+                                             true
+                                         else
+                                             let isOk = generatorsFilters |> List.contains g.Name
+                                             if verbose then
+                                                 if isOk then
+                                                     printfn $"- %s{g.Name}: is included"
+                                                 else
+                                                     printfn $"- %s{g.Name}: is excluded"
+                                             isOk)
+                |> List.map (runGenerator inputFile)
 
             let formattedCode =
                 let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
@@ -219,17 +226,17 @@ About to format generated ouptut from %A{genType}"""
                 let tempFile = Path.GetTempFileName()
                 let linesToKeep = Generation.linesToKeep inputFile
 
-                if verbose then printfn $"Inline generation: Writing to temp file: '%A{tempFile}'"
+                if verbose then printfn $"Inline generation: Writing to temp file: '%s{tempFile}'"
                 File.WriteAllLines(tempFile, seq{ yield! linesToKeep; yield! code} )
-                if verbose then printfn $"Inline generation: Removing input file: '%A{tempFile}'"
+                if verbose then printfn $"Inline generation: Removing input file: '%s{tempFile}'"
                 File.Delete(inputFile)
                 if verbose then
-                    printfn $"Inline generation: Renaming temp file to input file: '%A{tempFile}' -> '%A{inputFile}'"
+                    printfn $"Inline generation: Renaming temp file to input file: '%s{tempFile}' -> '%s{inputFile}'"
                 File.Move(tempFile, inputFile)
             else
                 match outputFile with
                 | Some filename ->
-                    if verbose then printfn $"Code generation: Writing output file: '%A{filename}'"
+                    if verbose then printfn $"Code generation: Writing output file: '%s{filename}'"
                     File.WriteAllLines(filename, code)
                 | None -> failwith "Error: No OutputFile was included, and --inlinegeneration was not specified."
 
