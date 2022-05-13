@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1]
 ### Changed
-- Added support for generator filters with msbuild property `<Generators>generatorName1;generatorName2</Generators>` only the named generators are run, all others are excluded, the Generators element is added under the Compile element as follows:
+- Added support for generator filters with msbuild property `<Generators>...</Generators>` only the named generators are run, all others are excluded, the Generators element is added under the Compile element as follows:
     ```
         <Compile Include="Input.fs">
             <MyriadParams>
@@ -18,8 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         </Compile>
     ```
 
-- If `MyriadConfigFile` is not specified assume it would be: `ProjectDirectory/myriad.toml`.
-- If there is no config file present create one empty.
+- If `MyriadConfigFile` is not specified assume it would be: `$(ProjectDirectory)\myriad.toml`.
+- If there is no config file present an empty one is created.
 
 
 ## [0.8.0]
