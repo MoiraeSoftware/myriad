@@ -28,6 +28,7 @@
         <MyriadParam1>1</MyriadParam1>
         <MyriadParam2>2</MyriadParam2>
       </MyriadParams>
+      <Generators>LensesGenerator;FieldsGenerator;DUCasesGenerator</Generators>
     </Compile>
 
     <Compile Include="FieldsLensDus.fs">
@@ -49,6 +50,7 @@
 
     <Compile Include="ArbitaryFile2.fs">
       <MyriadFile>Test.txt</MyriadFile>
+      <Generators>Example1Gen</Generators>
       <!-- <MyriadConfigKey>example1</MyriadConfigKey> -->
     </Compile>
 
