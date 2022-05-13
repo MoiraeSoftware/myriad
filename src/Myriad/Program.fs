@@ -73,6 +73,7 @@ module Main =
         | Verbose
         | [<EqualsAssignment;CustomCommandLine("--additionalparams")>] AdditionalParams of key:string * value:string
         | InlineGeneration
+        | [<CustomCommandLine("--generator-filter")>] GeneratorFilter of string list
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -87,6 +88,8 @@ module Main =
                 | Verbose -> "Verbose output."
                 | AdditionalParams _ -> "Specify additional parameters."
                 | InlineGeneration -> "Generate code for the input file at the end of the input file."
+                | GeneratorFilter _-> "A list of generators to run, only the specifid generators will be run, all others will be ignored."
+                
         
 
     [<EntryPoint>]
@@ -97,6 +100,7 @@ module Main =
             let results = parser.Parse argv
             let verbose = results.Contains Verbose
 
+            if verbose then printfn $"command args: %A{argv}"
             if results.Contains WaitForDebugger then
                 while not(Debugger.IsAttached) do
                   Threading.Thread.Sleep(100)
@@ -110,6 +114,12 @@ module Main =
             let inlineGeneration = results.Contains InlineGeneration
             let plugins = results.GetResults Plugin
             let contextFile = results.TryGetResult ContextFile
+            let generatorsOnly = defaultArg (results.TryGetResult GeneratorFilter) []
+            
+            if verbose then
+                if List.isNotEmpty generatorsOnly then
+                    printfn "GeneratorFilters:"
+                    generatorsOnly |> List.iter (printfn "%s")
             
             let projectContext =
                 match contextFile with
