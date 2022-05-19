@@ -278,14 +278,24 @@ module Ast =
             ParsedImplFileInput(file, isScript, qualName, scopedPragmas, hashDirectives, modules, (isLastCompiland, isExe))
             
     type SynModuleOrNamespace with
-        static member CreateNamespace(ident, ?isRecursive, ?decls, ?docs, ?attribs, ?access) =
+        
+        static member private Create(ident, kind: SynModuleOrNamespaceKind, ?isRecursive: bool, ?decls: SynModuleDecl list, ?docs: PreXmlDoc, ?attribs: SynAttributeList list, ?access: SynAccess) =
             let range = range0
-            let kind = SynModuleOrNamespaceKind.DeclaredNamespace
             let isRecursive = defaultArg isRecursive false
             let decls = defaultArg decls []
             let docs = defaultArg docs  PreXmlDoc.Empty
             let attribs = defaultArg attribs SynAttributes.Empty
             SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range)
+            
+        static member CreateNamespace(ident: LongIdent, ?isRecursive: bool, ?decls: SynModuleDecl list, ?docs: PreXmlDoc, ?attribs: SynAttributeList list, ?access: SynAccess) =
+            SynModuleOrNamespace.Create(ident, SynModuleOrNamespaceKind.DeclaredNamespace, ?isRecursive = isRecursive, ?decls = decls, ?docs = docs, ?attribs = attribs, ?access =access)
+            
+        static member CreateModule(ident, ?isRecursive, ?decls, ?docs, ?attribs, ?access) =
+            SynModuleOrNamespace.Create(ident, SynModuleOrNamespaceKind.NamedModule, ?isRecursive = isRecursive, ?decls = decls, ?docs = docs, ?attribs = attribs, ?access = access)
+            
+        static member CreateAnonModule(?ident, ?isRecursive, ?decls, ?docs, ?attribs, ?access) =
+            let ident = defaultArg ident (Ident.CreateLong "Tmp")
+            SynModuleOrNamespace.Create(ident, SynModuleOrNamespaceKind.AnonModule, ?isRecursive = isRecursive, ?decls = decls, ?docs = docs, ?attribs = attribs, ?access = access)
             
     type SynComponentInfo with
         static member Create(id: LongIdent, ?attributes, ?parameters, ?constraints, ?xmldoc, ?preferPostfix, ?access) =
