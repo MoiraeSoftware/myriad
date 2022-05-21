@@ -8,21 +8,9 @@ The idea behind Myriad is to un-complicate, as far as possible, the ability to d
 
 Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins. Myriad provides an approach to compiler extension that isn't modifying or adjusting Type Providers or waiting a long time for other F# language improvements. You write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project. This lets the compiler optimise generated output in addition to allowing tooling to operate effectively.
 
-![Build](https://github.com/MoiraeSoftware/myriad/workflows/Build/badge.svg)
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K115UYS)
+![Build](https://github.com/MoiraeSoftware/myriad/workflows/Build/badge.svg)  
 
-## Terms of use
-
- By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
-
- - You **condemn Russia and its military aggression against Ukraine**
- - You **recognize that Russia is an occupant that unlawfully invaded a sovereign state**
- - You **support Ukraine's territorial integrity, including its claims over temporarily occupied territories of Crimea and Donbas**
- - You **reject false narratives perpetuated by Russian state propaganda**
-
- To learn more about the war and how you can help, [click here](https://tyrrrz.me). Glory to Ukraine! 🇺🇦
- 
- - - -
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K115UYS)  
 
 ## Usage via MSBuild
 
@@ -285,3 +273,13 @@ Here is a list of external plugins that have been built
 [JsonWrapper](https://github.com/BinaryDefense/JsonWrapper)
 [TypeSafeInternals](https://github.com/TheAngryByrd/TypeSafeInternals)
 
+## Terms of use
+
+ By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
+
+ - You **condemn Russia and its military aggression against Ukraine**
+ - You **recognize that Russia is an occupant that unlawfully invaded a sovereign state**
+ - You **support Ukraine's territorial integrity, including its claims over temporarily occupied territories of Crimea and Donbas**
+ - You **reject false narratives perpetuated by Russian state propaganda**
+
+ To learn more about the war and how you can help, [click here](https://tyrrrz.me). Glory to Ukraine! 🇺🇦
