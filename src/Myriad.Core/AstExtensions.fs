@@ -497,3 +497,21 @@ module AstExtensions =
     type SynSimplePats with
         static member Create(patterns) =
             SynSimplePats.SimplePats(patterns, range0)
+
+    type SynTypeDefn with
+        static member CreateFromRepr(name : Ident, repr : SynTypeDefnRepr, ?members : SynMemberDefns, ?xmldoc : PreXmlDoc) =
+            let name = SynComponentInfo.Create([name], xmldoc = defaultArg xmldoc PreXmlDoc.Empty)
+            let extraMembers, trivia =
+                match members with
+                | None -> SynMemberDefns.Empty, SynTypeDefnTrivia.Zero
+                | Some defns -> defns, { SynTypeDefnTrivia.Zero with WithKeyword = Some range0 }
+
+            SynTypeDefn(name, repr, extraMembers, None, range0, trivia)
+
+        static member CreateUnion (name : Ident, cases : SynUnionCase list, ?members : SynMemberDefns, ?xmldoc : PreXmlDoc) =
+            let repr = SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(None, cases, range0), range0)
+            SynTypeDefn.CreateFromRepr(name, repr, defaultArg members SynMemberDefns.Empty, defaultArg xmldoc PreXmlDoc.Empty)
+
+        static member  CreateRecord (name : Ident, fields : SynField seq, ?members : SynMemberDefns, ?xmldoc : PreXmlDoc) =
+            let repr = SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(None, Seq.toList fields, range0), range0)
+            SynTypeDefn.CreateFromRepr(name, repr, defaultArg members SynMemberDefns.Empty, defaultArg xmldoc PreXmlDoc.Empty)
