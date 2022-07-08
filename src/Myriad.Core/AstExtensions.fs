@@ -84,18 +84,18 @@ module AstExtensions =
         static member CreateRecord (fields: list<RecordFieldName * option<SynExpr>>) =
             let fields = fields |> List.map (fun (rfn, synExpr) -> SynExprRecordField (rfn, None, synExpr, None))
             SynExpr.Record(None, None, fields, range0)
-            
+
         static member CreateRecordUpdate (copyInfo: SynExpr, fieldUpdates) =
             let blockSep = (range0, None) : BlockSeparator
             let fields = fieldUpdates |> List.map (fun (rfn, synExpr) -> SynExprRecordField(rfn, Some range0, synExpr, Some blockSep))
             let copyInfo = Some (copyInfo, blockSep)
             SynExpr.Record(None, copyInfo, fields, range0)
-            
+
         static member CreateRecordUpdate (copyInfo: SynExpr, fieldUpdates ) =
             let blockSep = (range0, None) : BlockSeparator
             let copyInfo = Some (copyInfo, blockSep)
             SynExpr.Record (None, copyInfo, fieldUpdates, range0)
-            
+
         /// Creates:
         ///
         /// ```
@@ -154,15 +154,16 @@ module AstExtensions =
 
         static member Create(name: string) = SynType.CreateLongIdent name
 
-        static member Option(inner: SynType) =
+        static member Option(inner: SynType, ?isPostfix : bool) =
+            let isPostfix = defaultArg isPostfix false
             SynType.App(
-                typeName=SynType.CreateLongIdent "Option",
+                typeName=SynType.CreateLongIdent (if isPostfix then "option" else "Option"),
                 typeArgs=[ inner ],
                 commaRanges = [ ],
-                isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                isPostfix = isPostfix,
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
         static member ResizeArray(inner: SynType) =
@@ -171,9 +172,9 @@ module AstExtensions =
                 typeArgs=[ inner ],
                 commaRanges = [ ],
                 isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
         static member Set(inner: SynType) =
@@ -182,31 +183,32 @@ module AstExtensions =
                 typeArgs=[ inner ],
                 commaRanges = [ ],
                 isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
-        static member NativePointer(inner: SynType) =
+        static member NativePointer(inner: SynType, ?isPostfix : bool) =
             SynType.App(
                 typeName=SynType.CreateLongIdent "nativeptr",
                 typeArgs=[ inner ],
                 commaRanges = [ ],
-                isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                isPostfix = defaultArg isPostfix false,
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
-        static member Option(inner: string) =
+        static member Option(inner: string, ?isPostfix : bool) =
+            let isPostfix = defaultArg isPostfix false
             SynType.App(
-                typeName=SynType.CreateLongIdent "Option",
+                typeName=SynType.CreateLongIdent (if isPostfix then "option" else "Option"),
                 typeArgs=[ SynType.Create inner ],
                 commaRanges = [ ],
-                isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                isPostfix = isPostfix,
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
         static member Dictionary(key, value) =
@@ -215,9 +217,9 @@ module AstExtensions =
                 typeArgs=[ key; value ],
                 commaRanges = [ ],
                 isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
         static member Map(key, value) =
@@ -226,20 +228,21 @@ module AstExtensions =
                 typeArgs=[ key; value ],
                 commaRanges = [ ],
                 isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
-        static member List(inner: SynType) =
+        static member List(inner: SynType, ?isPostfix : bool) =
+            let isPostfix = defaultArg isPostfix false
             SynType.App(
-                typeName=SynType.CreateLongIdent "list",
+                typeName=SynType.CreateLongIdent (if isPostfix then "list" else "List"),
                 typeArgs=[ inner ],
                 commaRanges = [ ],
-                isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                isPostfix = isPostfix,
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
         static member Array(inner: SynType) =
@@ -247,21 +250,22 @@ module AstExtensions =
                 typeName=SynType.CreateLongIdent "array",
                 typeArgs=[ inner ],
                 commaRanges = [ ],
-                isPostfix = false,
+                isPostfix = true,
                 range=range0,
                 greaterRange=None,
                 lessRange=None
             )
 
-        static member List(inner: string) =
+        static member List(inner: string, ?isPostfix : bool) =
+            let isPostfix = defaultArg isPostfix false
             SynType.App(
-                typeName=SynType.CreateLongIdent "list",
+                typeName=SynType.CreateLongIdent (if isPostfix then "list" else "List"),
                 typeArgs=[ SynType.Create inner ],
                 commaRanges = [ ],
-                isPostfix = false,
-                range=range0,
-                greaterRange=None,
-                lessRange=None
+                isPostfix = isPostfix,
+                range = range0,
+                greaterRange = Some range0,
+                lessRange = Some range0
             )
 
         static member DateTimeOffset() =
