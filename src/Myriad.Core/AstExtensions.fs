@@ -31,6 +31,16 @@ module AstExtensions =
             sb.Append x.Lid.[x.Lid.Length-1].idText |> ignore
             sb.ToString()
 
+    type SynComponentInfo with
+        static member Create(id: LongIdent, ?attributes, ?parameters, ?constraints, ?xmldoc, ?preferPostfix, ?access) =
+            let attributes = defaultArg attributes SynAttributes.Empty
+            let constraints = defaultArg constraints []
+            let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
+            let preferPostfix = defaultArg preferPostfix false
+            let access = defaultArg access None
+            let range = range0
+            SynComponentInfo(attributes, parameters, constraints,id, xmldoc,preferPostfix, access, range)   
+    
     type SynArgPats with
         static member Empty =
             SynArgPats.Pats[]
@@ -79,6 +89,10 @@ module AstExtensions =
             |> SynExpr.CreateParen
         static member CreateUnit =
             SynExpr.CreateConst SynConst.Unit
+            
+        static member CreatePipeRight =
+            SynExpr.CreateIdent(Ident.Create "op_PipeRight")
+            
         static member CreateNull =
             SynExpr.Null(range0)
         static member CreateRecord (fields: list<RecordFieldName * option<SynExpr>>) =
@@ -139,6 +153,9 @@ module AstExtensions =
                     |> inner tail
             inner exprs None
 
+        static member CreateWorkflow(ident : LongIdentWithDots, statements : SynExpr list) =
+            let steps = SynExpr.CreateSequential statements
+            SynExpr.CreateApp(SynExpr.CreateLongIdent ident, SynExpr.ComputationExpr(false, steps, range0))
 
     type SynType with
         static member CreateApp (typ, args, ?isPostfix) =
@@ -497,3 +514,34 @@ module AstExtensions =
     type SynSimplePats with
         static member Create(patterns) =
             SynSimplePats.SimplePats(patterns, range0)
+
+    type SynTypeDefn with
+        static member CreateFromRepr(name : Ident, repr : SynTypeDefnRepr, ?members : SynMemberDefns, ?xmldoc : PreXmlDoc) =
+            let name = SynComponentInfo.Create([name], xmldoc = defaultArg xmldoc PreXmlDoc.Empty)
+            let extraMembers, trivia =
+                match members with
+                | None -> SynMemberDefns.Empty, SynTypeDefnTrivia.Zero
+                | Some defns -> defns, { SynTypeDefnTrivia.Zero with WithKeyword = Some range0 }
+
+            SynTypeDefn(name, repr, extraMembers, None, range0, trivia)
+
+        static member CreateUnion (name : Ident, cases : SynUnionCase list, ?members : SynMemberDefns, ?xmldoc : PreXmlDoc) =
+            let repr = SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(None, cases, range0), range0)
+            SynTypeDefn.CreateFromRepr(name, repr, defaultArg members SynMemberDefns.Empty, defaultArg xmldoc PreXmlDoc.Empty)
+
+        static member  CreateRecord (name : Ident, fields : SynField seq, ?members : SynMemberDefns, ?xmldoc : PreXmlDoc) =
+            let repr = SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(None, Seq.toList fields, range0), range0)
+            SynTypeDefn.CreateFromRepr(name, repr, defaultArg members SynMemberDefns.Empty, defaultArg xmldoc PreXmlDoc.Empty)
+
+    type SynField with
+        static member Create(fieldType : SynType, ?name : Ident, ?attributes : SynAttributes, ?access : SynAccess, ?xmldoc : PreXmlDoc) =
+            let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
+            let attributes = defaultArg attributes SynAttributes.Empty 
+            SynField(attributes, false, name, fieldType, false, xmldoc, access, range0)
+    
+    type SynUnionCase with
+        static member Create(name : Ident, fields : SynField list, ?attributes : SynAttributes, ?access : SynAccess, ?xmldoc : PreXmlDoc) =
+            let trivia : SynUnionCaseTrivia = { BarRange = None }
+            let attributes = defaultArg attributes SynAttributes.Empty
+            let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
+            SynUnionCase(attributes, name, SynUnionCaseKind.Fields(fields), xmldoc, access, range0, trivia)
