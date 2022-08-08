@@ -263,8 +263,8 @@ dotnet new myriadgenerator -n myMyriadPlugin
 6. Upload generated packages into NuGet.org
 
 ### Also see
-* [Applied Metaprogramming with Myriad And Falanx](https://7sharp9.github.io/fsharp/2019-04-24-applied-metaprogramming-with-myriad/)
-* [Myriad Intro](https://7sharp9.github.io/fsharp/2019-11-06-myriad-intro/)
+* [Applied Metaprogramming with Myriad And Falanx](https://7sharp9.dev/programming/2019-04-24-applied-metaprogramming-with-myriad/)
+* [Myriad Intro](https://7sharp9.dev/programming/2019-11-06-myriad-intro/)
 
 ### External plugins
 
