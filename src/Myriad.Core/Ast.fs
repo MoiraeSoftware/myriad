@@ -98,13 +98,13 @@ module Ast =
         let allLines = Generation.linesToKeep filename |> String.concat Environment.NewLine
         let parsingOpts = {FSharpParsingOptions.Default with
                                SourceFiles = [| filename |]
-                               ErrorSeverityOptions = FSharpDiagnosticOptions.Default }
+                               DiagnosticOptions = FSharpDiagnosticOptions.Default }
         let checker = FSharpChecker.Create()
         CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString allLines, parsingOpts, checker)
 
     let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
         match attrib.TypeName with
-        | LongIdentWithDots(ident, _range) ->
+        | SynLongIdent(ident, _range, _) ->
             let ident =
                 ident
                 |> List.map(fun id -> id.ToString())
@@ -174,8 +174,8 @@ module Ast =
             ]
 
         [   match ast with
-            | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g)) ->
-                for SynModuleOrNamespace(namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _) as ns in modules do
+            | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g, _)) ->
+                for SynModuleOrNamespace(namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _, _) as ns in modules do
                     yield! extractTypes moduleDecls namespaceId
             | _ -> () ]
 
@@ -206,15 +206,15 @@ module Ast =
         
     module ModuleOrNamespace =
         let hasAttribute<'a>
-            (SynModuleOrNamespace (_namespaceId, _isRec, _isModule, _moduleDecls, _preXmlDoc, attributes, _access, _range)) =
+            (SynModuleOrNamespace (_namespaceId, _isRec, _isModule, _moduleDecls, _preXmlDoc, attributes, _access, _range, _)) =
             attributes
             |> List.collect (fun n -> n.Attributes)
             |> List.exists (typeNameMatches typeof<'a>)
             
         let modulesWithAttribute<'a> (ast: ParsedInput) =
             [ match ast with
-              | ParsedInput.ImplFile (ParsedImplFileInput (_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g)) ->
-                  for SynModuleOrNamespace (_namespaceId, _isRec, moduleOrNs, _moduleDecls, _preXmlDoc, _attributes, _access, _range) as ns in modules do
+              | ParsedInput.ImplFile (ParsedImplFileInput (_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g, _)) ->
+                  for SynModuleOrNamespace (_namespaceId, _isRec, moduleOrNs, _moduleDecls, _preXmlDoc, _attributes, _access, _range, _) as ns in modules do
                       if moduleOrNs.IsModule && hasAttribute<'a> ns then
                           yield ns
               | _ -> () ]
@@ -229,7 +229,7 @@ module Ast =
                           yield! (extractTypes decls combined)
                       | _other -> () ]
 
-            let (SynModuleOrNamespace (namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _range)) =
+            let (SynModuleOrNamespace (namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _range, _)) =
                 nsOrModule
 
             extractTypes moduleDecls namespaceId
@@ -275,7 +275,7 @@ module Ast =
             let modules = defaultArg modules []
             let isLastCompiland = defaultArg isLastCompiland true
             let isExe = defaultArg isExe false
-            ParsedImplFileInput(file, isScript, qualName, scopedPragmas, hashDirectives, modules, (isLastCompiland, isExe))
+            ParsedImplFileInput(file, isScript, qualName, scopedPragmas, hashDirectives, modules, (isLastCompiland, isExe), ParsedImplFileInputTrivia.Zero)
             
     type SynModuleOrNamespace with
         
@@ -285,7 +285,7 @@ module Ast =
             let decls = defaultArg decls []
             let docs = defaultArg docs  PreXmlDoc.Empty
             let attribs = defaultArg attribs SynAttributes.Empty
-            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range)
+            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range, SynModuleOrNamespaceTrivia.Zero)
             
         static member CreateNamespace(ident: LongIdent, ?isRecursive: bool, ?decls: SynModuleDecl list, ?docs: PreXmlDoc, ?attribs: SynAttributeList list, ?access: SynAccess) =
             SynModuleOrNamespace.Create(ident, SynModuleOrNamespaceKind.DeclaredNamespace, ?isRecursive = isRecursive, ?decls = decls, ?docs = docs, ?attribs = attribs, ?access =access)
@@ -298,9 +298,13 @@ module Ast =
             SynModuleOrNamespace.Create(ident, SynModuleOrNamespaceKind.AnonModule, ?isRecursive = isRecursive, ?decls = decls, ?docs = docs, ?attribs = attribs, ?access = access)                 
             
     type SynPat with
-        static member CreateNamed(ident, ?isThisVal, ?access) =
+        static member CreateNamed(ident : SynIdent, ?isThisVal, ?access) =
             let isThisVal = defaultArg isThisVal false
             SynPat.Named(ident, isThisVal, access, range0)
+            
+        static member CreateNamed(ident : Ident, ?isThisVal, ?access) =
+            let isThisVal = defaultArg isThisVal false
+            SynPat.Named(SynIdent(ident, None), isThisVal, access, range0)
             
         static member CreateWild =
             SynPat.Wild(range0)
@@ -311,9 +315,9 @@ module Ast =
         static member CreateParen(exp) =
             SynPat.Paren(exp, range0)
             
-        static member CreateLongIdent(id, args, ?prop, ?typarDecls, ?extraId, ?access) =
+        static member CreateLongIdent(id, args, ?typarDecls, ?extraId, ?access) =
             let args = SynArgPats.Pats(args)
-            SynPat.LongIdent(id, prop, extraId, typarDecls, args, access, range0)
+            SynPat.LongIdent(id, extraId, typarDecls, args, access, range0)
             
         static member CreateNull =
             SynPat.Null(range0)

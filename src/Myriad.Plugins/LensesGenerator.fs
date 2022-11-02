@@ -21,11 +21,11 @@ module internal CreateLenses =
         let fieldName = match id with None -> failwith "no field name" | Some f -> f
 
         let recordType =
-            LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
+            SynLongIdent.Create (parent |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
                     
         let letPat = SynPat.CreateNamed fieldName
-        let lambdaGetBody = SynExpr.CreateLongIdent(LongIdentWithDots.Create ["x"; fieldName.idText])
+        let lambdaGetBody = SynExpr.CreateLongIdent(SynLongIdent.Create ["x"; fieldName.idText])
         let lambdaGetPats = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "x"), recordType))]
         
         let lambdaSetBody =
@@ -38,8 +38,8 @@ module internal CreateLenses =
                      SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "value"), fieldType)) ]
                     
             let innerBody =
-                let copySrc = SynExpr.CreateLongIdent(false, LongIdentWithDots.Create ["x"], None)
-                let recordUpdateName :RecordFieldName = (LongIdentWithDots.CreateString fieldName.idText, true)
+                let copySrc = SynExpr.CreateLongIdent(false, SynLongIdent.Create ["x"], None)
+                let recordUpdateName :RecordFieldName = (SynLongIdent.CreateString fieldName.idText, true)
                 let fieldList = [(recordUpdateName, Some(SynExpr.Ident (Ident.Create "value")))]
                 SynExpr.CreateRecordUpdate (copySrc, fieldList)
                 
@@ -54,7 +54,7 @@ module internal CreateLenses =
         SynModuleDecl.CreateLet [SynBinding.Let(pattern = letPat, expr = letBody)]
 
     let private createLensForDU (requiresQualifiedAccess : bool) (parent: LongIdent) (wrapperName : Option<string>) (du : SynUnionCase) =
-        let (SynUnionCase.SynUnionCase(_,id,duType,_,_,_,_)) = du
+        let (SynUnionCase.SynUnionCase(_,(SynIdent(id, _)),duType,_,_,_,_)) = du
         let (SynField.SynField(_,_,_,fieldType,_,_,_,_)) =
             match duType with
             | SynUnionCaseKind.Fields [singleCase] -> singleCase
@@ -62,12 +62,12 @@ module internal CreateLenses =
             | _ -> failwithf "Unsupported type"
 
         let duType =
-            LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
+            SynLongIdent.Create (parent |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
 
         let getterName = Ident("getter", range0)
         let pattern =
-            SynPat.CreateLongIdent(LongIdentWithDots.CreateString "Lens'", [])
+            SynPat.CreateLongIdent(SynLongIdent.CreateString "Lens'", [])
 
         let matchCaseIdentParts =
             if requiresQualifiedAccess then
@@ -76,12 +76,12 @@ module internal CreateLenses =
                 [id.idText]
 
         // The name of the DU case, optionally preceded by the name of the DU itself, if fully qualified access is required
-        let fullCaseName = LongIdentWithDots.Create matchCaseIdentParts
+        let fullCaseName = SynLongIdent.Create matchCaseIdentParts
 
         let lensExpression =
             let matchCase =
                 let caseVariableName = "x"
-                let args = [SynPat.CreateLongIdent (LongIdentWithDots.CreateString caseVariableName, [])]
+                let args = [SynPat.CreateLongIdent (SynLongIdent.CreateString caseVariableName, [])]
                 let matchCaseIdent = SynPat.CreateLongIdent(fullCaseName, args)
 
                 let rhs = SynExpr.CreateIdent (Ident.Create caseVariableName)
@@ -89,7 +89,7 @@ module internal CreateLenses =
 
             let getterArgName = "x"
             let matchOn =
-                let ident = LongIdentWithDots.CreateString getterArgName
+                let ident = SynLongIdent.CreateString getterArgName
                 SynExpr.CreateLongIdent(false, ident, None)
 
             let matchExpression = SynExpr.CreateMatch(matchOn, [matchCase])
@@ -100,7 +100,7 @@ module internal CreateLenses =
                 let valueArgPatterns = [SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed valueIdent, fieldType))]
 
                 let duType =
-                    LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
+                    SynLongIdent.Create (parent |> List.map (fun i -> i.idText))
                     |> SynType.CreateLongIdent
 
                 let createCase = SynExpr.App (ExprAtomicFlag.NonAtomic, false, SynExpr.LongIdent (false, fullCaseName, None, range0), SynExpr.Ident valueIdent, range0)
@@ -118,7 +118,7 @@ module internal CreateLenses =
                 let valData = SynValData.SynValData(None, SynValInfo.Empty, None)
                 let synPat = SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "x", false), duType))
 
-                let synPat = SynPat.LongIdent (LongIdentWithDots.CreateString "getter", None, None, None, SynArgPats.Pats [synPat], None, range0)
+                let synPat = SynPat.LongIdent (SynLongIdent.CreateString "getter", None, None, SynArgPats.Pats [synPat], None, range0)
 
                 let trivia = {EqualsRange = Some range0; LetKeyword = Some range0}
                 SynBinding.SynBinding (None, SynBindingKind.Normal, false, false, [], PreXmlDoc.Empty, valData, synPat, None, matchExpression, range0, DebugPointAtBinding.NoneAtDo, trivia)
@@ -136,8 +136,8 @@ module internal CreateLenses =
 
         List.foldBack folder list []
 
-    let private (|LongIdentLid|) (ident : LongIdentWithDots) =
-        ident.Lid
+    let private (|LongIdentLid|) (ident : SynLongIdent) =
+        ident.LongIdent
 
     let private (|SynTypeAppTypeName|_|) (expr : SynType) =
         match expr with
@@ -162,8 +162,8 @@ module internal CreateLenses =
                                              Some longIdent.AsString
             | expr-> failwithf $"Unsupported syntax of specifying the wrapper name for type %A{recordId}.\nExpr: %A{expr}"
 
-        let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
-        let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
+        let ident = SynLongIdent.Create (namespaceId |> List.map (fun ident -> ident.idText))
+        let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.LongIdent, range0)
         let openParent = SynModuleDecl.CreateOpen openTarget
         let moduleInfo = SynComponentInfo.Create moduleIdent
 
