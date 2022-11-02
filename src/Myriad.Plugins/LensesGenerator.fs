@@ -12,7 +12,7 @@ module internal CreateLenses =
     let private wrap (wrapperName : Option<string>) lens =
         match wrapperName with
         | Some name when not (String.IsNullOrWhiteSpace(name)) ->
-            let wrapperVar = SynExpr.CreateLongIdent (false, LongIdentWithDots (Ident.CreateLong name, []), None)
+            let wrapperVar = SynExpr.CreateLongIdent (false, SynLongIdent.CreateString name, None)
             SynExpr.App (ExprAtomicFlag.NonAtomic, false, wrapperVar, SynExpr.CreateParen lens, range0)
         | _ -> lens
 
@@ -163,7 +163,7 @@ module internal CreateLenses =
             | expr-> failwithf $"Unsupported syntax of specifying the wrapper name for type %A{recordId}.\nExpr: %A{expr}"
 
         let ident = SynLongIdent.Create (namespaceId |> List.map (fun ident -> ident.idText))
-        let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.LongIdent, range0)
+        let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident, range0)
         let openParent = SynModuleDecl.CreateOpen openTarget
         let moduleInfo = SynComponentInfo.Create moduleIdent
 

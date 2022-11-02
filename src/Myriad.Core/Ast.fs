@@ -1,10 +1,9 @@
 namespace Myriad.Core
 
 open System
+open System.IO
 open FSharp.Compiler.Syntax
-open FSharp.Compiler.Diagnostics
-open FSharp.Compiler.CodeAnalysis
-open Fantomas
+open Fantomas.Core
 open FSharp.Compiler.Text.Range
 open FSharp.Compiler.Xml
 open FSharp.Compiler.SyntaxTrivia
@@ -95,12 +94,9 @@ module DynamicReflection =
 module Ast =
     
     let fromFilename filename =
-        let allLines = Generation.linesToKeep filename |> String.concat Environment.NewLine
-        let parsingOpts = {FSharpParsingOptions.Default with
-                               SourceFiles = [| filename |]
-                               DiagnosticOptions = FSharpDiagnosticOptions.Default }
-        let checker = FSharpChecker.Create()
-        CodeFormatter.ParseAsync(filename, SourceOrigin.SourceString allLines, parsingOpts, checker)
+        let fileContent = File.ReadAllText filename
+        CodeFormatter.ParseAsync(false, fileContent)
+
 
     let typeNameMatches (attributeType: Type) (attrib: SynAttribute) =
         match attrib.TypeName with
@@ -372,7 +368,7 @@ module Ast =
     type SynExpr with
         static member CreateLambda(pats: SynPat list, body: SynExpr, ?isMember: bool) =
             let isMember = defaultArg isMember false
-            let compiler = System.Reflection.Assembly.Load("FSharp.Compiler.Service")
+            let compiler = System.Reflection.Assembly.Load("Fantomas.FCS")
             let syntaxTreeOps = compiler.GetType("FSharp.Compiler.SyntaxTreeOps")
             let synArgNameGenerator = compiler.GetType("FSharp.Compiler.SyntaxTreeOps+SynArgNameGenerator")
             let nameGen = synArgNameGenerator?``.ctor``()

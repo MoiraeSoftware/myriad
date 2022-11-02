@@ -4,7 +4,7 @@ framework: net60, netstandard21, netcoreapp31
 storage: none
 
 nuget Argu
-nuget Fantomas
+nuget Fantomas.Core
 nuget FSharp.Compiler.Service
 nuget FSharp.Core strategy: min
 nuget Tomlyn

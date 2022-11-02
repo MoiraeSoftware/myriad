@@ -16,8 +16,8 @@ module AstExtensions =
             
     type SynModuleOrNamespaceTrivia with
         static member Zero =
-            { SynModuleOrNamespaceTrivia.ModuleKeyword = None
-              NamespaceKeyword = None }
+            { SynModuleOrNamespaceTrivia.ModuleKeyword = Some range0
+              NamespaceKeyword = Some range0 }
             
     type Ident with
         static member Create text =
@@ -26,12 +26,14 @@ module AstExtensions =
             text.Split([|'.'|]) |> List.ofArray |> List.map Ident.Create
 
     type SynLongIdent with
-        static member Create texts =
-            SynLongIdent(texts |> List.map Ident.Create, [], [])
-        static member CreateString (text: string) =
-            SynLongIdent(Ident.CreateLong text, [], [])
         static member CreateFromLongIdent (longIdent: LongIdent) =
-            SynLongIdent(longIdent, [], [])
+            SynLongIdent(longIdent, [], List.replicate longIdent.Length None)
+            
+        static member Create (texts) =
+            SynLongIdent.CreateFromLongIdent (texts |> List.map Ident.Create)
+            
+        static member CreateString (text: string) =
+            SynLongIdent.CreateFromLongIdent (Ident.CreateLong text)
 
         member x.AsString =
             let sb = Text.StringBuilder()
@@ -62,7 +64,13 @@ module AstExtensions =
 
     type SynMemberFlags with
         static member InstanceMember : SynMemberFlags =
-            { IsInstance = true; MemberKind = SynMemberKind.Member; IsDispatchSlot = false; IsOverrideOrExplicitImpl = false; IsFinal = false; Trivia = SynMemberFlagsTrivia.Zero }
+            { IsInstance = true
+              MemberKind = SynMemberKind.Member
+              IsDispatchSlot = false
+              IsOverrideOrExplicitImpl = false
+              IsFinal = false
+              GetterOrSetterIsCompilerGenerated = false
+              Trivia = SynMemberFlagsTrivia.Zero }
         static member StaticMember =
             { SynMemberFlags.InstanceMember with IsInstance = false }
 
@@ -391,7 +399,7 @@ module AstExtensions =
         static member CreateOpen id =
             SynModuleDecl.Open(id, range0)
         static member CreateOpen (fullNamespaceOrModuleName: string) =
-            SynModuleDecl.Open(SynOpenDeclTarget.ModuleOrNamespace(Ident.CreateLong fullNamespaceOrModuleName, range0), range0)
+            SynModuleDecl.Open(SynOpenDeclTarget.ModuleOrNamespace(SynLongIdent.CreateString fullNamespaceOrModuleName, range0), range0)
         static member CreateHashDirective (directive, values) =
             SynModuleDecl.HashDirective (ParsedHashDirective (directive, values, range0), range0)
 

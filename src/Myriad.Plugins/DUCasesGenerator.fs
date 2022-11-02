@@ -45,7 +45,7 @@ module internal CreateDUModule =
 
             SynExpr.CreateMatch(matchOn, matches)
 
-        let returnTypeInfo = SynBindingReturnInfo.Create duType
+        let returnTypeInfo = SynBindingReturnInfo.Create (SynType.String())
         SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo)]
 
     let createFromString (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
@@ -96,7 +96,7 @@ module internal CreateDUModule =
 
             SynExpr.Match(DebugPointAtBinding.NoneAtLet, matchOn, [yield! matches; wildCase], range0, SynExprMatchTrivia.Zero)
 
-        let returnTypeInfo = SynBindingReturnInfo.Create duType
+        let returnTypeInfo = SynBindingReturnInfo.Create (SynType.Option duType)
         SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo)]
 
     let createToTag (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
@@ -135,7 +135,7 @@ module internal CreateDUModule =
 
             SynExpr.Match(DebugPointAtBinding.NoneAtLet , matchOn, matches, range0, SynExprMatchTrivia.Zero)
 
-        let returnTypeInfo = SynBindingReturnInfo.Create duType
+        let returnTypeInfo = SynBindingReturnInfo.Create (SynType.Int())
         SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo)]
 
     let createIsCase (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
@@ -178,7 +178,7 @@ module internal CreateDUModule =
 
                 SynExpr.Match(DebugPointAtBinding.NoneAtLet, matchOn, [matchCase; wildCase], range0, SynExprMatchTrivia.Zero)
 
-            let returnTypeInfo = SynBindingReturnInfo.Create duType
+            let returnTypeInfo = SynBindingReturnInfo.Create (SynType.Bool())
             SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo)]
         ]
 
@@ -189,7 +189,7 @@ module internal CreateDUModule =
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Union(_accessibility, cases, _recordRange), _range) ->
 
             let ident = SynLongIdent.Create (namespaceId |> List.map (fun ident -> ident.idText))
-            let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.LongIdent, range0)
+            let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident, range0)
             let openParent = SynModuleDecl.CreateOpen openTarget
             let requiresQualifiedAccess =
                 Ast.hasAttribute<RequireQualifiedAccessAttribute> typeDefn
