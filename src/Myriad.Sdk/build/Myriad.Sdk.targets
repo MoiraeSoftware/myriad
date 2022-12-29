@@ -216,7 +216,7 @@
             <MyriadSdk_Args Include='--additionalparams "$(_MyriadSdk_MyriadParams_Flattened)"' Condition=" '$(_MyriadSdk_MyriadParams_Flattened)' != '' " />
             <MyriadSdk_Args Include='--wait-for-debugger' Condition=" '$(MyriadSdkWaitForDebugger)' == 'true' " />
             <MyriadSdk_Args Include='--verbose' Condition=" '$(MyriadSdkVerboseOutput)' == 'true' " />
-            <MyriadSdk_Args Include='--plugin %(MyriadSdkGenerator.FullPath)' Condition=" '@(MyriadSdkGenerator)' != '' " />
+            <MyriadSdk_Args Include='--plugin "%(MyriadSdkGenerator.FullPath)"' Condition=" '@(MyriadSdkGenerator)' != '' " />
             <MyriadSdk_Args Include='--inlinegeneration' Condition=" '$(_MyriadSdk_InlineGeneration)' == 'true' " />
             <MyriadSdk_Args Include='--generator-filter "%(_GeneratorsOnly.Identity)"' Condition=" '%(_GeneratorsOnly.Identity)' != '' " />
         </ItemGroup>
