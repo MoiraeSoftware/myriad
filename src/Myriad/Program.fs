@@ -4,6 +4,8 @@ open Fantomas
 open System.IO
 open FSharp.Compiler.Syntax
 open Argu
+open Fantomas.Core
+open Fantomas.Core.FormatConfig
 open Myriad.Core
 open Tomlyn
 open System.Collections.Generic
@@ -187,7 +189,7 @@ module Main =
                 |> List.map (runGenerator inputFile)
 
             let formattedCode =
-                let cfg = { FormatConfig.FormatConfig.Default with StrictMode = true }
+                let cfg = { FormatConfig.Default with StrictMode = true }
                 
                 let outputCode =
                     let filename =
@@ -212,7 +214,7 @@ Parsed Input :------------------------------------
 --------------------------------------------------
 About to format generated ouptut from %A{genType}"""
 
-                            CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", [], None, cfg) |> Async.RunSynchronously
+                            CodeFormatter.FormatASTAsync(parseTree, "myriad.fsx", cfg) |> Async.RunSynchronously
                         | Some (Output.Source source) -> source
                         | None -> "")
 

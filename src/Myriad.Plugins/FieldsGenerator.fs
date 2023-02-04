@@ -12,12 +12,12 @@ module internal Create =
         let fieldName = match id with None -> failwith "no field name" | Some f -> f
 
         let recordType =
-            LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
+            SynLongIdent.Create (parent |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
 
         let varName = "x"
         let pattern =
-            let name = LongIdentWithDots.CreateString fieldName.idText
+            let name = SynLongIdent.CreateString fieldName.idText
             let arg =
                 let named = SynPat.CreateNamed(Ident.Create varName)
                 SynPat.CreateTyped(named, recordType)
@@ -26,7 +26,7 @@ module internal Create =
             SynPat.CreateLongIdent(name, [arg])
 
         let expr =
-            let ident = LongIdentWithDots.Create [varName; fieldName.idText]
+            let ident = SynLongIdent.Create [varName; fieldName.idText]
             SynExpr.CreateLongIdent(false, ident, None)
 
         let valData =
@@ -37,10 +37,10 @@ module internal Create =
         SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, valData = valData)]
 
     let createCreate (parent: LongIdent) (fields: SynField list) =
-        let varIdent = LongIdentWithDots.CreateString "create"
+        let varIdent = SynLongIdent.CreateString "create"
 
         let recordType =
-            LongIdentWithDots.Create (parent |> List.map (fun i -> i.idText))
+            SynLongIdent.Create (parent |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
 
         let pattern =
@@ -57,7 +57,7 @@ module internal Create =
                 fields
                 |> List.map (fun (SynField.SynField(_,_,id,_,_,_,_,_)) ->
                                  let fieldIdent = match id with None -> failwith "no field name" | Some f -> f
-                                 let name = LongIdentWithDots.Create([fieldIdent.idText])
+                                 let name = SynLongIdent.Create([fieldIdent.idText])
                                  let ident = SynExpr.CreateIdent(Ast.Ident.asCamelCase fieldIdent)
                                  SynExprRecordField.SynExprRecordField(RecordFieldName(name, true), None, Some ident, None))
 
@@ -68,7 +68,7 @@ module internal Create =
         SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, returnInfo = returnTypeInfo)]
 
     let createMap (recordId: LongIdent) (recordFields: SynField list) : SynModuleDecl =
-        let varIdent = LongIdentWithDots.CreateString "map"
+        let varIdent = SynLongIdent.CreateString "map"
         let recordPrimeIdent =  Ident.Create "record'"
 
         let createFieldMapNameIdent (id: Ident option ) =
@@ -87,7 +87,7 @@ module internal Create =
             let recordParam =
                 let name = SynPat.CreateNamed(recordPrimeIdent)
                 let typ =
-                    LongIdentWithDots.Create (recordId |> List.map (fun i -> i.idText))
+                    SynLongIdent.Create (recordId |> List.map (fun i -> i.idText))
                     |> SynType.CreateLongIdent
 
                 SynPat.CreateTyped(name, typ)
@@ -104,13 +104,13 @@ module internal Create =
 
             let fieldUpdates =
                 let mapField (SynField(_,_,id,_,_,_,_,_)) =
-                    let lid = LongIdentWithDots.Create [id.Value.idText]
+                    let lid = SynLongIdent.Create [id.Value.idText]
                     let rfn = RecordFieldName(lid, true)
 
                     let update =
                         let funcExpr = SynExpr.CreateIdent (createFieldMapNameIdent id)
                         let argExpr =
-                            let longIdentWithDots = LongIdentWithDots.Create [recordPrimeIdent.idText; id.Value.idText]
+                            let longIdentWithDots = SynLongIdent.Create [recordPrimeIdent.idText; id.Value.idText]
                             SynExpr.CreateLongIdent(false, longIdentWithDots, None)
                         SynExpr.CreateApp(funcExpr, argExpr)
 
@@ -125,7 +125,7 @@ module internal Create =
             SynExpr.Record(None, copyInfo, fieldUpdates, range0 )
 
         let returnTypeInfo =
-            LongIdentWithDots.Create (recordId |> List.map (fun i -> i.idText))
+            SynLongIdent.Create (recordId |> List.map (fun i -> i.idText))
             |> SynType.CreateLongIdent
             |> SynBindingReturnInfo.Create
 
@@ -138,8 +138,8 @@ module internal Create =
         match synTypeDefnRepr with
         | SynTypeDefnRepr.Simple(SynTypeDefnSimpleRepr.Record(_accessibility, recordFields, _recordRange), _) ->
 
-            let ident = LongIdentWithDots.Create (namespaceId |> List.map (fun ident -> ident.idText))
-            let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident.Lid, range0)
+            let ident = SynLongIdent.Create (namespaceId |> List.map (fun ident -> ident.idText))
+            let openTarget = SynOpenDeclTarget.ModuleOrNamespace(ident, range0)
             let openParent = SynModuleDecl.CreateOpen openTarget
 
             let fieldMaps = recordFields |> List.map (createFieldMap recordId)

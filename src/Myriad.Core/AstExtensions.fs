@@ -9,26 +9,38 @@ open FSharp.Compiler.SyntaxTrivia
 
 [<AutoOpen>]
 module AstExtensions =
+    type ParsedImplFileInputTrivia with
+        static member Zero =
+            { ParsedImplFileInputTrivia.ConditionalDirectives = []
+              CodeComments = [] }
+            
+    type SynModuleOrNamespaceTrivia with
+        static member Zero =
+            { SynModuleOrNamespaceTrivia.ModuleKeyword = Some range0
+              NamespaceKeyword = Some range0 }
+            
     type Ident with
         static member Create text =
             Ident(text, range0)
         static member CreateLong (text: string) =
             text.Split([|'.'|]) |> List.ofArray |> List.map Ident.Create
 
-    type LongIdentWithDots with
-        static member Create texts =
-            LongIdentWithDots(texts |> List.map Ident.Create, [])
-        static member CreateString (text: string) =
-            LongIdentWithDots(Ident.CreateLong text, [])
+    type SynLongIdent with
         static member CreateFromLongIdent (longIdent: LongIdent) =
-            LongIdentWithDots(longIdent, [])
+            SynLongIdent(longIdent, [], List.replicate longIdent.Length None)
+            
+        static member Create (texts) =
+            SynLongIdent.CreateFromLongIdent (texts |> List.map Ident.Create)
+            
+        static member CreateString (text: string) =
+            SynLongIdent.CreateFromLongIdent (Ident.CreateLong text)
 
         member x.AsString =
             let sb = Text.StringBuilder()
-            for i in 0 .. x.Lid.Length - 2 do
-                sb.Append x.Lid.[i].idText |> ignore
+            for i in 0 .. x.LongIdent.Length - 2 do
+                sb.Append x.LongIdent[i].idText |> ignore
                 sb.Append '.' |> ignore
-            sb.Append x.Lid.[x.Lid.Length-1].idText |> ignore
+            sb.Append x.LongIdent[x.LongIdent.Length-1].idText |> ignore
             sb.ToString()
 
     type SynComponentInfo with
@@ -52,7 +64,13 @@ module AstExtensions =
 
     type SynMemberFlags with
         static member InstanceMember : SynMemberFlags =
-            { IsInstance = true; MemberKind = SynMemberKind.Member; IsDispatchSlot = false; IsOverrideOrExplicitImpl = false; IsFinal = false; Trivia = SynMemberFlagsTrivia.Zero }
+            { IsInstance = true
+              MemberKind = SynMemberKind.Member
+              IsDispatchSlot = false
+              IsOverrideOrExplicitImpl = false
+              IsFinal = false
+              GetterOrSetterIsCompilerGenerated = false
+              Trivia = SynMemberFlagsTrivia.Zero }
         static member StaticMember =
             { SynMemberFlags.InstanceMember with IsInstance = false }
 
@@ -60,6 +78,11 @@ module AstExtensions =
         /// Creates a <see href="SynStringKind.Regular">Regular</see> string
         static member CreateString s =
             SynConst.String(s, SynStringKind.Regular, range0)
+            
+    type SynExprMatchTrivia with
+        static member Zero =
+            { MatchKeyword = range0
+              WithKeyword = range0 }
 
     type SynExpr with
         static member CreateConst cnst =
@@ -120,16 +143,16 @@ module AstExtensions =
         /// | clauseN
         /// ```
         static member CreateMatch(matchExpr, clauses) =
-            SynExpr.Match(range0, DebugPointAtBinding.Yes range0, matchExpr, range0, clauses, range0)
-        /// Creates : `instanceAndMethod(args)`
-        static member CreateInstanceMethodCall(instanceAndMethod : LongIdentWithDots, args) =
+            SynExpr.Match(DebugPointAtBinding.Yes range0, matchExpr, clauses, range0, SynExprMatchTrivia.Zero)
+            
+        static member CreateInstanceMethodCall(instanceAndMethod : SynLongIdent, args) =
             let valueExpr = SynExpr.CreateLongIdent instanceAndMethod
             SynExpr.CreateApp(valueExpr, args)
         /// Creates : `instanceAndMethod()`
-        static member CreateInstanceMethodCall(instanceAndMethod : LongIdentWithDots) =
+        static member CreateInstanceMethodCall(instanceAndMethod : SynLongIdent) =
             SynExpr.CreateInstanceMethodCall(instanceAndMethod, SynExpr.CreateUnit)
         /// Creates : `instanceAndMethod<type1, type2,... type}>(args)`
-        static member CreateInstanceMethodCall(instanceAndMethod : LongIdentWithDots, instanceMethodsGenericTypes, args) =
+        static member CreateInstanceMethodCall(instanceAndMethod : SynLongIdent, instanceMethodsGenericTypes, args) =
             let valueExpr = SynExpr.CreateLongIdent instanceAndMethod
             let valueExprWithType = SynExpr.TypeApp(valueExpr, range0, instanceMethodsGenericTypes, [], None, range0, range0)
             SynExpr.CreateApp(valueExprWithType, args)
@@ -153,7 +176,7 @@ module AstExtensions =
                     |> inner tail
             inner exprs None
 
-        static member CreateWorkflow(ident : LongIdentWithDots, statements : SynExpr list) =
+        static member CreateWorkflow(ident : SynLongIdent, statements : SynExpr list) =
             let steps = SynExpr.CreateSequential statements
             SynExpr.CreateApp(SynExpr.CreateLongIdent ident, SynExpr.ComputationExpr(false, steps, range0))
 
@@ -163,11 +186,11 @@ module AstExtensions =
         static member CreateLongIdent id =
             SynType.LongIdent(id)
         static member CreateLongIdent s =
-            SynType.CreateLongIdent(LongIdentWithDots.CreateString s)
+            SynType.CreateLongIdent(SynLongIdent.CreateString s)
         static member CreateUnit =
             SynType.CreateLongIdent("unit")
         static member CreateFun (fieldTypeIn, fieldTypeOut) =
-            SynType.Fun (fieldTypeIn, fieldTypeOut, range0)
+            SynType.Fun (fieldTypeIn, fieldTypeOut, range0, { ArrowRange = range0 })
 
         static member Create(name: string) = SynType.CreateLongIdent name
 
@@ -230,7 +253,7 @@ module AstExtensions =
 
         static member Dictionary(key, value) =
             SynType.App(
-                typeName=SynType.LongIdent(LongIdentWithDots.Create [ "System"; "Collections"; "Generic"; "Dictionary" ]),
+                typeName=SynType.LongIdent(SynLongIdent.Create [ "System"; "Collections"; "Generic"; "Dictionary" ]),
                 typeArgs=[ key; value ],
                 commaRanges = [ ],
                 isPostfix = false,
@@ -286,13 +309,13 @@ module AstExtensions =
             )
 
         static member DateTimeOffset() =
-            SynType.LongIdent(LongIdentWithDots.Create [ "System"; "DateTimeOffset" ])
+            SynType.LongIdent(SynLongIdent.Create [ "System"; "DateTimeOffset" ])
 
         static member DateTime() =
-            SynType.LongIdent(LongIdentWithDots.Create [ "System"; "DateTime" ])
+            SynType.LongIdent(SynLongIdent.Create [ "System"; "DateTime" ])
 
         static member Guid() =
-            SynType.LongIdent(LongIdentWithDots.Create [ "System"; "Guid" ])
+            SynType.LongIdent(SynLongIdent.Create [ "System"; "Guid" ])
 
         static member Int() =
             SynType.Create "int"
@@ -361,7 +384,7 @@ module AstExtensions =
             SynValInfo([], SynArgInfo.Empty)
 
     type SynMemberDefn with
-        static member CreateImplicitCtor (ctorArgs) =
+        static member CreateImplicitCtor (ctorArgs : SynSimplePat list) =
             SynMemberDefn.ImplicitCtor(None, SynAttributes.Empty, SynSimplePats.SimplePats(ctorArgs, range0), None, PreXmlDoc.Empty, range0 )
         static member CreateImplicitCtor() =
             SynMemberDefn.CreateImplicitCtor []
@@ -376,7 +399,7 @@ module AstExtensions =
         static member CreateOpen id =
             SynModuleDecl.Open(id, range0)
         static member CreateOpen (fullNamespaceOrModuleName: string) =
-            SynModuleDecl.Open(SynOpenDeclTarget.ModuleOrNamespace(Ident.CreateLong fullNamespaceOrModuleName, range0), range0)
+            SynModuleDecl.Open(SynOpenDeclTarget.ModuleOrNamespace(SynLongIdent.CreateString fullNamespaceOrModuleName, range0), range0)
         static member CreateHashDirective (directive, values) =
             SynModuleDecl.HashDirective (ParsedHashDirective (directive, values, range0), range0)
 
@@ -415,7 +438,7 @@ module AstExtensions =
                ArgExpr = SynExpr.Const (SynConst.Unit, range0)
                Range = range0
                Target = None
-               TypeName = LongIdentWithDots([ Ident.Create name ], [ ])
+               TypeName = SynLongIdent.CreateString name
             }
 
         static member Create(name: string, argument: string) : SynAttribute =
@@ -424,7 +447,7 @@ module AstExtensions =
                ArgExpr = SynExpr.Const (SynConst.String(argument, SynStringKind.Regular, range0), range0)
                Range = range0
                Target = None
-               TypeName = LongIdentWithDots([ Ident.Create name ], [ ])
+               TypeName = SynLongIdent.CreateString name
             }
 
         static member Create(name: string, argument: bool) : SynAttribute =
@@ -433,7 +456,7 @@ module AstExtensions =
                ArgExpr = SynExpr.Const (SynConst.Bool argument, range0)
                Range = range0
                Target = None
-               TypeName = LongIdentWithDots([ Ident.Create name ], [ ])
+               TypeName = SynLongIdent.CreateString name
             }
 
         static member Create(name: string, argument: int) : SynAttribute =
@@ -442,7 +465,7 @@ module AstExtensions =
                ArgExpr = SynExpr.Const (SynConst.Int32 argument, range0)
                Range = range0
                Target = None
-               TypeName = LongIdentWithDots([ Ident.Create name ], [ ])
+               TypeName = SynLongIdent.CreateString name
             }
 
         static member Create(name: string, argument: SynConst) : SynAttribute =
@@ -451,7 +474,7 @@ module AstExtensions =
                ArgExpr = SynExpr.Const (argument, range0)
                Range = range0
                Target = None
-               TypeName = LongIdentWithDots([ Ident.Create name ], [ ])
+               TypeName = SynLongIdent.CreateString name
             }
 
         static member Create(name: Ident, argument: SynConst) : SynAttribute =
@@ -460,7 +483,7 @@ module AstExtensions =
                ArgExpr = SynExpr.Const (argument, range0)
                Range = range0
                Target = None
-               TypeName = LongIdentWithDots([ name ], [ ])
+               TypeName = SynLongIdent([name], [ ], [])
             }
 
         static member Create(name: Ident list, argument: SynConst) : SynAttribute =
@@ -469,7 +492,7 @@ module AstExtensions =
                ArgExpr = SynExpr.Const (argument, range0)
                Range = range0
                Target = None
-               TypeName = LongIdentWithDots(name, [ ])
+               TypeName = SynLongIdent(name, [ ], [])
             }
 
         static member RequireQualifiedAccess() =
@@ -544,4 +567,4 @@ module AstExtensions =
             let trivia : SynUnionCaseTrivia = { BarRange = None }
             let attributes = defaultArg attributes SynAttributes.Empty
             let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
-            SynUnionCase(attributes, name, SynUnionCaseKind.Fields(fields), xmldoc, access, range0, trivia)
+            SynUnionCase(attributes, SynIdent(name, None) , SynUnionCaseKind.Fields(fields), xmldoc, access, range0, trivia)
