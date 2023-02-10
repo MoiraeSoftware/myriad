@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.82]
+## [0.8.2]
 ### Changed
 Updated FSharp.Compiler.Service to 41.0.6 Thanks @AlexeyRaga
 ### Fixed
