@@ -16,7 +16,7 @@
         <RepositoryUrl>$(GitUrl)</RepositoryUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <Copyright>Dave Thomas</Copyright>
-        <PackageReleaseNotes>$(Giturl)/blob/v$(NugetVersion)/CHANGELOG.md</PackageReleaseNotes>
+        <PackageReleaseNotes>$(Giturl)/blob/v$(VersionPrefix)/CHANGELOG.md</PackageReleaseNotes>
         <EnableSourceLink Condition=" 'Configuration' == 'Release' ">true</EnableSourceLink>
         <NoWarn>$(NoWarn);FS2003;NU5128</NoWarn>
     </PropertyGroup>
