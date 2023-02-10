@@ -193,7 +193,7 @@ module Test1 =
         (mapthree: float -> float)
         (mapfour: float32 -> float32)
         (record': Test1)
-        =
+        : Test1 =
         { record' with
             one = mapone record'.one
             two = maptwo record'.two
@@ -205,7 +205,7 @@ namespace rec TestDus
 module Currency =
     open Input
 
-    let toString (x: Currency) =
+    let toString (x: Currency) : string =
         match x with
         | CAD -> "CAD"
         | PLN -> "PLN"
@@ -213,7 +213,7 @@ module Currency =
         | USD -> "USD"
         | Custom _ -> "Custom"
 
-    let fromString (x: string) =
+    let fromString (x: string) : Option<Currency> =
         match x with
         | "CAD" -> Some CAD
         | "PLN" -> Some PLN
@@ -221,7 +221,7 @@ module Currency =
         | "USD" -> Some USD
         | _ -> None
 
-    let toTag (x: Currency) =
+    let toTag (x: Currency) : int =
         match x with
         | CAD -> 0
         | PLN -> 1
@@ -229,27 +229,27 @@ module Currency =
         | USD -> 3
         | Custom _ -> 4
 
-    let isCAD (x: Currency) =
+    let isCAD (x: Currency) : bool =
         match x with
         | CAD -> true
         | _ -> false
 
-    let isPLN (x: Currency) =
+    let isPLN (x: Currency) : bool =
         match x with
         | PLN -> true
         | _ -> false
 
-    let isEUR (x: Currency) =
+    let isEUR (x: Currency) : bool =
         match x with
         | EUR -> true
         | _ -> false
 
-    let isUSD (x: Currency) =
+    let isUSD (x: Currency) : bool =
         match x with
         | USD -> true
         | _ -> false
 
-    let isCustom (x: Currency) =
+    let isCustom (x: Currency) : bool =
         match x with
         | Custom _ -> true
         | _ -> false

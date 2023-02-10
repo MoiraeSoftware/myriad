@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.82]
+### Changed
+Updated FSharp.Compiler.Service to 41.0.6 Thanks @AlexeyRaga
+### Fixed
+MyriadSdk path is now quoted which fixes #159 and allows the path to have spaces.  Thanks @lucasteles
+
 ## [0.8.1]
 ### Changed
 - Added support for generator filters with msbuild property `<Generators>...</Generators>` only the named generators are run, all others are excluded, the Generators element is added under the Compile element as follows:
