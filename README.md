@@ -10,9 +10,8 @@ Myriad is an evolution of the ideas I developed while working with F#'s type pro
 
 If you want to help and contribute code than thats great check out the issues or leave a comment.  
 
-If you enjoy this repo and wanted to shown your appriciation etc then I have GitHub sponsors and also Ko-fi:  
-
-![GitHub Sponsors](https://img.shields.io/github/sponsors/7sharp9?style=for-the-badge)  
+If you enjoy this repo and wanted to shown your appriciation etc then I do have Ko-fi:  
+  
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K115UYS)  
 
 ## Usage via MSBuild
