@@ -8,7 +8,7 @@ The idea behind Myriad is to un-complicate, as far as possible, the ability to d
 
 Myriad is an evolution of the ideas I developed while working with F#'s type providers and other meta-programming functionality like quotations and AST manipulation. Myriad aims to make it easy to extend the compiler via Myriad plugins. Myriad provides an approach to compiler extension that isn't modifying or adjusting Type Providers or waiting a long time for other F# language improvements. You write a Myriad plugin that works on a fragment of AST input, and the plugin supplies AST output with the final form being source code that is built into your project. This lets the compiler optimise generated output in addition to allowing tooling to operate effectively.
 
-If you want to help and contribute code than thats great check out the issues or leave a comment.  
+If you want to help and contribute code than thats great check out the issues and make a PR.  
 
 If you enjoy this repo and wanted to shown your appriciation etc then I do have Ko-fi:  
   
