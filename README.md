@@ -14,6 +14,10 @@ If you enjoy this repo and wanted to shown your appriciation etc then I do have 
   
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K115UYS)  
 
+If you want to chat about Myriad then I have a Discord server for just that:
+
+(https://discord.gg/8aUPgKnuJC)
+
 ## Usage via MSBuild
 
 To use Myriad via its MSBuild support you add the `Myriad.Core` and `Myriad.Sdk` package references:
