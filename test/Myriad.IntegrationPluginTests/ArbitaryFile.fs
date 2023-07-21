@@ -6,14 +6,14 @@
 
 
 module First =
-    let inline fourtyTwo = 42
+    let fourtyTwo = 42
 
 module Second =
-    let inline fourtyTwo = 42
+    let fourtyTwo = 42
 
 module Third =
-    let inline fourtyTwo = 42
+    let fourtyTwo = 42
 
 module Fourth =
-    let inline fourtyTwo = 42
+    let fourtyTwo = 42
 

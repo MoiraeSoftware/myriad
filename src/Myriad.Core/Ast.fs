@@ -333,7 +333,7 @@ module Ast =
             let bind = DebugPointAtBinding.NoneAtLet
             // Do not use SynBindingTrivia.Zero because ASTTransformer expects values.
             let trivia = { SynBindingTrivia.LeadingKeyword = SynLeadingKeyword.Let range0
-                           InlineKeyword = Some range0
+                           InlineKeyword = None
                            EqualsRange = Some range0 }
             SynBinding.SynBinding(access, SynBindingKind.Normal, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind, trivia)
             

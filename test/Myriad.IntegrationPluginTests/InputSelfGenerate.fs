@@ -83,21 +83,21 @@ type AetherPerson = {
 module Test1Lenses =
     open InputSelfGenerated
 
-    let inline ones =
+    let ones =
         (fun (x: Test1) -> x.ones), (fun (x: Test1) (value: int) -> { x with ones = value })
 
-    let inline two =
+    let two =
         (fun (x: Test1) -> x.two), (fun (x: Test1) (value: string) -> { x with two = value })
 
-    let inline three =
+    let three =
         (fun (x: Test1) -> x.three), (fun (x: Test1) (value: float) -> { x with three = value })
 
-    let inline four =
+    let four =
         (fun (x: Test1) -> x.four), (fun (x: Test1) (value: float32) -> { x with four = value })
 module RecordWithWrappedLensLenses =
     open InputSelfGenerated
 
-    let inline one =
+    let one =
         Example.Lens(
             (fun (x: RecordWithWrappedLens) -> x.one),
             (fun (x: RecordWithWrappedLens) (value: int) -> { x with one = value })
@@ -105,7 +105,7 @@ module RecordWithWrappedLensLenses =
 module RecordWithEmptyWrapperNameLenses =
     open InputSelfGenerated
 
-    let inline one_empty_wrapper_name =
+    let one_empty_wrapper_name =
         (fun (x: RecordWithEmptyWrapperName) -> x.one_empty_wrapper_name),
         (fun (x: RecordWithEmptyWrapperName) (value: int) ->
             { x with
@@ -113,7 +113,7 @@ module RecordWithEmptyWrapperNameLenses =
 module RecordWithWrappedLensViaTypedefofLenses =
     open InputSelfGenerated
 
-    let inline one_typedefof =
+    let one_typedefof =
         Example.Lens(
             (fun (x: RecordWithWrappedLensViaTypedefof) -> x.one_typedefof),
             (fun (x: RecordWithWrappedLensViaTypedefof) (value: Option<int>) -> { x with one_typedefof = value })
@@ -121,7 +121,7 @@ module RecordWithWrappedLensViaTypedefofLenses =
 module RecordWithWrappedLensViaTypeofLenses =
     open InputSelfGenerated
 
-    let inline one_typeof =
+    let one_typeof =
         Example.Lens(
             (fun (x: RecordWithWrappedLensViaTypeof) -> x.one_typeof),
             (fun (x: RecordWithWrappedLensViaTypeof) (value: Option<int>) -> { x with one_typeof = value })
@@ -129,10 +129,10 @@ module RecordWithWrappedLensViaTypeofLenses =
 module AddressLenses =
     open InputSelfGenerated
 
-    let inline Street =
+    let Street =
         Example.Lens((fun (x: Address) -> x.Street), (fun (x: Address) (value: string) -> { x with Street = value }))
 
-    let inline HouseNumber =
+    let HouseNumber =
         Example.Lens(
             (fun (x: Address) -> x.HouseNumber),
             (fun (x: Address) (value: int) -> { x with HouseNumber = value })
@@ -140,34 +140,34 @@ module AddressLenses =
 module PersonLenses =
     open InputSelfGenerated
 
-    let inline Name =
+    let Name =
         Example.Lens((fun (x: Person) -> x.Name), (fun (x: Person) (value: string) -> { x with Name = value }))
 
-    let inline Address =
+    let Address =
         Example.Lens((fun (x: Person) -> x.Address), (fun (x: Person) (value: Address) -> { x with Address = value }))
 module AetherAddressLenses =
     open InputSelfGenerated
 
-    let inline Street =
+    let Street =
         (fun (x: AetherAddress) -> x.Street), (fun (value: string) (x: AetherAddress) -> { x with Street = value })
 
-    let inline HouseNumber =
+    let HouseNumber =
         (fun (x: AetherAddress) -> x.HouseNumber),
         (fun (value: int) (x: AetherAddress) -> { x with HouseNumber = value })
 module AetherPersonLenses =
     open InputSelfGenerated
 
-    let inline Name =
+    let Name =
         (fun (x: AetherPerson) -> x.Name), (fun (value: string) (x: AetherPerson) -> { x with Name = value })
 
-    let inline Address =
+    let Address =
         (fun (x: AetherPerson) -> x.Address),
         (fun (value: AetherAddress) (x: AetherPerson) -> { x with Address = value })
 module SingleCaseDULenses =
     open InputSelfGenerated
 
-    let inline Lens' =
-        let inline getter (x: SingleCaseDU) =
+    let Lens' =
+        let getter (x: SingleCaseDU) =
             match x with
             | Single x -> x
 
@@ -175,9 +175,9 @@ module SingleCaseDULenses =
 module WrappedSingleCaseDULenses =
     open InputSelfGenerated
 
-    let inline Lens' =
+    let Lens' =
         Example.Lens(
-            let inline getter (x: WrappedSingleCaseDU) =
+            let getter (x: WrappedSingleCaseDU) =
                 match x with
                 | SingleWrapped x -> x
 
@@ -186,8 +186,8 @@ module WrappedSingleCaseDULenses =
 module FullyQualifiedDULenses =
     open InputSelfGenerated
 
-    let inline Lens' =
-        let inline getter (x: FullyQualifiedDU) =
+    let Lens' =
+        let getter (x: FullyQualifiedDU) =
             match x with
             | FullyQualifiedDU.FullyQualified x -> x
 
@@ -195,8 +195,8 @@ module FullyQualifiedDULenses =
 module Module_SingleCaseDULenses =
     open InputSelfGenerated.ModuleWithDUs
 
-    let inline Lens' =
-        let inline getter (x: Module_SingleCaseDU) =
+    let Lens' =
+        let getter (x: Module_SingleCaseDU) =
             match x with
             | Single x -> x
 
@@ -204,9 +204,9 @@ module Module_SingleCaseDULenses =
 module Module_WrappedSingleCaseDULenses =
     open InputSelfGenerated.ModuleWithDUs
 
-    let inline Lens' =
+    let Lens' =
         Example.Lens(
-            let inline getter (x: Module_WrappedSingleCaseDU) =
+            let getter (x: Module_WrappedSingleCaseDU) =
                 match x with
                 | SingleWrapped x -> x
 
@@ -215,8 +215,8 @@ module Module_WrappedSingleCaseDULenses =
 module Module_FullyQualifiedDULenses =
     open InputSelfGenerated.ModuleWithDUs
 
-    let inline Lens' =
-        let inline getter (x: Module_FullyQualifiedDU) =
+    let Lens' =
+        let getter (x: Module_FullyQualifiedDU) =
             match x with
             | Module_FullyQualifiedDU.FullyQualifiedCase x -> x
 
@@ -224,13 +224,13 @@ module Module_FullyQualifiedDULenses =
 
 module Test1 =
     open InputSelfGenerated
-    let inline ones (x: Test1) = x.ones
-    let inline two (x: Test1) = x.two
-    let inline three (x: Test1) = x.three
-    let inline four (x: Test1) = x.four
-    let inline create (ones: int) (two: string) (three: float) (four: float32) : Test1 = { }
+    let ones (x: Test1) = x.ones
+    let two (x: Test1) = x.two
+    let three (x: Test1) = x.three
+    let four (x: Test1) = x.four
+    let create (ones: int) (two: string) (three: float) (four: float32) : Test1 = { }
 
-    let inline map
+    let map
         (mapones: int -> int)
         (maptwo: string -> string)
         (mapthree: float -> float)
@@ -242,7 +242,7 @@ module Test1 =
 module Currency =
     open InputSelfGenerated
 
-    let inline toString (x: Currency) : string =
+    let toString (x: Currency) : string =
         match x with
         | CAD -> "CAD"
         | PLN -> "PLN"
@@ -250,7 +250,7 @@ module Currency =
         | USD -> "USD"
         | Custom _ -> "Custom"
 
-    let inline fromString (x: string) : Option<Currency> =
+    let fromString (x: string) : Option<Currency> =
         match x with
         | "CAD" -> Some CAD
         | "PLN" -> Some PLN
@@ -258,7 +258,7 @@ module Currency =
         | "USD" -> Some USD
         | _ -> None
 
-    let inline toTag (x: Currency) : int =
+    let toTag (x: Currency) : int =
         match x with
         | CAD -> 0
         | PLN -> 1
@@ -266,27 +266,27 @@ module Currency =
         | USD -> 3
         | Custom _ -> 4
 
-    let inline isCAD (x: Currency) : bool =
+    let isCAD (x: Currency) : bool =
         match x with
         | CAD -> true
         | _ -> false
 
-    let inline isPLN (x: Currency) : bool =
+    let isPLN (x: Currency) : bool =
         match x with
         | PLN -> true
         | _ -> false
 
-    let inline isEUR (x: Currency) : bool =
+    let isEUR (x: Currency) : bool =
         match x with
         | EUR -> true
         | _ -> false
 
-    let inline isUSD (x: Currency) : bool =
+    let isUSD (x: Currency) : bool =
         match x with
         | USD -> true
         | _ -> false
 
-    let inline isCustom (x: Currency) : bool =
+    let isCustom (x: Currency) : bool =
         match x with
         | Custom _ -> true
         | _ -> false

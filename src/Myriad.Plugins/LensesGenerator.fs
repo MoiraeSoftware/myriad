@@ -122,7 +122,7 @@ module internal CreateLenses =
 
                 let trivia =
                   { SynBindingTrivia.LeadingKeyword = SynLeadingKeyword.Let range0
-                    InlineKeyword = Some range0
+                    InlineKeyword = None
                     EqualsRange = Some range0 }
                 SynBinding.SynBinding (None, SynBindingKind.Normal, false, false, [], PreXmlDoc.Empty, valData, synPat, None, matchExpression, range0, DebugPointAtBinding.NoneAtDo, trivia)
 
