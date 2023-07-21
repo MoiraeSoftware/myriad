@@ -281,7 +281,17 @@ module Ast =
             let decls = defaultArg decls []
             let docs = defaultArg docs  PreXmlDoc.Empty
             let attribs = defaultArg attribs SynAttributes.Empty
-            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range, SynModuleOrNamespaceTrivia.Zero)
+            let keyword =
+              match kind with
+              | SynModuleOrNamespaceKind.NamedModule ->
+                SynModuleOrNamespaceLeadingKeyword.Module range0
+              | SynModuleOrNamespaceKind.DeclaredNamespace 
+              | SynModuleOrNamespaceKind.GlobalNamespace ->
+                SynModuleOrNamespaceLeadingKeyword.Namespace range0
+              | SynModuleOrNamespaceKind.AnonModule ->
+                SynModuleOrNamespaceLeadingKeyword.None
+            let trivia = { SynModuleOrNamespaceTrivia.LeadingKeyword = keyword }
+            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range, trivia)
             
         static member CreateNamespace(ident: LongIdent, ?isRecursive: bool, ?decls: SynModuleDecl list, ?docs: PreXmlDoc, ?attribs: SynAttributeList list, ?access: SynAccess) =
             SynModuleOrNamespace.Create(ident, SynModuleOrNamespaceKind.DeclaredNamespace, ?isRecursive = isRecursive, ?decls = decls, ?docs = docs, ?attribs = attribs, ?access =access)

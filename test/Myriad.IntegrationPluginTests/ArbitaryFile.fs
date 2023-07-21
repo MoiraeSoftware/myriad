@@ -5,6 +5,8 @@
 
 
 
+namespace TestExample1
+
 module First =
     let fourtyTwo = 42
 
