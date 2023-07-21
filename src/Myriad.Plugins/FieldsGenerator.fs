@@ -8,7 +8,7 @@ module internal Create =
     open Fantomas.FCS.Text.Range
 
     let createFieldMap (parent: LongIdent) (field: SynField)  =
-        let (SynField.SynField(_,_,id,_,_,_,_,_,_)) = field
+        let (SynField.SynField(_,_,id,_,_,_,_,_,bloop)) = field
         let fieldName = match id with None -> failwith "no field name" | Some f -> f
 
         let recordType =
@@ -59,7 +59,7 @@ module internal Create =
                                  let fieldIdent = match id with None -> failwith "no field name" | Some f -> f
                                  let name = SynLongIdent.Create([fieldIdent.idText])
                                  let ident = SynExpr.CreateIdent(Ast.Ident.asCamelCase fieldIdent)
-                                 SynExprRecordField.SynExprRecordField(RecordFieldName(name, true), None, Some ident, None))
+                                 SynExprRecordField.SynExprRecordField(RecordFieldName(name, true), Some range0, Some ident, None))
 
             let newRecord = SynExpr.Record(None, None, fields, range0 )
             SynExpr.CreateTyped(newRecord, recordType)

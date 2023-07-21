@@ -260,7 +260,12 @@ module Test1 =
     let two (x: Test1) = x.two
     let three (x: Test1) = x.three
     let four (x: Test1) = x.four
-    let create (ones: int) (two: string) (three: float) (four: float32) : Test1 = { }
+
+    let create (ones: int) (two: string) (three: float) (four: float32) : Test1 =
+        { ones = ones
+          two = two
+          three = three
+          four = four }
 
     let map
         (mapones: int -> int)
