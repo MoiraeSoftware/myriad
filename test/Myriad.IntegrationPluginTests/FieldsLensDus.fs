@@ -196,7 +196,11 @@ module Test1 =
         (mapfour: float32 -> float32)
         (record': Test1)
         : Test1 =
-        { record' with }
+        { record' with
+            one = mapone record'.one
+            two = maptwo record'.two
+            three = mapthree record'.three
+            four = mapfour record'.four }
 
 namespace rec TestDus
 
