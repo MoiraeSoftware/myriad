@@ -3,7 +3,7 @@
 open System.IO
 open Myriad.Core
 open Myriad.Core.Ast
-open FSharp.Compiler.Syntax
+open Fantomas.FCS.Syntax
 
 [<MyriadGenerator("example1")>]
 type Example1Gen() =

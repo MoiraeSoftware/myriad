@@ -1,14 +1,14 @@
 ﻿namespace Myriad.Plugins
 
-open FSharp.Compiler.Syntax
+open Fantomas.FCS.Syntax
 open Myriad.Core
 open Myriad.Core.Ast
 
 module internal Create =
-    open FSharp.Compiler.Text.Range
+    open Fantomas.FCS.Text.Range
 
     let createFieldMap (parent: LongIdent) (field: SynField)  =
-        let (SynField.SynField(_,_,id,_,_,_,_,_)) = field
+        let (SynField.SynField(_,_,id,_,_,_,_,_,_)) = field
         let fieldName = match id with None -> failwith "no field name" | Some f -> f
 
         let recordType =
@@ -46,7 +46,7 @@ module internal Create =
         let pattern =
             let arguments =
                 fields
-                |> List.map (fun (SynField.SynField(_,_,id,typ,_,_,_,_)) ->
+                |> List.map (fun (SynField.SynField(_,_,id,typ,_,_,_,_,_)) ->
                                  let name = SynPat.CreateNamed(Ast.Ident.asCamelCase id.Value)
                                  SynPat.CreateTyped(name, typ) |> SynPat.CreateParen)
 
@@ -55,7 +55,7 @@ module internal Create =
         let expr =
             let fields =
                 fields
-                |> List.map (fun (SynField.SynField(_,_,id,_,_,_,_,_)) ->
+                |> List.map (fun (SynField.SynField(_,_,id,_,_,_,_,_,_)) ->
                                  let fieldIdent = match id with None -> failwith "no field name" | Some f -> f
                                  let name = SynLongIdent.Create([fieldIdent.idText])
                                  let ident = SynExpr.CreateIdent(Ast.Ident.asCamelCase fieldIdent)
@@ -77,7 +77,7 @@ module internal Create =
         let pattern =
             let arguments =
                 recordFields
-                |> List.map (fun (SynField.SynField(_,_,id, fieldType,_,_,_,_)) ->
+                |> List.map (fun (SynField.SynField(_,_,id, fieldType,_,_,_,_,_)) ->
                                  let funType = SynType.CreateFun(fieldType, fieldType)
                                  let ident = createFieldMapNameIdent id
                                  let name = SynPat.CreateNamed(ident)
@@ -103,7 +103,7 @@ module internal Create =
                 Some (SynExpr.CreateIdent recordPrimeIdent, blockSep)
 
             let fieldUpdates =
-                let mapField (SynField(_,_,id,_,_,_,_,_)) =
+                let mapField (SynField(_,_,id,_,_,_,_,_,_)) =
                     let lid = SynLongIdent.Create [id.Value.idText]
                     let rfn = RecordFieldName(lid, true)
 

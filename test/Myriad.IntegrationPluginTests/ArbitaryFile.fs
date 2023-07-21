@@ -5,17 +5,15 @@
 
 
 
-namespace TestExample1
-
 module First =
-    let fourtyTwo = 42
+    let inline fourtyTwo = 42
 
 module Second =
-    let fourtyTwo = 42
+    let inline fourtyTwo = 42
 
 module Third =
-    let fourtyTwo = 42
+    let inline fourtyTwo = 42
 
 module Fourth =
-    let fourtyTwo = 42
+    let inline fourtyTwo = 42
 

@@ -1,12 +1,12 @@
 namespace Myriad.Plugins
 
-open FSharp.Compiler.Syntax
-open FSharp.Compiler.SyntaxTrivia
+open Fantomas.FCS.Syntax
+open Fantomas.FCS.SyntaxTrivia
 open Myriad.Core
 open Myriad.Core.Ast
 
 module internal CreateDUModule =
-    open FSharp.Compiler.Text.Range
+    open Fantomas.FCS.Text.Range
 
     let createToString (requiresQualifiedAccess: bool) (parent: LongIdent) (cases: SynUnionCase list) =
         let varIdent = SynLongIdent.CreateString "toString"
