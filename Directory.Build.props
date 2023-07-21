@@ -21,4 +21,11 @@
         <EnableSourceLink Condition=" 'Configuration' == 'Release' ">true</EnableSourceLink>
         <NoWarn>$(NoWarn);FS2003;NU5128</NoWarn>
     </PropertyGroup>
+    <ItemGroup>
+        <None Include="..\..\README.md">
+            <Pack>true</Pack>
+            <PackagePath></PackagePath>
+            <Visible>true</Visible>
+        </None>
+    </ItemGroup>
 </Project>
