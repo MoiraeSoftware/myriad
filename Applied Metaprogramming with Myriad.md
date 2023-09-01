@@ -647,7 +647,7 @@ Until next time!
 [4]: https://github.com/fsprojects/fantomas
 [5]: https://github.com/Microsoft/msbuild/blob/adb180d394176f36aca1cc2eac4455fef564739f/src/Tasks/Microsoft.Common.CurrentVersion.targets#L3407
 [6]: https://github.com/7sharp9/falanx
-[7]: https://7sharp9.github.io/2015/07/12/2015-07-08-meta-matic/
+[7]: https://web.archive.org/web/20190427014042/https://7sharp9.github.io/2015/07/12/2015-07-08-meta-matic/
 [8]: https://github.com/fsprojects/FSharp.TypeProviders.SDK
 [9]: https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/type-providers/
 [10]: https://developers.google.com/protocol-buffers/
