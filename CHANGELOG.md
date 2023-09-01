@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Nuget package now has correct link to changelog
 ## Added
 Readme added to Nuget package
+## Changed
+- Upgraded Fantomas.Core to 6.1.1.
+    - Changed namespace of Fantomas.FCS. (Open `Fantomas.FCS` instead of `open FSharp.Compiler`.)
+    - Changed type signatures in Fantomas.FCS. (Update code where affected.)
+    - Fantomas.FCS is more sensitive to missing ranges. (Include a `Some range0` where one is needed, instead of `None`.)
 
 ## [0.8.2]
 ### Changed

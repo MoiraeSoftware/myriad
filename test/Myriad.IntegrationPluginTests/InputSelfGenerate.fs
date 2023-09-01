@@ -113,7 +113,9 @@ module RecordWithEmptyWrapperNameLenses =
 
     let one_empty_wrapper_name =
         (fun (x: RecordWithEmptyWrapperName) -> x.one_empty_wrapper_name),
-        (fun (x: RecordWithEmptyWrapperName) (value: int) -> { x with one_empty_wrapper_name = value })
+        (fun (x: RecordWithEmptyWrapperName) (value: int) ->
+            { x with
+                one_empty_wrapper_name = value })
 namespace rec SelfTestLens
 
 module RecordWithWrappedLensViaTypedefofLenses =

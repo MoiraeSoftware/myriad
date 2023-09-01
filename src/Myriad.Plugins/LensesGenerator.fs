@@ -1,12 +1,12 @@
 ﻿namespace Myriad.Plugins
 
 open System
-open FSharp.Compiler.Syntax
-open FSharp.Compiler.Xml
+open Fantomas.FCS.Syntax
+open Fantomas.FCS.Xml
 open Myriad.Core
 open Myriad.Core.Ast
-open FSharp.Compiler.Text.Range
-open FSharp.Compiler.SyntaxTrivia
+open Fantomas.FCS.Text.Range
+open Fantomas.FCS.SyntaxTrivia
 
 module internal CreateLenses =
     let private wrap (wrapperName : Option<string>) lens =
@@ -17,7 +17,7 @@ module internal CreateLenses =
         | _ -> lens
 
     let private createLensForRecordField (parent: LongIdent) (wrapperName : Option<string>) (aetherStyle: bool) (field: SynField) =
-        let (SynField.SynField(_,_,id,fieldType,_,_,_,_)) = field
+        let (SynField.SynField(_,_,id,fieldType,_,_,_,_,_)) = field
         let fieldName = match id with None -> failwith "no field name" | Some f -> f
 
         let recordType =
@@ -55,7 +55,7 @@ module internal CreateLenses =
 
     let private createLensForDU (requiresQualifiedAccess : bool) (parent: LongIdent) (wrapperName : Option<string>) (du : SynUnionCase) =
         let (SynUnionCase.SynUnionCase(_,(SynIdent(id, _)),duType,_,_,_,_)) = du
-        let (SynField.SynField(_,_,_,fieldType,_,_,_,_)) =
+        let (SynField.SynField(_,_,_,fieldType,_,_,_,_,_)) =
             match duType with
             | SynUnionCaseKind.Fields [singleCase] -> singleCase
             | SynUnionCaseKind.Fields (_ :: _) -> failwith "It is not possible to create a lens for a DU with several cases"
@@ -120,7 +120,10 @@ module internal CreateLenses =
 
                 let synPat = SynPat.LongIdent (SynLongIdent.CreateString "getter", None, None, SynArgPats.Pats [synPat], None, range0)
 
-                let trivia = {EqualsRange = Some range0; LetKeyword = Some range0}
+                let trivia =
+                  { SynBindingTrivia.LeadingKeyword = SynLeadingKeyword.Let range0
+                    InlineKeyword = None
+                    EqualsRange = Some range0 }
                 SynBinding.SynBinding (None, SynBindingKind.Normal, false, false, [], PreXmlDoc.Empty, valData, synPat, None, matchExpression, range0, DebugPointAtBinding.NoneAtDo, trivia)
 
             let lens = SynExpr.LetOrUse (false, false, [getterLet], tuple, range0, { InKeyword = None })

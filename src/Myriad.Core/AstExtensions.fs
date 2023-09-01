@@ -1,14 +1,19 @@
 namespace Myriad.Core
 
 open System
-open FSharp.Compiler.Syntax
-open FSharp.Compiler.Text.Range
-open FSharp.Compiler.Text.Position
-open FSharp.Compiler.Xml
-open FSharp.Compiler.SyntaxTrivia
+open Fantomas.FCS.Syntax
+open Fantomas.FCS.Text.Range
+open Fantomas.FCS.Text.Position
+open Fantomas.FCS.Xml
+open Fantomas.FCS.SyntaxTrivia
 
 [<AutoOpen>]
 module AstExtensions =
+    let private dotsOrCommas ls =
+      match ls with
+      | [] -> []
+      | xs -> [ for _ in 1..xs.Length - 1 do range0 ]
+
     type ParsedImplFileInputTrivia with
         static member Zero =
             { ParsedImplFileInputTrivia.ConditionalDirectives = []
@@ -16,9 +21,16 @@ module AstExtensions =
             
     type SynModuleOrNamespaceTrivia with
         static member Zero =
-            { SynModuleOrNamespaceTrivia.ModuleKeyword = Some range0
-              NamespaceKeyword = Some range0 }
+            { SynModuleOrNamespaceTrivia.LeadingKeyword = SynModuleOrNamespaceLeadingKeyword.None }
+
+    type SynMemberDefnImplicitCtorTrivia with
+        static member Zero =
+            { SynMemberDefnImplicitCtorTrivia.AsKeyword = Some range0 }
             
+    type SynBindingReturnInfoTrivia with
+        static member Zero =
+            { SynBindingReturnInfoTrivia.ColonRange = Some range0 }
+
     type Ident with
         static member Create text =
             Ident(text, range0)
@@ -27,7 +39,7 @@ module AstExtensions =
 
     type SynLongIdent with
         static member CreateFromLongIdent (longIdent: LongIdent) =
-            SynLongIdent(longIdent, [], List.replicate longIdent.Length None)
+            SynLongIdent(longIdent, dotsOrCommas longIdent, List.replicate longIdent.Length None)
             
         static member Create (texts) =
             SynLongIdent.CreateFromLongIdent (texts |> List.map Ident.Create)
@@ -69,8 +81,7 @@ module AstExtensions =
               IsDispatchSlot = false
               IsOverrideOrExplicitImpl = false
               IsFinal = false
-              GetterOrSetterIsCompilerGenerated = false
-              Trivia = SynMemberFlagsTrivia.Zero }
+              GetterOrSetterIsCompilerGenerated = false }
         static member StaticMember =
             { SynMemberFlags.InstanceMember with IsInstance = false }
 
@@ -106,7 +117,7 @@ module AstExtensions =
         static member CreateParen expr =
             SynExpr.Paren(expr, range0, Some range0, range0)
         static member CreateTuple list =
-            SynExpr.Tuple(false, list, [], range0)
+            SynExpr.Tuple(false, list, dotsOrCommas list, range0)
         static member CreateParenedTuple list =
             SynExpr.CreateTuple list
             |> SynExpr.CreateParen
@@ -154,7 +165,7 @@ module AstExtensions =
         /// Creates : `instanceAndMethod<type1, type2,... type}>(args)`
         static member CreateInstanceMethodCall(instanceAndMethod : SynLongIdent, instanceMethodsGenericTypes, args) =
             let valueExpr = SynExpr.CreateLongIdent instanceAndMethod
-            let valueExprWithType = SynExpr.TypeApp(valueExpr, range0, instanceMethodsGenericTypes, [], None, range0, range0)
+            let valueExprWithType = SynExpr.TypeApp(valueExpr, range0, instanceMethodsGenericTypes, dotsOrCommas instanceMethodsGenericTypes, None, range0, range0)
             SynExpr.CreateApp(valueExprWithType, args)
         /// Creates: expr1; expr2; ... exprN
         static member CreateSequential exprs =
@@ -182,7 +193,7 @@ module AstExtensions =
 
     type SynType with
         static member CreateApp (typ, args, ?isPostfix) =
-            SynType.App(typ, None, args, [], None, (defaultArg isPostfix false), range0)
+            SynType.App(typ, None, args, dotsOrCommas args, None, (defaultArg isPostfix false), range0)
         static member CreateLongIdent id =
             SynType.LongIdent(id)
         static member CreateLongIdent s =
@@ -385,7 +396,7 @@ module AstExtensions =
 
     type SynMemberDefn with
         static member CreateImplicitCtor (ctorArgs : SynSimplePat list) =
-            SynMemberDefn.ImplicitCtor(None, SynAttributes.Empty, SynSimplePats.SimplePats(ctorArgs, range0), None, PreXmlDoc.Empty, range0 )
+            SynMemberDefn.ImplicitCtor(None, SynAttributes.Empty, SynSimplePats.SimplePats(ctorArgs, dotsOrCommas ctorArgs, range0), None, PreXmlDoc.Empty, range0, SynMemberDefnImplicitCtorTrivia.Zero)
         static member CreateImplicitCtor() =
             SynMemberDefn.CreateImplicitCtor []
 
@@ -536,7 +547,7 @@ module AstExtensions =
 
     type SynSimplePats with
         static member Create(patterns) =
-            SynSimplePats.SimplePats(patterns, range0)
+            SynSimplePats.SimplePats(patterns, dotsOrCommas patterns, range0)
 
     type SynTypeDefn with
         static member CreateFromRepr(name : Ident, repr : SynTypeDefnRepr, ?members : SynMemberDefns, ?xmldoc : PreXmlDoc) =
@@ -560,7 +571,7 @@ module AstExtensions =
         static member Create(fieldType : SynType, ?name : Ident, ?attributes : SynAttributes, ?access : SynAccess, ?xmldoc : PreXmlDoc) =
             let xmldoc = defaultArg xmldoc PreXmlDoc.Empty
             let attributes = defaultArg attributes SynAttributes.Empty 
-            SynField(attributes, false, name, fieldType, false, xmldoc, access, range0)
+            SynField(attributes, false, name, fieldType, false, xmldoc, access, range0, SynFieldTrivia.Zero)
     
     type SynUnionCase with
         static member Create(name : Ident, fields : SynField list, ?attributes : SynAttributes, ?access : SynAccess, ?xmldoc : PreXmlDoc) =

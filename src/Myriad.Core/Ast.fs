@@ -2,11 +2,11 @@ namespace Myriad.Core
 
 open System
 open System.IO
-open FSharp.Compiler.Syntax
+open Fantomas.FCS.Syntax
 open Fantomas.Core
-open FSharp.Compiler.Text.Range
-open FSharp.Compiler.Xml
-open FSharp.Compiler.SyntaxTrivia
+open Fantomas.FCS.Text.Range
+open Fantomas.FCS.Xml
+open Fantomas.FCS.SyntaxTrivia
 
 module DynamicReflection =
     open System.Reflection
@@ -170,7 +170,7 @@ module Ast =
             ]
 
         [   match ast with
-            | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g, _)) ->
+            | ParsedInput.ImplFile(ParsedImplFileInput(_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g, _, _)) ->
                 for SynModuleOrNamespace(namespaceId, _isRec, _isModule, moduleDecls, _preXmlDoc, _attributes, _access, _, _) as ns in modules do
                     yield! extractTypes moduleDecls namespaceId
             | _ -> () ]
@@ -209,7 +209,7 @@ module Ast =
             
         let modulesWithAttribute<'a> (ast: ParsedInput) =
             [ match ast with
-              | ParsedInput.ImplFile (ParsedImplFileInput (_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g, _)) ->
+              | ParsedInput.ImplFile (ParsedImplFileInput (_name, _isScript, _qualifiedNameOfFile, _scopedPragmas, _hashDirectives, modules, _g, _, _)) ->
                   for SynModuleOrNamespace (_namespaceId, _isRec, moduleOrNs, _moduleDecls, _preXmlDoc, _attributes, _access, _range, _) as ns in modules do
                       if moduleOrNs.IsModule && hasAttribute<'a> ns then
                           yield ns
@@ -271,7 +271,7 @@ module Ast =
             let modules = defaultArg modules []
             let isLastCompiland = defaultArg isLastCompiland true
             let isExe = defaultArg isExe false
-            ParsedImplFileInput(file, isScript, qualName, scopedPragmas, hashDirectives, modules, (isLastCompiland, isExe), ParsedImplFileInputTrivia.Zero)
+            ParsedImplFileInput(file, isScript, qualName, scopedPragmas, hashDirectives, modules, (isLastCompiland, isExe), ParsedImplFileInputTrivia.Zero, Set.empty)
             
     type SynModuleOrNamespace with
         
@@ -281,7 +281,17 @@ module Ast =
             let decls = defaultArg decls []
             let docs = defaultArg docs  PreXmlDoc.Empty
             let attribs = defaultArg attribs SynAttributes.Empty
-            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range, SynModuleOrNamespaceTrivia.Zero)
+            let keyword =
+              match kind with
+              | SynModuleOrNamespaceKind.NamedModule ->
+                SynModuleOrNamespaceLeadingKeyword.Module range0
+              | SynModuleOrNamespaceKind.DeclaredNamespace 
+              | SynModuleOrNamespaceKind.GlobalNamespace ->
+                SynModuleOrNamespaceLeadingKeyword.Namespace range0
+              | SynModuleOrNamespaceKind.AnonModule ->
+                SynModuleOrNamespaceLeadingKeyword.None
+            let trivia = { SynModuleOrNamespaceTrivia.LeadingKeyword = keyword }
+            SynModuleOrNamespace(ident, isRecursive, kind, decls, docs, attribs, access, range, trivia)
             
         static member CreateNamespace(ident: LongIdent, ?isRecursive: bool, ?decls: SynModuleDecl list, ?docs: PreXmlDoc, ?attribs: SynAttributeList list, ?access: SynAccess) =
             SynModuleOrNamespace.Create(ident, SynModuleOrNamespaceKind.DeclaredNamespace, ?isRecursive = isRecursive, ?decls = decls, ?docs = docs, ?attribs = attribs, ?access =access)
@@ -331,7 +341,9 @@ module Ast =
             let headPat = defaultArg pattern SynPat.CreateNull
             let expr = defaultArg expr (SynExpr.CreateTyped(SynExpr.CreateNull, SynType.CreateUnit))
             let bind = DebugPointAtBinding.NoneAtLet
-            let trivia = { LetKeyword = Some range0
+            // Do not use SynBindingTrivia.Zero because ASTTransformer expects values.
+            let trivia = { SynBindingTrivia.LeadingKeyword = SynLeadingKeyword.Let range0
+                           InlineKeyword = if isInline then Some range0 else None
                            EqualsRange = Some range0 }
             SynBinding.SynBinding(access, SynBindingKind.Normal, isInline, isMutable, attributes, xmldoc, valData, headPat, returnInfo, expr, range0, bind, trivia)
             
@@ -350,7 +362,7 @@ module Ast =
     type SynBindingReturnInfo with
         static member Create(typeName, ?attributes) =
             let attributes = defaultArg attributes SynAttributes.Empty
-            SynBindingReturnInfo.SynBindingReturnInfo(typeName, range0, attributes)
+            SynBindingReturnInfo.SynBindingReturnInfo(typeName, range0, attributes, SynBindingReturnInfoTrivia.Zero)
             
     type SynUnionCase with
         member x.HasFields =
@@ -369,8 +381,8 @@ module Ast =
         static member CreateLambda(pats: SynPat list, body: SynExpr, ?isMember: bool) =
             let isMember = defaultArg isMember false
             let compiler = System.Reflection.Assembly.Load("Fantomas.FCS")
-            let syntaxTreeOps = compiler.GetType("FSharp.Compiler.SyntaxTreeOps")
-            let synArgNameGenerator = compiler.GetType("FSharp.Compiler.SyntaxTreeOps+SynArgNameGenerator")
+            let syntaxTreeOps = compiler.GetType("Fantomas.FCS.SyntaxTreeOps")
+            let synArgNameGenerator = compiler.GetType("Fantomas.FCS.SyntaxTreeOps+SynArgNameGenerator")
             let nameGen = synArgNameGenerator?``.ctor``()
             syntaxTreeOps?mkSynFunMatchLambdas(nameGen, isMember, range0, pats, Some range0, body)
             
