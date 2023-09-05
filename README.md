@@ -14,10 +14,6 @@ If you enjoy this repo and wanted to shown your appriciation etc then I do have 
   
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K115UYS)  
 
-If you want to chat about Myriad then I have a Discord server for just that:
-
-(https://discord.gg/8aUPgKnuJC)
-
 ## Usage via MSBuild
 
 To use Myriad via its MSBuild support you add the `Myriad.Core` and `Myriad.Sdk` package references:
@@ -283,14 +279,3 @@ Here is a list of external plugins that have been built
 [SqlHyra](https://github.com/JordanMarr/SqlHydra)
 [JsonWrapper](https://github.com/BinaryDefense/JsonWrapper)
 [TypeSafeInternals](https://github.com/TheAngryByrd/TypeSafeInternals)
-
-## Terms of use
-
- By using this project or its source code, for any purpose and in any shape or form, you grant your **implicit agreement** to all the following statements:
-
- - You **condemn Russia and its military aggression against Ukraine**
- - You **recognize that Russia is an occupant that unlawfully invaded a sovereign state**
- - You **support Ukraine's territorial integrity, including its claims over temporarily occupied territories of Crimea and Donbas**
- - You **reject false narratives perpetuated by Russian state propaganda**
-
- To learn more about the war and how you can help, [click here](https://tyrrrz.me). Glory to Ukraine! 🇺🇦
