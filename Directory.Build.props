@@ -8,7 +8,7 @@
         <VersionPrefix Condition=" '$(VersionPrefix)' == '' ">0.8.3</VersionPrefix>
         <Version Condition=" '$(Version)' == '' ">$(VersionPrefix)$(VersionSuffix)</Version>
         <!-- pack stuff -->
-        <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net8.0;netstandard2.1</TargetFrameworks>
         <Authors>7sharp9</Authors>
         <PackageProjectUrl>$(GitUrl)</PackageProjectUrl>
         <PackageTags>fsharp;codegen;generation;metaprogramming</PackageTags>

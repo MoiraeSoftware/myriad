@@ -19,7 +19,7 @@ Briefly before we get onto the new configuration I mentioned, I just wanted to q
 ```xml
 <Project>
     <ItemGroup>
-        <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../lib/net6.0/Myriad.Plugins.MyPlugin.dll" />
+        <MyriadSdkGenerator Include="$(MSBuildThisFileDirectory)/../lib/net8.0/Myriad.Plugins.MyPlugin.dll" />
     </ItemGroup>
 </Project>
 ```

@@ -32,7 +32,7 @@ module internal Create =
         let valData =
             let argInfo = SynArgInfo.CreateIdString "x"
             let valInfo = SynValInfo.SynValInfo([[argInfo]], SynArgInfo.Empty)
-            SynValData.SynValData(None, valInfo, None)
+            SynValData.SynValData(None, valInfo, None, None)
 
         SynModuleDecl.CreateLet [SynBinding.Let(pattern = pattern, expr = expr, valData = valData)]
 

@@ -115,7 +115,7 @@ module internal CreateLenses =
             let tuple = SynExpr.CreateTuple [ SynExpr.Ident getterName; setter ]
 
             let getterLet =
-                let valData = SynValData.SynValData(None, SynValInfo.Empty, None)
+                let valData = SynValData.SynValData(None, SynValInfo.Empty, None, None)
                 let synPat = SynPat.CreateParen(SynPat.CreateTyped(SynPat.CreateNamed(Ident.Create "x", false), duType))
 
                 let synPat = SynPat.LongIdent (SynLongIdent.CreateString "getter", None, None, SynArgPats.Pats [synPat], None, range0)

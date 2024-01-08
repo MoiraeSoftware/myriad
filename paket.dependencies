@@ -1,6 +1,6 @@
-version 7.1.5
+version 8.0.0
 source https://api.nuget.org/v3/index.json
-framework: net60, netstandard21, netcoreapp31
+framework: net80, net60, netstandard21
 storage: none
 
 nuget Argu
