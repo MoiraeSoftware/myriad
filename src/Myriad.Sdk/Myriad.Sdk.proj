@@ -27,5 +27,4 @@
       <Visible>true</Visible>
     </Content>
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
