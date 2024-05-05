@@ -21,4 +21,4 @@ The way a Myriad plugin works is that it that works on a particular file type or
 
 ## What's next for Myriad?  
 
-Im in the process of updating the documentation here so that all of the new features adding in the latter part of 2021 afre all included as part of the documentation, hopefully there will also be video tutorials to demonstrate this too.  
+Who knows, Im not activly writing any new features, I do check in occasionally annd merge any PR's and answer questions. 
